@@ -3,6 +3,18 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 // ─── SITES DATABASE ────────────────────────────────────────────────────────────
 // sport: "PG" = paragliding only, "HG" = hang gliding only, "PGHG" = both
 const UK_SITES = [
+  // ── SKY SURFING CLUB (Hampshire South Downs) — exact data from skysurfingclub.co.uk ──
+  { id: 100, name: "SSC: Butser North",       lat: 50.9824, lon: -0.9842, altitude_m: 250, aspect:  17, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "CP+10", region: "SSC Hampshire", sport: "PGHG", club: "Sky Surfing Club", windNote: "340–055°" },
+  { id: 101, name: "SSC: Butser South",       lat: 50.9729, lon: -0.9783, altitude_m: 180, aspect: 228, wind_range_min: 10, wind_range_max: 32, site_type: "hill",    pg_rating: "CP",    region: "SSC Hampshire", sport: "PGHG", club: "Sky Surfing Club", windNote: "200–255°" },
+  { id: 102, name: "SSC: Butser West",        lat: 50.9767, lon: -0.9873, altitude_m: 250, aspect: 295, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "CP",    region: "SSC Hampshire", sport: "PGHG", club: "Sky Surfing Club", windNote: "265–325°" },
+  { id: 103, name: "SSC: Chalton",            lat: 50.9299, lon: -0.9540, altitude_m: 144, aspect:  60, wind_range_min: 12, wind_range_max: 40, site_type: "hill",    pg_rating: "CP+10", region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "020–100°" },
+  { id: 104, name: "SSC: Harting Down",       lat: 50.9594, lon: -0.8703, altitude_m: 229, aspect:  10, wind_range_min: 12, wind_range_max: 40, site_type: "hill",    pg_rating: "CP+10", region: "SSC Hampshire", sport: "PGHG", club: "Sky Surfing Club", windNote: "340–040°" },
+  { id: 105, name: "SSC: Oxenbourne",         lat: 50.9722, lon: -0.9923, altitude_m: 250, aspect: 312, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "CP+10", region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "265–360°" },
+  { id: 106, name: "SSC: Matterley Bowl",     lat: 51.0467, lon: -1.2466, altitude_m: 160, aspect:   5, wind_range_min: 10, wind_range_max: 30, site_type: "hill",    pg_rating: "CP",    region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "350–020°" },
+  { id: 107, name: "SSC: Mercury (Wether Down)", lat: 50.9741, lon: -1.0384, altitude_m: 225, aspect: 73, wind_range_min: 12, wind_range_max: 40, site_type: "hill", pg_rating: "CP+10", region: "SSC Hampshire", sport: "PGHG", club: "Sky Surfing Club", windNote: "045–100°" },
+  { id: 108, name: "SSC: Meon Shore",         lat: 50.8210, lon: -1.2526, altitude_m:  15, aspect: 223, wind_range_min: 15, wind_range_max: 55, site_type: "coastal", pg_rating: "CP+20", region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "205–240°" },
+  { id: 109, name: "SSC: Park Hill",          lat: 50.9981, lon: -1.0262, altitude_m: 190, aspect: 168, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "pilot", region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "135–200°" },
+  { id: 110, name: "SSC: Whitewool",          lat: 50.9788, lon: -1.0755, altitude_m: 190, aspect:  60, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "CP",    region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "020–100°" },
   // ── SOUTH DOWNS & SOUTHEAST ──────────────────────────────────────────────
   { id: 1,  name: "Devil's Dyke",        lat: 50.9012, lon: -0.2234, altitude_m: 208, aspect: 180, wind_range_min: 15, wind_range_max: 40, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "PGHG" },
   { id: 2,  name: "Firle Beacon",         lat: 50.8412, lon:  0.1156, altitude_m: 217, aspect: 180, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "open", region: "South Downs",    sport: "PGHG" },
@@ -254,7 +266,7 @@ export default function App() {
             <span style={{fontSize:22}}>🪂</span>
             <div>
               <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:18,letterSpacing:2,color:"#00e5ff",textTransform:"uppercase"}}>UK FLYCAST</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:8,color:"#4a6a8a",letterSpacing:1}}>PG & HG WEATHER INTELLIGENCE · {UK_SITES.length} SITES</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:8,color:"#4a6a8a",letterSpacing:1}}>PG & HG · {UK_SITES.length} SITES · SSC ✓</div>
             </div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
@@ -413,6 +425,8 @@ function SportBadge({sport,tiny}){
   return <span style={{...s,color:"#00e5ff",background:"#00e5ff11",border:"1px solid #00e5ff33"}}>PG</span>;
 }
 
+function ClubBadge({club}){if(!club) return null;return <span style={{fontFamily:"JetBrains Mono",fontSize:7,color:"#a78bfa",background:"#a78bfa11",border:"1px solid #a78bfa33",borderRadius:3,padding:"1px 4px",whiteSpace:"nowrap"}}>SSC</span>;}
+
 function BestCard({site,fly,rank,onClick}){
   const col=fly.color;
   return(<button onClick={onClick} className="fi" style={{background:"#0d1520",border:`1px solid ${rank<=3?col:"#1a2d4a"}`,borderRadius:8,padding:"10px 14px",cursor:"pointer",textAlign:"left",width:"100%",animationDelay:`${rank*.04}s`,opacity:0}}>
@@ -421,7 +435,7 @@ function BestCard({site,fly,rank,onClick}){
       <div style={{flex:1}}>
         <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
           <span style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:17,color:"#e0eeff"}}>{site.name}</span>
-          <SportBadge sport={site.sport}/>
+          <SportBadge sport={site.sport}/><ClubBadge club={site.club}/>
           <span style={{fontFamily:"JetBrains Mono",fontSize:8,color:"#4a6a8a"}}>{site.region}</span>
         </div>
         <div style={{display:"flex",gap:6,marginTop:2,flexWrap:"wrap",alignItems:"center"}}>
@@ -450,13 +464,13 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
     <div style={{padding:"10px 14px",borderBottom:"1px solid #1a2d4a",background:"#080c14",position:"sticky",top:0,zIndex:10}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div>
-          <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:17,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/></div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:17,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/><ClubBadge club={site.club}/></div>
           <div style={{fontFamily:"JetBrains Mono",fontSize:8,color:"#4a6a8a",marginTop:1}}>{site.region} · {site.altitude_m}m ASL</div>
         </div>
         <button onClick={onClose} style={{background:"#1a2d4a",border:"none",color:"#6a9abf",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
       </div>
       <div style={{display:"flex",gap:4,marginTop:6,flexWrap:"wrap"}}>
-        {[{l:site.site_type.toUpperCase(),c:"#6a9abf"},{l:site.pg_rating.toUpperCase(),c:"#ffd700"},{l:`ASPECT ${cDir(site.aspect)}`,c:"#00e5ff"},{l:`${site.wind_range_min}–${site.wind_range_max}km/h`,c:"#00e5ff"}].map(b=>(
+        {[{l:site.site_type.toUpperCase(),c:"#6a9abf"},{l:site.pg_rating.toUpperCase(),c:"#ffd700"},{l:site.windNote??`ASPECT ${cDir(site.aspect)}`,c:"#00e5ff"},{l:`${site.wind_range_min}–${site.wind_range_max}km/h`,c:"#00e5ff"}].map(b=>(
           <span key={b.l} style={{fontFamily:"JetBrains Mono",fontSize:7,color:b.c,background:`${b.c}11`,border:`1px solid ${b.c}33`,borderRadius:3,padding:"1px 5px"}}>{b.l}</span>
         ))}
       </div>
