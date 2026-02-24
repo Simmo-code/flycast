@@ -82,32 +82,72 @@ const kmhToMph = v => Math.round(v * 0.621371);
 const fmtSpeed = (v, unit) => unit === 'mph' ? `${kmhToMph(v)} mph` : `${Math.round(v)} km/h`;
 const fmtSpeedBoth = v => `${kmhToMph(Math.round(v))} mph (${Math.round(v)} km/h)`;
 
-// Primary: ECMWF via Open-Meteo (best European model)
+const FORECAST_DAYS = 7; // Extend to 7-day outlook
+
+// ── Helper: fetch any Open-Meteo endpoint silently (returns null on failure)
+async function tryFetch(url) {
+  try { const r = await fetch(url); return r.ok ? r.json() : null; }
+  catch { return null; }
+}
+
+// ── ECMWF IFS — primary, best medium-range for Europe
 async function fetchOpenMeteo(lat, lon) {
   const base = `latitude=${lat}&longitude=${lon}`;
-  const hourly = `hourly=temperature_2m,dewpoint_2m,precipitation_probability,windspeed_10m,winddirection_10m,windgusts_10m,cape,visibility,boundary_layer_height,convective_inhibition,lifted_index`;
-  const daily = `daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant`;
-  const opts = `wind_speed_unit=kmh&forecast_days=3&timezone=Europe%2FLondon`;
+  const hourly = `hourly=temperature_2m,dewpoint_2m,precipitation_probability,windspeed_10m,winddirection_10m,windgusts_10m,windspeed_100m,winddirection_100m,cape,visibility,boundary_layer_height,convective_inhibition,lifted_index,cloud_cover`;
+  const daily  = `daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant,sunrise,sunset`;
+  const opts   = `wind_speed_unit=kmh&forecast_days=${FORECAST_DAYS}&timezone=Europe%2FLondon`;
   const url = `https://api.open-meteo.com/v1/forecast?${base}&${hourly}&${daily}&${opts}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error("fetch failed");
   return res.json();
 }
 
-// Comparison: GFS model — different NWP for cross-checking
-async function fetchOpenMeteoGFS(lat, lon) {
+// ── UKMO UKV 2km — actual Met Office model, highest UK resolution
+async function fetchUKMO(lat, lon) {
   const base = `latitude=${lat}&longitude=${lon}`;
-  const hourly = `hourly=windspeed_10m,winddirection_10m,windgusts_10m,precipitation_probability,boundary_layer_height,cape`;
-  const daily = `daily=windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant,precipitation_probability_max`;
-  const opts = `wind_speed_unit=kmh&forecast_days=3&timezone=Europe%2FLondon&models=gfs_seamless`;
-  const url = `https://api.open-meteo.com/v1/forecast?${base}&${hourly}&${daily}&${opts}`;
-  try { const res = await fetch(url); if (!res.ok) return null; return res.json(); }
-  catch { return null; }
+  const hourly = `hourly=windspeed_10m,winddirection_10m,windgusts_10m,precipitation_probability,boundary_layer_height,cape,cloud_cover`;
+  const daily  = `daily=windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant,precipitation_probability_max`;
+  const opts   = `wind_speed_unit=kmh&forecast_days=3&timezone=Europe%2FLondon`;
+  return tryFetch(`https://api.open-meteo.com/v1/ukmo?${base}&${hourly}&${daily}&${opts}`);
 }
 
-function processWeatherData(raw, rawGfs) {
-  return [0,1,2].map(i => {
-    const d = raw.daily;
+// ── DWD ICON-EU 7km — German weather service, highly reliable for Europe
+async function fetchICON(lat, lon) {
+  const base = `latitude=${lat}&longitude=${lon}`;
+  const hourly = `hourly=windspeed_10m,winddirection_10m,windgusts_10m,precipitation_probability,boundary_layer_height,cape,cloud_cover`;
+  const daily  = `daily=windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant,precipitation_probability_max`;
+  const opts   = `wind_speed_unit=kmh&forecast_days=3&timezone=Europe%2FLondon&models=icon_seamless`;
+  return tryFetch(`https://api.open-meteo.com/v1/dwd-icon?${base}&${hourly}&${daily}&${opts}`);
+}
+
+// ── GFS — American model, good for 5-7 day outlook
+async function fetchGFS(lat, lon) {
+  const base = `latitude=${lat}&longitude=${lon}`;
+  const hourly = `hourly=windspeed_10m,winddirection_10m,windgusts_10m,precipitation_probability,boundary_layer_height,cape`;
+  const daily  = `daily=windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant,precipitation_probability_max`;
+  const opts   = `wind_speed_unit=kmh&forecast_days=${FORECAST_DAYS}&timezone=Europe%2FLondon&models=gfs_seamless`;
+  return tryFetch(`https://api.open-meteo.com/v1/forecast?${base}&${hourly}&${daily}&${opts}`);
+}
+
+// ── Extract day slice from a secondary model raw response
+function extractModelDay(raw, i) {
+  if (!raw || !raw.daily) return null;
+  const d = raw.daily;
+  const avg = arr => { const v=(arr||[]).slice(i*24+6,i*24+18).filter(x=>x!=null); return v.length?v.reduce((a,b)=>a+b,0)/v.length:null; };
+  return {
+    windSpeed: d.windspeed_10m_max?.[i]??null,
+    gustSpeed: d.windgusts_10m_max?.[i]??null,
+    windDir:   d.winddirection_10m_dominant?.[i]??null,
+    precipProb:d.precipitation_probability_max?.[i]??null,
+    blHeight:  avg(raw.hourly?.boundary_layer_height),
+    cape:      avg(raw.hourly?.cape),
+    cloudCover:avg(raw.hourly?.cloud_cover),
+  };
+}
+
+function processWeatherData(raw, rawUKMO, rawICON, rawGFS) {
+  return Array.from({length: FORECAST_DAYS}, (_, i) => {
+    const d   = raw.daily;
     const sl  = arr => (arr||[]).slice(i*24, i*24+24);
     const slP = arr => sl(arr).slice(6,18);
     const avg = arr => arr.length ? arr.reduce((a,b)=>a+(b||0),0)/arr.length : 0;
@@ -116,38 +156,56 @@ function processWeatherData(raw, rawGfs) {
     const hourlyBL = sl(raw.hourly.boundary_layer_height);
     const avgBL    = avg(slP(raw.hourly.boundary_layer_height));
     const avgCAPE  = avg(slP(raw.hourly.cape));
-    // W* (convective velocity) estimate in m/s — RASP-style thermal strength
-    const wStarMs = Math.min(4.5, Math.sqrt(Math.max(0, avgCAPE / 300)) * Math.max(0.3, avgBL / 1200));
-    // Thermal trigger: first hour BL > 300m (thermals becoming useful)
-    const thermalTrigger = (() => { for (let h=6;h<18;h++) if ((hourlyBL[h]||0)>300) return h; return null; })();
-    // Lifted Index (negative = good thermals)
-    const liftedIdx = avg(slP(raw.hourly.lifted_index ?? []));
-    // CIN: convective inhibition — how much capping (low = easier thermals)
-    const cin = avg(slP(raw.hourly.convective_inhibition ?? []));
-    // GFS comparison
-    let gfsData = null;
-    if (rawGfs && rawGfs.daily) {
-      const gd = rawGfs.daily;
-      gfsData = {
-        windSpeed: gd.windspeed_10m_max?.[i]??null,
-        gustSpeed: gd.windgusts_10m_max?.[i]??null,
-        windDir:   gd.winddirection_10m_dominant?.[i]??null,
-        precipProb:gd.precipitation_probability_max?.[i]??null,
-        blHeight:  avg((rawGfs.hourly.boundary_layer_height||[]).slice(i*24+6,i*24+18)),
-        cape:      avg((rawGfs.hourly.cape||[]).slice(i*24+6,i*24+18)),
-      };
-    }
-    // Model agreement 0-100 (how closely ECMWF & GFS agree)
+    const avgCloud = avg(slP(raw.hourly.cloud_cover)); // 0-100%
+
+    // W* convective velocity estimate
+    const wStarMs = Math.min(4.5, Math.sqrt(Math.max(0, avgCAPE/300)) * Math.max(0.3, avgBL/1200));
+    // Thermal trigger hour
+    const thermalTrigger = (() => { for(let h=6;h<18;h++) if((hourlyBL[h]||0)>300) return h; return null; })();
+    // Lifted Index
+    const liftedIdx = avg(slP(raw.hourly.lifted_index??[]));
+    const cin = avg(slP(raw.hourly.convective_inhibition??[]));
+
+    // ── Wind shear: compare 100m wind to 10m wind
+    const spd10  = avg(slP(raw.hourly.windspeed_10m));
+    const spd100 = avg(slP(raw.hourly.windspeed_100m??[]));
+    const dir10  = d.winddirection_10m_dominant[i]??270;
+    const dir100h = slP(raw.hourly.winddirection_100m??[]);
+    const dir100 = dir100h.length ? avg(dir100h) : null;
+    const windShear = spd100 > 0 ? (spd100 - spd10) : null; // km/h increase with height
+    const shearDir  = dir100 != null ? angleDiff(dir10, dir100) : null;
+
+    // ── Overcast risk: cloud cover >80% during key hours kills thermals
+    const overcastRisk = avgCloud > 75 ? 'HIGH' : avgCloud > 50 ? 'MODERATE' : avgCloud > 25 ? 'LOW' : 'CLEAR';
+    const overcastKillsDay = avgCloud > 80; // stratus warning
+
+    // ── Sunrise / sunset for flying window
+    const sunrise = d.sunrise?.[i] ? new Date(d.sunrise[i]).getHours() + new Date(d.sunrise[i]).getMinutes()/60 : 6;
+    const sunset  = d.sunset?.[i]  ? new Date(d.sunset[i]).getHours()  + new Date(d.sunset[i]).getMinutes()/60  : 20;
+
+    // ── Secondary model snapshots
+    const ukmoDay = extractModelDay(rawUKMO, i);
+    const iconDay = extractModelDay(rawICON, i);
+    const gfsDay  = extractModelDay(rawGFS,  i);
+
+    // ── Multi-model agreement score (0-100) across all available models
     const modelAgreement = (() => {
-      if (!gfsData||gfsData.windSpeed==null) return null;
-      const spd = d.windspeed_10m_max[i]??20;
-      const spdDiff = Math.abs(spd - gfsData.windSpeed);
-      const dirDiff = angleDiff(d.winddirection_10m_dominant[i]??270, gfsData.windDir??270);
-      const rnDiff  = Math.abs((d.precipitation_probability_max[i]??20)-(gfsData.precipProb??20));
-      return Math.max(0, Math.round(100 - spdDiff*3 - dirDiff*0.5 - rnDiff));
+      const models = [ukmoDay, iconDay, gfsDay].filter(m => m?.windSpeed != null);
+      if (!models.length) return null;
+      const primary = d.windspeed_10m_max[i]??20;
+      const avgSpdDiff = models.reduce((s,m) => s + Math.abs(primary - m.windSpeed), 0) / models.length;
+      const avgDirDiff = models.reduce((s,m) => s + angleDiff(dir10, m.windDir??dir10), 0) / models.length;
+      const avgRnDiff  = models.reduce((s,m) => s + Math.abs((d.precipitation_probability_max[i]??20)-(m.precipProb??20)), 0) / models.length;
+      return Math.max(0, Math.round(100 - avgSpdDiff*2.5 - avgDirDiff*0.4 - avgRnDiff*0.5));
     })();
+
+    // ── Ensemble-style wind range from spread across models
+    const allWindSpeeds = [d.windspeed_10m_max[i]??20, ukmoDay?.windSpeed, iconDay?.windSpeed, gfsDay?.windSpeed].filter(v=>v!=null);
+    const windMin = Math.min(...allWindSpeeds);
+    const windMax = Math.max(...allWindSpeeds);
+
     return {
-      windDir:   d.winddirection_10m_dominant[i]??270,
+      windDir:   dir10,
       windSpeed: d.windspeed_10m_max[i]??20,
       gustSpeed: d.windgusts_10m_max[i]??28,
       precipProb:d.precipitation_probability_max[i]??20,
@@ -155,16 +213,17 @@ function processWeatherData(raw, rawGfs) {
       blHeight:  avgBL,
       visibility:avg(slP(raw.hourly.visibility))||8000,
       cloudBase: Math.round(Math.max(0,(tempMax-dewpoint)*400)),
+      cloudCover:Math.round(avgCloud),
       hourlyWindSpeed: sl(raw.hourly.windspeed_10m),
       hourlyGusts:     sl(raw.hourly.windgusts_10m),
       hourlyWindDir:   sl(raw.hourly.winddirection_10m),
       hourlyBL,
-      wStarMs,
-      thermalTrigger,
-      liftedIdx,
-      cin,
-      gfsData,
+      wStarMs, thermalTrigger, liftedIdx, cin,
+      windShear, shearDir, overcastRisk, overcastKillsDay,
+      sunrise, sunset,
+      ukmoDay, iconDay, gfsDay,
       modelAgreement,
+      windMin, windMax,
     };
   });
 }
@@ -307,7 +366,7 @@ export default function App() {
 
   const days = useMemo(()=>{
     const t=new Date();
-    return [0,1,2].map(i=>{const d=new Date(t);d.setDate(d.getDate()+i);return{date:d,label:i===0?"Today":i===1?"Tomorrow":d.toLocaleDateString("en-GB",{weekday:"long"})};});
+    return Array.from({length:7},(_,i)=>{const d=new Date(t);d.setDate(d.getDate()+i);return{date:d,label:i===0?"Today":i===1?"Tomorrow":d.toLocaleDateString("en-GB",{weekday:"short"})};});
   },[]);
 
   const load = useCallback(async()=>{
@@ -315,7 +374,7 @@ export default function App() {
     const r={};
     for(let i=0;i<UK_SITES.length;i+=10){
       await Promise.all(UK_SITES.slice(i,i+10).map(async s=>{
-        try{const [ec,gfs]=await Promise.all([fetchOpenMeteo(s.lat,s.lon),fetchOpenMeteoGFS(s.lat,s.lon)]);r[s.id]=processWeatherData(ec,gfs);}catch{r[s.id]=null;}
+        try{const [ec,ukmo,icon,gfs]=await Promise.all([fetchOpenMeteo(s.lat,s.lon),fetchUKMO(s.lat,s.lon),fetchICON(s.lat,s.lon),fetchGFS(s.lat,s.lon)]);r[s.id]=processWeatherData(ec,ukmo,icon,gfs);}catch{r[s.id]=null;}
       }));
     }
     setWx(r);setUpdated(new Date());setLoading(false);
@@ -406,15 +465,15 @@ export default function App() {
       <header style={{background:"linear-gradient(180deg,#0a1628 0%,#080c14 100%)",borderBottom:"1px solid #1a2d4a",padding:"0 12px",flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingTop:8,paddingBottom:6}}>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:22}}>🪂</span>
+            <span style={{fontSize:24}}>🪂</span>
             <div>
-              <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:18,letterSpacing:2,color:"#00e5ff",textTransform:"uppercase"}}>UK FLYCAST</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a",letterSpacing:1}}>PG & HG · {UK_SITES.length} SITES · SSC ✓</div>
+              <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:20,letterSpacing:2,color:"#00e5ff",textTransform:"uppercase"}}>UK FLYCAST</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",letterSpacing:1}}>PG & HG · {UK_SITES.length} SITES · 7 DAYS · SSC ✓</div>
             </div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
-            {updated&&<div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a",textAlign:"right"}}><div>UPDATED</div><div style={{color:"#6a9abf"}}>{updated.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div></div>}
-            <button onClick={load} disabled={loading} style={{background:loading?"#1a2d4a":"#00e5ff14",border:`1px solid ${loading?"#1a2d4a":"#00e5ff44"}`,color:loading?"#4a6a8a":"#00e5ff",padding:"5px 10px",borderRadius:4,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:11,letterSpacing:1,cursor:loading?"default":"pointer",display:"flex",alignItems:"center",gap:4}}>
+            {updated&&<div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",textAlign:"right"}}><div>UPDATED</div><div style={{color:"#6a9abf"}}>{updated.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div></div>}
+            <button onClick={load} disabled={loading} style={{background:loading?"#1a2d4a":"#00e5ff14",border:`1px solid ${loading?"#1a2d4a":"#00e5ff44"}`,color:loading?"#4a6a8a":"#00e5ff",padding:"5px 10px",borderRadius:4,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,letterSpacing:1,cursor:loading?"default":"pointer",display:"flex",alignItems:"center",gap:4}}>
               <span style={{display:"inline-block",animation:loading?"spin 1s linear infinite":"none"}}>↻</span>
               {loading?"FETCHING...":"REFRESH"}
             </button>
@@ -427,19 +486,19 @@ export default function App() {
             const lbl=sc>=78?"EXCELLENT":sc>=58?"GOOD":sc>=38?"MARGINAL":"POOR";
             const act=i===day;
             return(<button key={i} onClick={()=>setDay(i)} style={{flex:"0 0 auto",background:act?`${col}14`:"#0d1520",border:`1px solid ${act?col:"#1a2d4a"}`,borderRadius:6,padding:"7px 14px",cursor:"pointer",textAlign:"left",minWidth:90,transition:"all 0.2s"}}>
-              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:act?col:"#6a9abf",letterSpacing:1,textTransform:"uppercase"}}>{d.label}</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a",marginTop:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
+              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:act?col:"#6a9abf",letterSpacing:1,textTransform:"uppercase"}}>{d.label}</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",marginTop:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
               <div style={{marginTop:5,display:"flex",alignItems:"center",gap:5}}>
-                <div style={{width:26,height:26,borderRadius:"50%",background:`${col}18`,border:`1.5px solid ${col}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"JetBrains Mono",fontSize:10,fontWeight:700,color:col}}>{loading?"—":sc}</div>
-                <div style={{fontFamily:"Barlow Condensed",fontSize:11,fontWeight:600,color:col}}>{loading?"...":lbl}</div>
+                <div style={{width:26,height:26,borderRadius:"50%",background:`${col}18`,border:`1.5px solid ${col}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"JetBrains Mono",fontSize:13,fontWeight:700,color:col}}>{loading?"—":sc}</div>
+                <div style={{fontFamily:"Barlow Condensed",fontSize:14,fontWeight:600,color:col}}>{loading?"...":lbl}</div>
               </div>
             </button>);
           })}
           <div style={{flex:1,background:"#0d1520",border:"1px solid #1a2d4a",borderRadius:6,padding:"7px 10px",display:"flex",flexDirection:"column",justifyContent:"center",minWidth:100}}>
-            <div style={{fontFamily:"Barlow Condensed",fontSize:13,color:"#4a6a8a",letterSpacing:1,marginBottom:4}}>DATA SOURCES</div>
+            <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#4a6a8a",letterSpacing:1,marginBottom:4}}>DATA SOURCES</div>
             <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
-              {[["Open-Meteo",true],["Met Office",false],["OWM",false]].map(([s,a])=>(
-                <span key={s} style={{fontFamily:"JetBrains Mono",fontSize:11,color:a?"#00e5ff":"#3a4d5a",background:a?"#00e5ff11":"#1a2d4a",border:`1px solid ${a?"#00e5ff33":"#2a3d5a"}`,borderRadius:3,padding:"1px 4px"}}>{s}{a?" ✓":" —"}</span>
+              {[["ECMWF","#00e5ff"],["UKMO 2km","#00ff9d"],["ICON-EU","#ffd700"],["GFS","#9ab8d8"]].map(([s,col])=>(
+                <span key={s} style={{fontFamily:"JetBrains Mono",fontSize:14,color:col,background:`${col}14`,border:`1px solid ${col}44`,borderRadius:3,padding:"1px 4px"}}>{s} ✓</span>
               ))}
             </div>
           </div>
@@ -449,7 +508,7 @@ export default function App() {
       {/* NAV */}
       <nav style={{background:"#0a1220",borderBottom:"1px solid #1a2d4a",display:"flex",flexShrink:0}}>
         {[{id:"map",i:"◉",l:"MAP"},{id:"best",i:"★",l:"BEST"},{id:"sites",i:"≡",l:"SITES"},{id:"forecast",i:"◈",l:"FORECAST"}].map(t=>(
-          <button key={t.id} onClick={()=>setTab(t.id)} style={{flex:1,padding:"8px 0",background:"none",border:"none",borderBottom:`2px solid ${tab===t.id?"#00e5ff":"transparent"}`,color:tab===t.id?"#00e5ff":"#4a6a8a",fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,letterSpacing:1,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+          <button key={t.id} onClick={()=>setTab(t.id)} style={{flex:1,padding:"8px 0",background:"none",border:"none",borderBottom:`2px solid ${tab===t.id?"#00e5ff":"transparent"}`,color:tab===t.id?"#00e5ff":"#4a6a8a",fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,letterSpacing:1,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
             {t.i} {t.l}
           </button>
         ))}
@@ -464,10 +523,10 @@ export default function App() {
         {/* BEST */}
         {tab==="best"&&<div style={{flex:1,overflow:"auto",padding:12}} className="fi">
           <div style={{marginBottom:12}}>
-            <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:20,color:"#ffd700",letterSpacing:2}}>★ BEST SITES — {days[day].label.toUpperCase()}</div>
-            <div style={{fontFamily:"JetBrains Mono",fontSize:13,color:"#4a6a8a",marginTop:2}}>{best.length} sites flyable · ranked by score · PG & HG</div>
+            <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:22,color:"#ffd700",letterSpacing:2}}>★ BEST SITES — {days[day].label.toUpperCase()}</div>
+            <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",marginTop:2}}>{best.length} sites flyable · ranked by score · PG & HG</div>
           </div>
-          {loading?<LoadCards/>:best.length===0?<div style={{textAlign:"center",padding:40,color:"#4a6a8a",fontFamily:"Barlow Condensed",fontSize:16}}>No sites forecast flyable — check another day!</div>:(
+          {loading?<LoadCards/>:best.length===0?<div style={{textAlign:"center",padding:40,color:"#4a6a8a",fontFamily:"Barlow Condensed",fontSize:18}}>No sites forecast flyable — check another day!</div>:(
             <div style={{display:"grid",gap:8}}>{best.map(({site,fly},r)=><BestCard key={site.id} site={site} fly={fly} rank={r+1} onClick={()=>setSelSite(site)}/>)}</div>
           )}
         </div>}
@@ -478,7 +537,7 @@ export default function App() {
             <select value={region} onChange={e=>setRegion(e.target.value)}>{regions.map(r=><option key={r} value={r}>{r}</option>)}</select>
             <select value={sport} onChange={e=>setSport(e.target.value)}><option value="All">PG + HG</option><option value="PG">PG Only</option><option value="HG">HG Only</option></select>
             <select value={sort} onChange={e=>setSort(e.target.value)}><option value="score">Sort: Flyability</option><option value="xc">Sort: XC Potential</option><option value="name">Sort: Name</option></select>
-            <span style={{fontFamily:"JetBrains Mono",fontSize:13,color:"#4a6a8a"}}>{filtered.length} sites</span>
+            <span style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a"}}>{filtered.length} sites</span>
           </div>
           <div style={{display:"grid",gap:6}}>
             {filtered.map(s=>{
@@ -486,14 +545,14 @@ export default function App() {
               return(<button key={s.id} onClick={()=>setSelSite(s)} style={{background:"#0d1520",border:`1px solid ${selSite?.id===s.id?col:"#1a2d4a"}`,borderRadius:6,padding:"9px 12px",cursor:"pointer",textAlign:"left",width:"100%",transition:"border-color 0.2s"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <div>
-                    <div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:"#c8d8f0"}}>{s.name}</span><SportBadge sport={s.sport}/></div>
-                    <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a"}}>{s.region} · {s.altitude_m}m · {s.pg_rating}</div>
+                    <div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:17,color:"#c8d8f0"}}>{s.name}</span><SportBadge sport={s.sport}/></div>
+                    <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a"}}>{s.region} · {s.altitude_m}m · {s.pg_rating}</div>
                   </div>
                   <div style={{display:"flex",alignItems:"center",gap:6}}>
-                    {f&&<div style={{fontFamily:"JetBrains Mono",fontSize:12,color:f.xc.color,textAlign:"right",maxWidth:75}}>{f.xc.label}</div>}
+                    {f&&<div style={{fontFamily:"JetBrains Mono",fontSize:15,color:f.xc.color,textAlign:"right",maxWidth:75}}>{f.xc.label}</div>}
                     <div style={{width:42,height:42,borderRadius:"50%",background:f?`${col}14`:"#1a2d4a",border:`2px solid ${col}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-                      <div style={{fontFamily:"JetBrains Mono",fontSize:14,fontWeight:700,color:col,lineHeight:1}}>{loading?"—":(f?.score??"?")}</div>
-                      <div style={{fontFamily:"JetBrains Mono",fontSize:11,color:col}}>{f?f.label.slice(0,4).toUpperCase():"..."}</div>
+                      <div style={{fontFamily:"JetBrains Mono",fontSize:16,fontWeight:700,color:col,lineHeight:1}}>{loading?"—":(f?.score??"?")}</div>
+                      <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:col}}>{f?f.label.slice(0,4).toUpperCase():"..."}</div>
                     </div>
                   </div>
                 </div>
@@ -512,8 +571,8 @@ export default function App() {
         {/* FORECAST */}
         {tab==="forecast"&&<div style={{flex:1,overflow:"auto",padding:12}} className="fi">
           <div style={{marginBottom:10}}>
-            <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:20,color:"#00e5ff",letterSpacing:2}}>3-DAY UK FORECAST</div>
-            <div style={{fontFamily:"JetBrains Mono",fontSize:13,color:"#4a6a8a",marginTop:2}}>{UK_SITES.length} sites · PG & HG</div>
+            <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:22,color:"#00e5ff",letterSpacing:2}}>7-DAY UK FORECAST</div>
+            <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",marginTop:2}}>{UK_SITES.length} sites · PG & HG</div>
           </div>
           <div style={{display:"grid",gap:10}}>
             {days.map((d,i)=>{
@@ -523,19 +582,19 @@ export default function App() {
               return(<div key={i} style={{background:"#0d1520",border:`1px solid ${i===day?col:"#1a2d4a"}`,borderRadius:8,padding:12}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
                   <div>
-                    <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:20,color:col,letterSpacing:1}}>{d.label.toUpperCase()}</div>
-                    <div style={{fontFamily:"JetBrains Mono",fontSize:13,color:"#4a6a8a"}}>{d.date.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
-                    {maxXC>0&&<div style={{fontFamily:"Barlow Condensed",fontSize:13,color:"#00e5ff",marginTop:2}}>✈ Max XC: {maxXC}km</div>}
+                    <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:22,color:col,letterSpacing:1}}>{d.label.toUpperCase()}</div>
+                    <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a"}}>{d.date.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div>
+                    {maxXC>0&&<div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#00e5ff",marginTop:2}}>✈ Max XC: {maxXC}km</div>}
                   </div>
-                  <div style={{textAlign:"right"}}><div style={{fontFamily:"JetBrains Mono",fontSize:26,fontWeight:700,color:col,lineHeight:1}}>{loading?"—":sc}</div><div style={{fontFamily:"Barlow Condensed",fontSize:11,color:col}}>UK AVG</div></div>
+                  <div style={{textAlign:"right"}}><div style={{fontFamily:"JetBrains Mono",fontSize:28,fontWeight:700,color:col,lineHeight:1}}>{loading?"—":sc}</div><div style={{fontFamily:"Barlow Condensed",fontSize:14,color:col}}>UK AVG</div></div>
                 </div>
                 <div style={{background:"#1a2d4a",borderRadius:2,height:3,marginBottom:8}}><div style={{width:`${sc}%`,height:"100%",background:`linear-gradient(90deg,${col}66,${col})`,borderRadius:2}}/></div>
                 {top.length>0?<div style={{display:"grid",gap:3}}>{top.map(({site,fly})=>(
                   <div key={site.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#080c14",borderRadius:4,padding:"5px 8px"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:5}}><span style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:"#c8d8f0"}}>{site.name}</span><SportBadge sport={site.sport} tiny/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a"}}>{site.region}</span></div>
-                    <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:fly.xc.color}}>{fly.xc.label}</span><span style={{fontFamily:"JetBrains Mono",fontSize:12,fontWeight:700,color:fly.color}}>{fly.score}</span></div>
+                    <div style={{display:"flex",alignItems:"center",gap:5}}><span style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:"#c8d8f0"}}>{site.name}</span><SportBadge sport={site.sport} tiny/><span style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a"}}>{site.region}</span></div>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontFamily:"JetBrains Mono",fontSize:15,color:fly.xc.color}}>{fly.xc.label}</span><span style={{fontFamily:"JetBrains Mono",fontSize:15,fontWeight:700,color:fly.color}}>{fly.score}</span></div>
                   </div>
-                ))}</div>:<div style={{fontFamily:"Barlow Condensed",fontSize:13,color:"#4a6a8a",textAlign:"center",padding:"6px 0"}}>No sites forecast flyable</div>}
+                ))}</div>:<div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#4a6a8a",textAlign:"center",padding:"6px 0"}}>No sites forecast flyable</div>}
               </div>);
             })}
           </div>
@@ -548,10 +607,10 @@ export default function App() {
       {/* FOOTER */}
       <footer style={{background:"#080c14",borderTop:"1px solid #1a2d4a",padding:"5px 12px",flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:4}}>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#2a3d5a"}}>⚠ For planning only — always check NOTAMs, site guides & current conditions before flying</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#2a3d5a"}}>⚠ For planning only — always check NOTAMs, site guides & current conditions before flying</div>
           <div style={{display:"flex",gap:8}}>
             {[["Windy","https://windy.com"],["XCSkies","https://xcskies.com"],["Flybubble","https://flybubble.com/weather"],["BHPA","https://bhpa.co.uk"]].map(([l,h])=>(
-              <a key={l} href={h} target="_blank" rel="noopener noreferrer" style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a",textDecoration:"none",borderBottom:"1px solid #1a2d4a"}}>{l}</a>
+              <a key={l} href={h} target="_blank" rel="noopener noreferrer" style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",textDecoration:"none",borderBottom:"1px solid #1a2d4a"}}>{l}</a>
             ))}
           </div>
         </div>
@@ -570,10 +629,10 @@ function WindDirStatus({ fly, dayData }) {
   const label = inWindow ? "ON WINDOW" : breakdown.dirScore > 0 ? "MARGINAL" : "OFF WINDOW";
   return (
     <span style={{ display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" }}>
-      <span style={{ fontFamily:"JetBrains Mono", fontSize:13, fontWeight:700, color:col, background:`${col}18`, border:`1px solid ${col}44`, borderRadius:3, padding:"1px 5px" }}>{icon} {label}</span>
-      <span style={{ fontFamily:"JetBrains Mono", fontSize:12, color:"#6a9abf" }}>{Math.round(windDir)}° ({cDir(windDir)})</span>
-      <span style={{ fontFamily:"JetBrains Mono", fontSize:11, color:"#4a6a8a" }}>window: {windWindow}</span>
-      {flyableHours && <span style={{ fontFamily:"JetBrains Mono", fontSize:11, color: flyableHours.goodHours >= 4 ? "#00e5ff" : flyableHours.goodHours >= 2 ? "#ffd700" : "#ff8c00" }}>{flyableHours.goodHours}/{flyableHours.totalHours}h on window</span>}
+      <span style={{ fontFamily:"JetBrains Mono", fontSize:15, fontWeight:700, color:col, background:`${col}18`, border:`1px solid ${col}44`, borderRadius:3, padding:"1px 5px" }}>{icon} {label}</span>
+      <span style={{ fontFamily:"JetBrains Mono", fontSize:15, color:"#6a9abf" }}>{Math.round(windDir)}° ({cDir(windDir)})</span>
+      <span style={{ fontFamily:"JetBrains Mono", fontSize:14, color:"#4a6a8a" }}>window: {windWindow}</span>
+      {flyableHours && <span style={{ fontFamily:"JetBrains Mono", fontSize:14, color: flyableHours.goodHours >= 4 ? "#00e5ff" : flyableHours.goodHours >= 2 ? "#ffd700" : "#ff8c00" }}>{flyableHours.goodHours}/{flyableHours.totalHours}h on window</span>}
     </span>
   );
 }
@@ -598,22 +657,22 @@ function SportBadge({sport,tiny}){
   return <span style={{...s,color:"#00e5ff",background:"#00e5ff11",border:"1px solid #00e5ff33"}}>PG</span>;
 }
 
-function ClubBadge({club}){if(!club) return null;return <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#a78bfa",background:"#a78bfa11",border:"1px solid #a78bfa33",borderRadius:3,padding:"1px 4px",whiteSpace:"nowrap"}}>SSC</span>;}
+function ClubBadge({club}){if(!club) return null;return <span style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#a78bfa",background:"#a78bfa11",border:"1px solid #a78bfa33",borderRadius:3,padding:"1px 4px",whiteSpace:"nowrap"}}>SSC</span>;}
 
 function BestCard({site,fly,rank,onClick}){
   const col=fly.color;
   return(<button onClick={onClick} className="fi" style={{background:"#0d1520",border:`1px solid ${rank<=3?col:"#1a2d4a"}`,borderRadius:8,padding:"10px 14px",cursor:"pointer",textAlign:"left",width:"100%",animationDelay:`${rank*.04}s`,opacity:0}}>
     <div style={{display:"flex",alignItems:"center",gap:12}}>
-      <div style={{fontFamily:"Barlow Condensed",fontSize:20,fontWeight:900,color:rank<=3?col:"#4a6a8a",minWidth:22,textAlign:"center"}}>{rank===1?"🥇":rank===2?"🥈":rank===3?"🥉":rank}</div>
+      <div style={{fontFamily:"Barlow Condensed",fontSize:22,fontWeight:900,color:rank<=3?col:"#4a6a8a",minWidth:22,textAlign:"center"}}>{rank===1?"🥇":rank===2?"🥈":rank===3?"🥉":rank}</div>
       <div style={{flex:1}}>
         <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
-          <span style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:19,color:"#e0eeff"}}>{site.name}</span>
+          <span style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:21,color:"#e0eeff"}}>{site.name}</span>
           <SportBadge sport={site.sport}/><ClubBadge club={site.club}/>
-          <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a"}}>{site.region}</span>
+          <span style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a"}}>{site.region}</span>
         </div>
         <div style={{display:"flex",gap:6,marginTop:2,flexWrap:"wrap",alignItems:"center"}}>
-          <span style={{fontFamily:"Barlow Condensed",fontSize:13,color:col,fontWeight:700}}>{fly.label}</span>
-          <span style={{fontFamily:"JetBrains Mono",fontSize:13,color:fly.xc.color}}>✈ {fly.xc.label}</span>
+          <span style={{fontFamily:"Barlow Condensed",fontSize:15,color:col,fontWeight:700}}>{fly.label}</span>
+          <span style={{fontFamily:"JetBrains Mono",fontSize:15,color:fly.xc.color}}>✈ {fly.xc.label}</span>
         </div>
         <div style={{marginTop:5,display:"flex",gap:3,flexWrap:"wrap"}}>
           <WindDirPill fly={fly}/>
@@ -623,8 +682,8 @@ function BestCard({site,fly,rank,onClick}){
         </div>
       </div>
       <div style={{width:50,height:50,borderRadius:"50%",background:`${col}14`,border:`2.5px solid ${col}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 0 16px ${col}44`,flexShrink:0}}>
-        <div style={{fontFamily:"JetBrains Mono",fontSize:16,fontWeight:700,color:col,lineHeight:1}}>{fly.score}</div>
-        <div style={{fontFamily:"JetBrains Mono",fontSize:11,color:col}}>/ 100</div>
+        <div style={{fontFamily:"JetBrains Mono",fontSize:18,fontWeight:700,color:col,lineHeight:1}}>{fly.score}</div>
+        <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:col}}>/ 100</div>
       </div>
     </div>
   </button>);
@@ -637,35 +696,35 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
     <div style={{padding:"10px 14px",borderBottom:"1px solid #1a2d4a",background:"#080c14",position:"sticky",top:0,zIndex:10}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div>
-          <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:19,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/><ClubBadge club={site.club}/></div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a",marginTop:1}}>{site.region} · {site.altitude_m}m ASL</div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:21,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/><ClubBadge club={site.club}/></div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",marginTop:1}}>{site.region} · {site.altitude_m}m ASL</div>
         </div>
-        <button onClick={onClose} style={{background:"#1a2d4a",border:"none",color:"#6a9abf",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
+        <button onClick={onClose} style={{background:"#1a2d4a",border:"none",color:"#6a9abf",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
       </div>
       <div style={{display:"flex",gap:4,marginTop:6,flexWrap:"wrap"}}>
         {[{l:site.site_type.toUpperCase(),c:"#6a9abf"},{l:site.pg_rating.toUpperCase(),c:"#ffd700"},{l:site.windNote??`ASPECT ${cDir(site.aspect)}`,c:"#00e5ff"},{l:`${kmhToMph(site.wind_range_min)}–${kmhToMph(site.wind_range_max)} mph`,c:"#00e5ff"}].map(b=>(
-          <span key={b.l} style={{fontFamily:"JetBrains Mono",fontSize:11,color:b.c,background:`${b.c}11`,border:`1px solid ${b.c}33`,borderRadius:3,padding:"1px 5px"}}>{b.l}</span>
+          <span key={b.l} style={{fontFamily:"JetBrains Mono",fontSize:14,color:b.c,background:`${b.c}11`,border:`1px solid ${b.c}33`,borderRadius:3,padding:"1px 5px"}}>{b.l}</span>
         ))}
       </div>
     </div>
     <div style={{display:"flex",borderBottom:"1px solid #1a2d4a"}}>
       {days.map((d,i)=>{const fd=flyData?.[i];const c=fd?fd.color:"#4a6a8a";return(
         <button key={i} onClick={()=>onDayChange(i)} style={{flex:1,padding:"6px 4px",background:"none",border:"none",borderBottom:`2px solid ${i===activeDay?c:"transparent"}`,cursor:"pointer",textAlign:"center"}}>
-          <div style={{fontFamily:"Barlow Condensed",fontSize:13,fontWeight:700,color:i===activeDay?c:"#4a6a8a"}}>{d.label.slice(0,3).toUpperCase()}</div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:c,marginTop:2}}>{fd?fd.score:"—"}</div>
+          <div style={{fontFamily:"Barlow Condensed",fontSize:15,fontWeight:700,color:i===activeDay?c:"#4a6a8a"}}>{d.label.slice(0,3).toUpperCase()}</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:16,color:c,marginTop:2}}>{fd?fd.score:"—"}</div>
         </button>
       );})}
     </div>
     {f?<div style={{padding:14}}>
       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
         <div style={{width:58,height:58,borderRadius:"50%",background:`${col}14`,border:`3px solid ${col}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 0 20px ${col}44`,flexShrink:0}}>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:20,fontWeight:700,color:col,lineHeight:1}}>{f.score}</div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:11,color:col}}>/ 100</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:22,fontWeight:700,color:col,lineHeight:1}}>{f.score}</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:col}}>/ 100</div>
         </div>
         <div>
-          <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:20,color:col,letterSpacing:1}}>{f.label.toUpperCase()}</div>
-          <div style={{fontFamily:"Barlow Condensed",fontSize:13,color:f.xc.color,marginTop:1}}>✈ {f.xc.label}</div>
-          {f.xc.detail&&<div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a",marginTop:2}}>{f.xc.detail}</div>}
+          <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:22,color:col,letterSpacing:1}}>{f.label.toUpperCase()}</div>
+          <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:f.xc.color,marginTop:1}}>✈ {f.xc.label}</div>
+          {f.xc.detail&&<div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",marginTop:2}}>{f.xc.detail}</div>}
         </div>
       </div>
       {/* Dynamic confidence badge based on model agreement */}
@@ -673,23 +732,23 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
         const ag = f.dayData.modelAgreement;
         const col = ag==null?"#ffd700":ag>=75?"#00e5ff":ag>=50?"#ffd700":"#ff8c00";
         const lbl = ag==null?"SINGLE MODEL":ag>=75?"HIGH CONFIDENCE":ag>=50?"MODERATE CONFIDENCE":"MODELS DISAGREE";
-        const sub = ag==null?"ECMWF only · GFS unavailable":`ECMWF vs GFS agreement: ${ag}%`;
+        const sub = ag==null?"ECMWF only · GFS unavailable":`ECMWF · UKMO · ICON · GFS · ${ag}% agreement`;
         return (
           <div style={{background:"#080c14",border:`1px solid ${col}33`,borderRadius:6,padding:"6px 10px",marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
             <div style={{width:8,height:8,borderRadius:"50%",background:col,boxShadow:`0 0 6px ${col}88`,flexShrink:0}}/>
             <div>
-              <div style={{fontFamily:"Barlow Condensed",fontSize:12,color:col,fontWeight:700}}>{lbl}</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#4a6a8a"}}>{sub}</div>
+              <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:col,fontWeight:700}}>{lbl}</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#4a6a8a"}}>{sub}</div>
             </div>
-            {ag!=null&&<div style={{marginLeft:"auto",fontFamily:"JetBrains Mono",fontSize:14,fontWeight:700,color:col}}>{ag}%</div>}
+            {ag!=null&&<div style={{marginLeft:"auto",fontFamily:"JetBrains Mono",fontSize:16,fontWeight:700,color:col}}>{ag}%</div>}
           </div>
         );
       })()}
       <div style={{marginBottom:12}}>
-        <div style={{fontFamily:"Barlow Condensed",fontSize:12,color:"#4a6a8a",letterSpacing:1,marginBottom:8}}>FLYABILITY BREAKDOWN</div>
+        <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#4a6a8a",letterSpacing:1,marginBottom:8}}>FLYABILITY BREAKDOWN</div>
         {[
           {l:"Wind Direction",s:f.breakdown.dirScore,  v:<WindDirStatus fly={f} dayData={f.dayData}/>,w:"30%"},
-          {l:"Wind Speed",    s:f.breakdown.speedScore, v:fmtSpeedBoth(f.dayData.windSpeed),w:"20%"},
+          {l:"Wind Speed",    s:f.breakdown.speedScore, v:f.dayData.windMin!=null&&f.dayData.windMax!=f.dayData.windMin?`${kmhToMph(Math.round(f.dayData.windMin))}–${kmhToMph(Math.round(f.dayData.windMax))} mph`:fmtSpeedBoth(f.dayData.windSpeed),w:"20%"},
           {l:"Precipitation", s:f.breakdown.precipScore,v:`${f.dayData.precipProb}% prob`,w:"15%"},
           {l:"Thermal Index", s:f.breakdown.thermalIdx, v:`CAPE ${Math.round(f.dayData.cape)} J/kg`,w:"15%"},
           {l:"Cloud Base",    s:f.breakdown.cloudScore, v:`${f.dayData.cloudBase}m AGL`,w:"10%"},
@@ -699,12 +758,12 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
           <div key={it.l} style={{marginBottom:7}}>
             <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
               <div style={{display:"flex",gap:4,alignItems:"center"}}>
-                <span style={{fontFamily:"Barlow Condensed",fontSize:13,fontWeight:600,color:"#9ab8d8"}}>{it.l}</span>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#2a3d5a"}}>×{it.w}</span>
+                <span style={{fontFamily:"Barlow Condensed",fontSize:15,fontWeight:600,color:"#9ab8d8"}}>{it.l}</span>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#2a3d5a"}}>×{it.w}</span>
               </div>
               <div style={{display:"flex",gap:6,alignItems:"center"}}>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#6a9abf"}}>{it.v}</span>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:10,fontWeight:700,color:sCol(it.s),minWidth:24,textAlign:"right"}}>{Math.round(it.s)}</span>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#6a9abf"}}>{it.v}</span>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:13,fontWeight:700,color:sCol(it.s),minWidth:24,textAlign:"right"}}>{Math.round(it.s)}</span>
               </div>
             </div>
             <div style={{background:"#1a2d4a",borderRadius:2,height:3}}><div style={{width:`${Math.round(it.s)}%`,height:"100%",background:sCol(it.s),borderRadius:2,transition:"width 0.6s ease"}}/></div>
@@ -713,7 +772,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
       </div>
       <WindCompass site={site} windDir={f.dayData.windDir} windSpeed={f.dayData.windSpeed} gustSpeed={f.dayData.gustSpeed} inWindow={f.inWindow}/>
       <div style={{marginBottom:12}}>
-        <button onClick={()=>setShowH(!showH)} style={{background:"none",border:"1px solid #1a2d4a",borderRadius:4,color:"#6a9abf",fontFamily:"Barlow Condensed",fontSize:13,fontWeight:700,letterSpacing:1,padding:"6px 12px",cursor:"pointer",width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <button onClick={()=>setShowH(!showH)} style={{background:"none",border:"1px solid #1a2d4a",borderRadius:4,color:"#6a9abf",fontFamily:"Barlow Condensed",fontSize:15,fontWeight:700,letterSpacing:1,padding:"6px 12px",cursor:"pointer",width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <span>HOURLY WIND GRAPH</span><span>{showH?"▲":"▼"}</span>
         </button>
         {showH&&<HourlyGraph data={f.dayData} site={site} siteMin={site.wind_range_min} siteMax={site.wind_range_max}/>}
@@ -722,7 +781,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
       <SoaringIndex dayData={f.dayData} site={site}/>
       {/* ── MULTI-MODEL COMPARISON ── */}
       <ModelComparison dayData={f.dayData}/>
-    </div>:<div style={{padding:32,textAlign:"center",color:"#4a6a8a",fontFamily:"Barlow Condensed",fontSize:13}}>Loading weather data...</div>}
+    </div>:<div style={{padding:32,textAlign:"center",color:"#4a6a8a",fontFamily:"Barlow Condensed",fontSize:15}}>Loading weather data...</div>}
   </div>);
 }
 
@@ -730,7 +789,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
 // Shows BL height trend, W* thermal strength, trigger time, lifted index
 // Mirrors what pilots look for on RASP BLIPMAPs and Skylight
 function SoaringIndex({ dayData, site }) {
-  const { wStarMs, thermalTrigger, liftedIdx, cin, blHeight, cloudBase, hourlyBL, cape } = dayData;
+  const { wStarMs, thermalTrigger, liftedIdx, cin, blHeight, cloudBase, hourlyBL, cape, sunrise, sunset, overcastKillsDay, cloudCover } = dayData;
   const siteAlt = site.altitude_m;
 
   // RASP star rating (1-5) based on W* and BL height above site
@@ -758,36 +817,38 @@ function SoaringIndex({ dayData, site }) {
 
   return (
     <div style={{ background:'#080c14', border:'1px solid #1a2d4a', borderRadius:8, padding:'10px 12px', marginBottom:12 }}>
-      <div style={{ fontFamily:'Barlow Condensed', fontSize:11, color:'#4a6a8a', letterSpacing:1, marginBottom:8 }}>SOARING INDEX (RASP / SKYLIGHT)</div>
+      <div style={{ fontFamily:'Barlow Condensed', fontSize:14, color:'#4a6a8a', letterSpacing:1, marginBottom:8 }}>SOARING INDEX (RASP / SKYLIGHT)</div>
 
       {/* RASP star rating + W* */}
       <div style={{ display:'flex', gap:12, marginBottom:10, flexWrap:'wrap' }}>
         <div style={{ flex:1, background:'#0d1520', borderRadius:6, padding:'7px 10px', border:`1px solid ${starCol}33` }}>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', marginBottom:3 }}>RASP RATING</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a', marginBottom:3 }}>RASP RATING</div>
           <div style={{ display:'flex', gap:2, alignItems:'center' }}>
             {[1,2,3,4,5].map(n => (
-              <span key={n} style={{ fontSize:12, opacity: n <= raspStars ? 1 : 0.15 }}>★</span>
+              <span key={n} style={{ fontSize:15, opacity: n <= raspStars ? 1 : 0.15 }}>★</span>
             ))}
-            <span style={{ fontFamily:'JetBrains Mono', fontSize:12, color:starCol, marginLeft:4 }}>{raspStars}/5</span>
+            <span style={{ fontFamily:'JetBrains Mono', fontSize:15, color:starCol, marginLeft:4 }}>{raspStars}/5</span>
           </div>
         </div>
         <div style={{ flex:1, background:'#0d1520', borderRadius:6, padding:'7px 10px', border:`1px solid ${thermalCol}33` }}>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', marginBottom:3 }}>W* THERMAL STRENGTH</div>
-          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:15, color:thermalCol }}>{wStarMs.toFixed(1)} m/s</div>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a' }}>{thermalLabel}</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a', marginBottom:3 }}>W* THERMAL STRENGTH</div>
+          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:17, color:thermalCol }}>{wStarMs.toFixed(1)} m/s</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a' }}>{thermalLabel}</div>
         </div>
         <div style={{ flex:1, background:'#0d1520', borderRadius:6, padding:'7px 10px', border:'1px solid #1a2d4a' }}>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', marginBottom:3 }}>TRIGGER TIME</div>
-          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:15, color: thermalTrigger ? '#ffd700' : '#3a5a7a' }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a', marginBottom:3 }}>TRIGGER TIME</div>
+          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:17, color: thermalTrigger ? '#ffd700' : '#3a5a7a' }}>
             {thermalTrigger ? `${String(thermalTrigger).padStart(2,'0')}:00` : 'None'}
           </div>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a' }}>BL &gt; 300m above gnd</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>
+            🌅 {Math.floor(sunrise||6)}:{String(Math.round(((sunrise||6)%1)*60)).padStart(2,'0')} — 🌇 {Math.floor(sunset||20)}:{String(Math.round(((sunset||20)%1)*60)).padStart(2,'0')}
+          </div>
         </div>
       </div>
 
       {/* BL Height sparkline */}
       <div style={{ marginBottom:8 }}>
-        <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', marginBottom:3 }}>BOUNDARY LAYER HEIGHT (RASP BL TOP)</div>
+        <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a', marginBottom:3 }}>BOUNDARY LAYER HEIGHT (RASP BL TOP)</div>
         <svg viewBox={`0 0 ${W} ${H}`} style={{ display:'block', width:'100%', height:H }}>
           {/* Site altitude fill zone */}
           <rect x={pl} y={siteY} width={gw} height={H - pb - siteY + ptop} fill="#ffd70006" />
@@ -811,11 +872,20 @@ function SoaringIndex({ dayData, site }) {
             <text key={h} x={pl+h*(gw/24)} y={H-2} textAnchor="middle" fill="#3a5a7a" fontSize={6} fontFamily="JetBrains Mono">{String(h).padStart(2,'0')}h</text>
           ))}
         </svg>
+        {overcastKillsDay && (
+          <div style={{ background:'#3a1a0a', border:'1px solid #ff3b3b44', borderRadius:5, padding:'5px 8px', marginTop:4, display:'flex', gap:6, alignItems:'center' }}>
+            <span style={{ fontSize:14 }}>☁️</span>
+            <div>
+              <div style={{ fontFamily:'Barlow Condensed', fontSize:15, fontWeight:700, color:'#ff3b3b' }}>OVERCAST WARNING</div>
+              <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#ff8c00' }}>Heavy cloud cover ({cloudCover}%) will limit or kill thermal development</div>
+            </div>
+          </div>
+        )}
         <div style={{ display:'flex', gap:10, marginTop:2, flexWrap:'wrap' }}>
           {[['#00e5ff','BL height'],['#ffd70044','Site altitude'],['#9ab8d844','Cloud base']].map(([col,lbl]) => (
             <div key={lbl} style={{ display:'flex', alignItems:'center', gap:3 }}>
               <div style={{ width:12, height:2, background:col, borderRadius:1 }}/>
-              <span style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a' }}>{lbl}</span>
+              <span style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a' }}>{lbl}</span>
             </div>
           ))}
         </div>
@@ -830,9 +900,9 @@ function SoaringIndex({ dayData, site }) {
           { lbl:'BL AGL', val:`${Math.round(blAboveSite)}m`, col: blAboveSite>1000?'#00e5ff':blAboveSite>500?'#ffd700':'#4a6a8a', sub:`${Math.round(blAboveSite*3.281)}ft`, tip:'BL height above site' },
         ].map(({lbl,val,col,sub,tip}) => (
           <div key={lbl} title={tip} style={{ flex:'1 1 60px', background:'#0d1520', borderRadius:5, padding:'5px 7px', border:`1px solid ${col}22` }}>
-            <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#3a5a7a', marginBottom:1 }}>{lbl}</div>
-            <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:14, color:col, lineHeight:1.1 }}>{val}</div>
-            <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a' }}>{sub}</div>
+            <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#3a5a7a', marginBottom:1 }}>{lbl}</div>
+            <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:16, color:col, lineHeight:1.1 }}>{val}</div>
+            <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a' }}>{sub}</div>
           </div>
         ))}
       </div>
@@ -843,55 +913,134 @@ function SoaringIndex({ dayData, site }) {
 // ── MODEL COMPARISON (ECMWF vs GFS) ─────────────────────────────────────────
 // Like cross-checking Windy models — shows where ECMWF & GFS agree/disagree
 function ModelComparison({ dayData }) {
-  const { windSpeed, windDir, gustSpeed, precipProb, blHeight, cape, gfsData, modelAgreement } = dayData;
-  const gfs = gfsData;
+  const { windSpeed, windDir, gustSpeed, precipProb, blHeight, cape,
+          ukmoDay, iconDay, gfsDay, modelAgreement, windMin, windMax,
+          windShear, shearDir, overcastRisk, cloudCover } = dayData;
   const agCol = modelAgreement == null ? '#4a6a8a' : modelAgreement >= 75 ? '#00e5ff' : modelAgreement >= 50 ? '#ffd700' : '#ff8c00';
+  const fmt = v => v != null ? fmtSpeedBoth(v) : '—';
+  const fmtDir = v => v != null ? `${Math.round(v)}° ${cDir(v)}` : '—';
+  const fmtPct = v => v != null ? `${Math.round(v)}%` : '—';
+  const fmtBL  = v => v != null && v > 0 ? `${Math.round(v)}m` : '—';
 
-  const rows = [
-    { lbl:'Wind Speed',  ecmwf: fmtSpeedBoth(windSpeed), gfs: gfs?.windSpeed!=null ? fmtSpeedBoth(gfs.windSpeed) : '—', diff: gfs?.windSpeed!=null ? Math.abs(windSpeed-gfs.windSpeed) : null, unit:'km/h' },
-    { lbl:'Wind Dir',    ecmwf: `${Math.round(windDir)}° ${cDir(windDir)}`, gfs: gfs?.windDir!=null ? `${Math.round(gfs.windDir)}° ${cDir(gfs.windDir)}` : '—', diff: gfs?.windDir!=null ? angleDiff(windDir,gfs.windDir) : null, unit:'°' },
-    { lbl:'Gusts',       ecmwf: fmtSpeedBoth(gustSpeed), gfs: gfs?.gustSpeed!=null ? fmtSpeedBoth(gfs.gustSpeed) : '—', diff: gfs?.gustSpeed!=null ? Math.abs(gustSpeed-gfs.gustSpeed) : null, unit:'km/h' },
-    { lbl:'Rain Prob',   ecmwf: `${precipProb}%`, gfs: gfs?.precipProb!=null ? `${Math.round(gfs.precipProb)}%` : '—', diff: gfs?.precipProb!=null ? Math.abs(precipProb-gfs.precipProb) : null, unit:'%' },
-    { lbl:'BL Height',   ecmwf: `${Math.round(blHeight)}m`, gfs: gfs?.blHeight!=null&&gfs.blHeight>0 ? `${Math.round(gfs.blHeight)}m` : '—', diff: gfs?.blHeight!=null&&gfs.blHeight>0 ? Math.abs(blHeight-gfs.blHeight) : null, unit:'m' },
-    { lbl:'CAPE',        ecmwf: `${Math.round(cape)} J/kg`, gfs: gfs?.cape!=null&&gfs.cape>0 ? `${Math.round(gfs.cape)} J/kg` : '—', diff: null, unit:'' },
+  // Model colours
+  const MC = { ECMWF:'#00e5ff', UKMO:'#00ff9d', ICON:'#ffd700', GFS:'#9ab8d8' };
+
+  const models = [
+    { name:'ECMWF', col:MC.ECMWF, ws:windSpeed, wd:windDir, gs:gustSpeed, rn:precipProb, bl:blHeight, cp:cape },
+    { name:'UKMO',  col:MC.UKMO,  ws:ukmoDay?.windSpeed, wd:ukmoDay?.windDir, gs:ukmoDay?.gustSpeed, rn:ukmoDay?.precipProb, bl:ukmoDay?.blHeight, cp:ukmoDay?.cape },
+    { name:'ICON',  col:MC.ICON,  ws:iconDay?.windSpeed, wd:iconDay?.windDir, gs:iconDay?.gustSpeed, rn:iconDay?.precipProb, bl:iconDay?.blHeight, cp:iconDay?.cape },
+    { name:'GFS',   col:MC.GFS,   ws:gfsDay?.windSpeed,  wd:gfsDay?.windDir,  gs:gfsDay?.gustSpeed,  rn:gfsDay?.precipProb,  bl:gfsDay?.blHeight,  cp:gfsDay?.cape },
   ];
 
   const diffCol = (d, unit) => {
     if (d == null) return '#3a5a7a';
-    const thresholds = { 'km/h': [5,15], '°': [15,45], '%': [10,25], 'm': [100,300], '': [0,0] };
-    const [lo, hi] = thresholds[unit] || [5,15];
-    return d <= lo ? '#00e5ff' : d <= hi ? '#ffd700' : '#ff8c00';
+    const t = { 'km/h':[5,15], '°':[15,45], '%':[10,25], 'm':[100,300] };
+    const [lo,hi] = t[unit]||[5,15];
+    return d<=lo?'#00e5ff':d<=hi?'#ffd700':'#ff8c00';
   };
 
+  // Wind speed range across all models
+  const hasRange = windMin != null && windMax != null && (windMax - windMin) > 1;
+
+  // Overcast colour
+  const ovCol = overcastRisk==='HIGH'?'#ff3b3b':overcastRisk==='MODERATE'?'#ff8c00':overcastRisk==='LOW'?'#ffd700':'#00e5ff';
+
   return (
-    <div style={{ background:'#080c14', border:'1px solid #1a2d4a', borderRadius:8, padding:'10px 12px', marginBottom:12 }}>
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
-        <div style={{ fontFamily:'Barlow Condensed', fontSize:11, color:'#4a6a8a', letterSpacing:1 }}>MODEL COMPARISON</div>
+    <div style={{ background:'#080c14', border:'1px solid #1a2d4a', borderRadius:8, padding:'12px', marginBottom:12 }}>
+      {/* Header row */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+        <div style={{ fontFamily:'Barlow Condensed', fontSize:16, color:'#4a6a8a', letterSpacing:1, fontWeight:700 }}>MODEL COMPARISON</div>
         {modelAgreement != null && (
-          <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-            <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a' }}>AGREEMENT</div>
-            <div style={{ fontFamily:'JetBrains Mono', fontSize:12, fontWeight:700, color:agCol }}>{modelAgreement}%</div>
+          <div style={{ display:'flex', alignItems:'center', gap:6, background:`${agCol}14`, border:`1px solid ${agCol}44`, borderRadius:5, padding:'3px 8px' }}>
+            <span style={{ fontFamily:'JetBrains Mono', fontSize:13, color:'#4a6a8a' }}>AGREE</span>
+            <span style={{ fontFamily:'JetBrains Mono', fontSize:18, fontWeight:700, color:agCol }}>{modelAgreement}%</span>
           </div>
         )}
       </div>
-      {/* Header */}
-      <div style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr 40px', gap:4, marginBottom:4 }}>
-        {['','ECMWF (primary)','GFS (check)','Δ'].map((h,i) => (
-          <div key={i} style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#2a4a6a', textAlign: i>=2?'right':i===0?'left':'center' }}>{h}</div>
+
+      {/* Model badges row */}
+      <div style={{ display:'flex', gap:6, marginBottom:8, flexWrap:'wrap' }}>
+        {models.map(m => (
+          <div key={m.name} style={{ display:'flex', flexDirection:'column', flex:'1 1 60px', background:'#0d1520', borderRadius:5, padding:'5px 8px', border:`1px solid ${m.col}33` }}>
+            <span style={{ fontFamily:'JetBrains Mono', fontSize:12, color:m.col, fontWeight:700 }}>{m.name}</span>
+            <span style={{ fontFamily:'Barlow Condensed', fontSize:15, color: m.ws!=null?'#c8d8f0':'#3a5a7a', fontWeight:700 }}>
+              {m.ws!=null ? `${kmhToMph(Math.round(m.ws))} mph` : '—'}
+            </span>
+            <span style={{ fontFamily:'JetBrains Mono', fontSize:12, color: m.wd!=null?'#9ab8d8':'#3a5a7a' }}>
+              {m.wd!=null ? cDir(m.wd) : '—'}
+            </span>
+          </div>
         ))}
       </div>
-      {rows.map(({lbl, ecmwf, gfs: gfsVal, diff, unit}) => (
-        <div key={lbl} style={{ display:'grid', gridTemplateColumns:'80px 1fr 1fr 40px', gap:4, padding:'4px 0', borderTop:'1px solid #0f1e30', alignItems:'center' }}>
-          <div style={{ fontFamily:'Barlow Condensed', fontSize:11, fontWeight:600, color:'#6a8aaa' }}>{lbl}</div>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#9ab8d8', textAlign:'center' }}>{ecmwf}</div>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color: gfsVal==='—'?'#2a4a6a':'#9ab8d8', textAlign:'center' }}>{gfsVal}</div>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, fontWeight:700, color:diffCol(diff,unit), textAlign:'right' }}>
-            {diff != null ? (unit==='km/h' ? `${kmhToMph(Math.round(diff))}mph` : `${Math.round(diff)}${unit}`) : '—'}
+
+      {/* Wind speed range bar */}
+      {hasRange && (
+        <div style={{ marginBottom:10 }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color:'#4a6a8a', marginBottom:4 }}>
+            WIND RANGE (model spread): {kmhToMph(Math.round(windMin))}–{kmhToMph(Math.round(windMax))} mph
+          </div>
+          <div style={{ background:'#1a2d4a', borderRadius:3, height:8, position:'relative' }}>
+            <div style={{
+              position:'absolute',
+              left:`${(windMin/50)*100}%`,
+              width:`${Math.max(4,((windMax-windMin)/50)*100)}%`,
+              height:'100%', background:'linear-gradient(90deg,#00e5ff88,#ffd70088)',
+              borderRadius:3
+            }}/>
           </div>
         </div>
-      ))}
-      <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#2a4a6a', marginTop:6, textAlign:'right' }}>
-        ECMWF IFS via Open-Meteo · GFS via Open-Meteo
+      )}
+
+      {/* Detail table */}
+      <div style={{ overflowX:'auto' }}>
+        <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13, fontFamily:'JetBrains Mono' }}>
+          <thead>
+            <tr>
+              {['',...models.map(m=>m.name)].map((h,i) => (
+                <th key={i} style={{ padding:'3px 6px', textAlign:i===0?'left':'center', color: i===0?'#4a6a8a':models[i-1]?.col, fontSize:12, fontWeight:700, borderBottom:'1px solid #1a2d4a' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { lbl:'Gusts', vals: models.map(m => m.gs!=null ? `${kmhToMph(Math.round(m.gs))} mph` : '—') },
+              { lbl:'Rain',  vals: models.map(m => fmtPct(m.rn)) },
+              { lbl:'BL',    vals: models.map(m => fmtBL(m.bl)) },
+              { lbl:'CAPE',  vals: models.map(m => m.cp!=null&&m.cp>0 ? `${Math.round(m.cp)}` : '—') },
+            ].map(row => (
+              <tr key={row.lbl}>
+                <td style={{ padding:'4px 6px', color:'#6a8aaa', fontFamily:'Barlow Condensed', fontSize:14, fontWeight:600, borderBottom:'1px solid #0f1e30' }}>{row.lbl}</td>
+                {row.vals.map((v,i) => (
+                  <td key={i} style={{ padding:'4px 6px', textAlign:'center', color:v==='—'?'#2a4a6a':'#9ab8d8', borderBottom:'1px solid #0f1e30' }}>{v}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Wind shear + overcast warnings */}
+      <div style={{ display:'flex', gap:6, marginTop:8, flexWrap:'wrap' }}>
+        {windShear != null && (
+          <div style={{ flex:1, background:'#0d1520', borderRadius:5, padding:'5px 8px', border:`1px solid ${Math.abs(windShear)>10?'#ff8c0044':'#1a2d4a'}` }}>
+            <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>WIND SHEAR</div>
+            <div style={{ fontFamily:'Barlow Condensed', fontSize:16, fontWeight:700, color:Math.abs(windShear)>15?'#ff3b3b':Math.abs(windShear)>8?'#ff8c00':'#00e5ff' }}>
+              +{kmhToMph(Math.round(Math.abs(windShear)))} mph at 100m
+            </div>
+            {shearDir != null && shearDir > 20 && (
+              <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#ff8c00' }}>Direction shift {Math.round(shearDir)}° with height</div>
+            )}
+          </div>
+        )}
+        <div style={{ flex:1, background:'#0d1520', borderRadius:5, padding:'5px 8px', border:`1px solid ${ovCol}44` }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>OVERCAST RISK</div>
+          <div style={{ fontFamily:'Barlow Condensed', fontSize:16, fontWeight:700, color:ovCol }}>{overcastRisk||'—'}</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>{cloudCover != null ? `${cloudCover}% cloud cover` : ''}</div>
+        </div>
+      </div>
+
+      <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color:'#2a4a6a', marginTop:6, textAlign:'right' }}>
+        ECMWF · UKMO UKV 2km · DWD ICON-EU · GFS — all via Open-Meteo
       </div>
     </div>
   );
@@ -1095,12 +1244,12 @@ function LoadOvl({total,loaded}){
   const pct=Math.round((loaded/total)*100);
   return(<div style={{position:"absolute",inset:0,background:"#080c14cc",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,zIndex:1000}}>
     <div style={{fontSize:36,animation:"spin 2s linear infinite"}}>🪂</div>
-    <div style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#00e5ff",letterSpacing:2}}>FETCHING WEATHER DATA</div>
+    <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#00e5ff",letterSpacing:2}}>FETCHING WEATHER DATA</div>
     <div style={{background:"#1a2d4a",borderRadius:2,height:4,width:200}}><div style={{width:`${pct}%`,height:"100%",background:"linear-gradient(90deg,#00e5ff66,#00e5ff)",borderRadius:2,transition:"width 0.3s"}}/></div>
-    <div style={{fontFamily:"Barlow Condensed",fontSize:12,color:"#4a6a8a"}}>{loaded}/{total} sites · {pct}%</div>
+    <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#4a6a8a"}}>{loaded}/{total} sites · {pct}%</div>
   </div>);
 }
 function LoadCards(){return <div style={{display:"grid",gap:8}}>{[1,2,3,4,5].map(i=><div key={i} style={{background:"#0d1520",border:"1px solid #1a2d4a",borderRadius:8,padding:14,height:70,opacity:.3+i*.1}}><div style={{background:"#1a2d4a",borderRadius:3,height:12,width:"40%",marginBottom:8}}/><div style={{background:"#1a2d4a",borderRadius:3,height:8,width:"60%"}}/></div>)}</div>;}
-function Pill({label,value,score}){const c=sCol(score);return(<div style={{background:"#080c14",border:`1px solid ${c}33`,borderRadius:4,padding:"3px 8px"}}><div style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#4a6a8a"}}>{label}</div><div style={{fontFamily:"JetBrains Mono",fontSize:14,color:c,fontWeight:700}}>{value}</div></div>);}
+function Pill({label,value,score}){const c=sCol(score);return(<div style={{background:"#080c14",border:`1px solid ${c}33`,borderRadius:4,padding:"3px 8px"}}><div style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#4a6a8a"}}>{label}</div><div style={{fontFamily:"JetBrains Mono",fontSize:16,color:c,fontWeight:700}}>{value}</div></div>);}
 function sCol(s){return s>=78?"#00e5ff":s>=58?"#ffd700":s>=38?"#ff8c00":"#ff3b3b";}
 function cDir(deg){const d=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];return d[Math.round(((deg%360)+360)%360/22.5)%16];}
