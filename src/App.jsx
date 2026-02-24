@@ -526,6 +526,7 @@ function WindDirPill({ fly }) {
     </div>
   );
 }
+function SportBadge({sport,tiny}){
   const s={fontFamily:"JetBrains Mono",fontSize:tiny?6:7,borderRadius:3,padding:tiny?"1px 2px":"1px 4px"};
   if(sport==="PGHG") return <div style={{display:"flex",gap:2}}><span style={{...s,color:"#00e5ff",background:"#00e5ff11",border:"1px solid #00e5ff33"}}>PG</span><span style={{...s,color:"#ffd700",background:"#ffd70011",border:"1px solid #ffd70033"}}>HG</span></div>;
   if(sport==="HG")   return <span style={{...s,color:"#ffd700",background:"#ffd70011",border:"1px solid #ffd70033"}}>HG</span>;
