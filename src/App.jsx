@@ -103,6 +103,7 @@ function processWeatherData(raw) {
       cloudBase: Math.round(Math.max(0,(tempMax-dewpoint)*400)),
       hourlyWindSpeed: sl(raw.hourly.windspeed_10m),
       hourlyGusts:     sl(raw.hourly.windgusts_10m),
+      hourlyWindDir:   sl(raw.hourly.winddirection_10m),
     };
   });
 }
@@ -110,14 +111,86 @@ function processWeatherData(raw) {
 // ─── ALGORITHMS ──────────────────────────────────────────────────────────────
 function angleDiff(a,b){const d=Math.abs(a-b)%360;return d>180?360-d:d;}
 
-function calcFlyability(site, day) {
-  const {windDir,windSpeed,gustSpeed,precipProb,cape,cloudBase,visibility,blHeight} = day;
+// Parse windNote "340-055°" or "265-325°" into {lo, hi} in degrees 0-359
+// Returns null if no windNote (falls back to aspect-based window)
+function parseWindWindow(windNote) {
+  if (!windNote) return null;
+  const m = windNote.match(/(\d{1,3})[^0-9]+(\d{1,3})/);
+  if (!m) return null;
+  return { lo: parseInt(m[1]), hi: parseInt(m[2]) };
+}
+
+// Check if a wind direction (degrees) is within a defined window [lo, hi]
+// Handles wrap-around (e.g. 340-055 wraps through North)
+function windInWindow(windDir, lo, hi) {
+  const w = ((windDir % 360) + 360) % 360;
+  if (lo <= hi) return w >= lo && w <= hi;
+  // wraps around 0/360 (e.g. 340 to 055)
+  return w >= lo || w <= hi;
+}
+
+// Returns 0-100 direction score using the site's actual wind window
+// 100 = dead centre, 80 = within window, 40 = within 15° of edge, 0 = outside window
+function calcDirScore(windDir, site) {
+  const win = parseWindWindow(site.windNote);
+  if (win) {
+    // Use exact degree window from site guide
+    const { lo, hi } = win;
+    if (windInWindow(windDir, lo, hi)) {
+      // Find centre of window for bonus scoring
+      let span = hi >= lo ? hi - lo : (360 - lo) + hi;
+      let centre = (lo + span / 2) % 360;
+      const distFromCentre = angleDiff(windDir, centre);
+      const halfSpan = span / 2;
+      // Score 100 at centre, 80 at edges of window
+      return Math.round(80 + 20 * Math.max(0, 1 - distFromCentre / halfSpan));
+    }
+    // Outside window — check how far outside
+    // Find nearest edge
+    const distLo = angleDiff(windDir, lo);
+    const distHi = angleDiff(windDir, hi);
+    const distEdge = Math.min(distLo, distHi);
+    if (distEdge <= 10) return 40;   // just outside — marginal
+    if (distEdge <= 20) return 15;   // noticeably cross
+    return 0;                         // clearly off — effectively unflyable
+  }
+  // Fallback: aspect-based scoring (±30° bands)
   const dd = angleDiff(windDir, site.aspect);
-  const dirScore = dd<=30?100:dd<=45?85:dd<=60?65:dd<=90?40:dd<=120?15:0;
+  return dd<=25?100:dd<=40?85:dd<=60?65:dd<=90?35:dd<=120?10:0;
+}
+
+// Returns how many peak hours (08-18) have wind direction in window
+function calcFlyableHours(hourlyWindDir, site) {
+  if (!hourlyWindDir || !hourlyWindDir.length) return null;
+  const win = parseWindWindow(site.windNote);
+  const peak = hourlyWindDir.slice(8, 18); // 08:00–18:00
+  if (!peak.length) return null;
+  const goodHours = peak.filter(d => {
+    if (d == null) return false;
+    if (win) return windInWindow(d, win.lo, win.hi);
+    return angleDiff(d, site.aspect) <= 60;
+  }).length;
+  return { goodHours, totalHours: peak.length };
+}
+
+function calcFlyability(site, day) {
+  const {windDir,windSpeed,gustSpeed,precipProb,cape,cloudBase,visibility,blHeight,hourlyWindDir} = day;
+
+  // ── DIRECTION: use exact window, hard cutoff outside ──────────────────────
+  const dirScore = calcDirScore(windDir, site);
+  const win = parseWindWindow(site.windNote);
+  const inWindow = win ? windInWindow(windDir, win.lo, win.hi) : (angleDiff(windDir, site.aspect) <= 60);
+  const flyableHours = calcFlyableHours(hourlyWindDir, site);
+
+  // Hard penalty: if wind is clearly outside the window, cap score severely
+  const dirMultiplier = dirScore === 0 ? 0 : 1;
+
+  // ── SPEED ──────────────────────────────────────────────────────────────────
   let speedScore=0;
   if(windSpeed<site.wind_range_min) speedScore=Math.max(0,(windSpeed/site.wind_range_min)*70);
   else if(windSpeed<=site.wind_range_max){const p=(windSpeed-site.wind_range_min)/(site.wind_range_max-site.wind_range_min);speedScore=p<0.3?70+p*100:p<0.7?100:100-(p-0.7)*150;}
   else speedScore=Math.max(0,100-(windSpeed-site.wind_range_max)*6);
+
   const precipScore = precipProb<5?100:precipProb<15?85:precipProb<25?60:precipProb<40?30:0;
   const thermalIdx  = Math.min(100, Math.sqrt(Math.max(0,cape))*0.8 + blHeight/25);
   const cba         = Math.max(0,cloudBase-site.altitude_m);
@@ -125,12 +198,17 @@ function calcFlyability(site, day) {
   const gr          = gustSpeed/Math.max(windSpeed,1);
   const gustScore   = gr<1.15?100:gr<1.25?85:gr<1.4?60:gr<1.6?30:5;
   const visScore    = visibility>15000?100:visibility>8000?80:visibility>5000?60:visibility>2000?25:0;
-  const total = dirScore*.25+speedScore*.20+precipScore*.15+thermalIdx*.15+cloudScore*.10+gustScore*.10+visScore*.05;
+
+  // Weighted total — direction now 30% (was 25%), more critical
+  const total = (dirScore*.30+speedScore*.20+precipScore*.13+thermalIdx*.13+cloudScore*.09+gustScore*.10+visScore*.05) * dirMultiplier;
+
   return {
     score:Math.round(Math.max(0,Math.min(100,total))),
     breakdown:{dirScore,speedScore,precipScore,thermalIdx,cloudScore,gustScore,visScore},
     label:total>=78?"Excellent":total>=58?"Good":total>=38?"Marginal":"Unflyable",
     color:total>=78?"#00e5ff":total>=58?"#ffd700":total>=38?"#ff8c00":"#ff3b3b",
+    inWindow, flyableHours,
+    windWindow: win ? `${String(win.lo).padStart(3,'0')}–${String(win.hi).padStart(3,'0')}°` : `${cDir(site.aspect)}±60°`,
   };
 }
 
@@ -355,7 +433,7 @@ export default function App() {
                   </div>
                 </div>
                 {f&&<div style={{marginTop:6,display:"flex",gap:3,flexWrap:"wrap"}}>
-                  <Pill label="DIR"  value={cDir(f.dayData.windDir)}              score={f.breakdown.dirScore}/>
+                  <WindDirPill fly={f}/>
                   <Pill label="WIND" value={`${Math.round(f.dayData.windSpeed)}km/h`} score={f.breakdown.speedScore}/>
                   <Pill label="RAIN" value={`${f.dayData.precipProb}%`}           score={f.breakdown.precipScore}/>
                   <Pill label="BASE" value={`${f.dayData.cloudBase}m`}            score={f.breakdown.cloudScore}/>
@@ -418,7 +496,36 @@ export default function App() {
 }
 
 // ─── COMPONENTS ───────────────────────────────────────────────────────────────
-function SportBadge({sport,tiny}){
+// Wind direction status — rich display for site panel breakdown row
+function WindDirStatus({ fly, dayData }) {
+  const { inWindow, windWindow, flyableHours, breakdown } = fly;
+  const { windDir } = dayData;
+  const col = inWindow ? "#00e5ff" : breakdown.dirScore > 0 ? "#ff8c00" : "#ff3b3b";
+  const icon = inWindow ? "✓" : "✗";
+  const label = inWindow ? "ON WINDOW" : breakdown.dirScore > 0 ? "MARGINAL" : "OFF WINDOW";
+  return (
+    <span style={{ display:"flex", alignItems:"center", gap:4, flexWrap:"wrap" }}>
+      <span style={{ fontFamily:"JetBrains Mono", fontSize:9, fontWeight:700, color:col, background:`${col}18`, border:`1px solid ${col}44`, borderRadius:3, padding:"1px 5px" }}>{icon} {label}</span>
+      <span style={{ fontFamily:"JetBrains Mono", fontSize:8, color:"#6a9abf" }}>{Math.round(windDir)}° ({cDir(windDir)})</span>
+      <span style={{ fontFamily:"JetBrains Mono", fontSize:7, color:"#4a6a8a" }}>window: {windWindow}</span>
+      {flyableHours && <span style={{ fontFamily:"JetBrains Mono", fontSize:7, color: flyableHours.goodHours >= 4 ? "#00e5ff" : flyableHours.goodHours >= 2 ? "#ffd700" : "#ff8c00" }}>{flyableHours.goodHours}/{flyableHours.totalHours}h on window</span>}
+    </span>
+  );
+}
+
+// Compact wind direction pill for site cards — shows ✓/✗ + direction
+function WindDirPill({ fly }) {
+  const { inWindow, breakdown, dayData } = fly;
+  const dirScore = breakdown.dirScore;
+  const col = inWindow ? '#00e596' : dirScore > 15 ? '#ff8c00' : '#ff3b3b';
+  const icon = inWindow ? '✓' : '✗';
+  return (
+    <div style={{ background: '#080c14', border: `1px solid ${col}44`, borderRadius: 3, padding: '2px 5px', display: 'flex', alignItems: 'center', gap: 3 }}>
+      <div style={{ fontFamily: 'JetBrains Mono', fontSize: 6, color: '#4a6a8a' }}>DIR</div>
+      <div style={{ fontFamily: 'JetBrains Mono', fontSize: 9, color: col, fontWeight: 700 }}>{icon} {cDir(dayData.windDir)}</div>
+    </div>
+  );
+}
   const s={fontFamily:"JetBrains Mono",fontSize:tiny?6:7,borderRadius:3,padding:tiny?"1px 2px":"1px 4px"};
   if(sport==="PGHG") return <div style={{display:"flex",gap:2}}><span style={{...s,color:"#00e5ff",background:"#00e5ff11",border:"1px solid #00e5ff33"}}>PG</span><span style={{...s,color:"#ffd700",background:"#ffd70011",border:"1px solid #ffd70033"}}>HG</span></div>;
   if(sport==="HG")   return <span style={{...s,color:"#ffd700",background:"#ffd70011",border:"1px solid #ffd70033"}}>HG</span>;
@@ -443,7 +550,7 @@ function BestCard({site,fly,rank,onClick}){
           <span style={{fontFamily:"JetBrains Mono",fontSize:9,color:fly.xc.color}}>✈ {fly.xc.label}</span>
         </div>
         <div style={{marginTop:5,display:"flex",gap:3,flexWrap:"wrap"}}>
-          <Pill label="DIR"  value={cDir(fly.dayData.windDir)}              score={fly.breakdown.dirScore}/>
+          <WindDirPill fly={fly}/>
           <Pill label="WIND" value={`${Math.round(fly.dayData.windSpeed)}km/h`} score={fly.breakdown.speedScore}/>
           <Pill label="RAIN" value={`${fly.dayData.precipProb}%`}           score={fly.breakdown.precipScore}/>
           <Pill label="BASE" value={`${fly.dayData.cloudBase}m`}            score={fly.breakdown.cloudScore}/>
@@ -502,7 +609,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
       <div style={{marginBottom:12}}>
         <div style={{fontFamily:"Barlow Condensed",fontSize:11,color:"#4a6a8a",letterSpacing:1,marginBottom:6}}>FLYABILITY BREAKDOWN</div>
         {[
-          {l:"Wind Direction",s:f.breakdown.dirScore,  v:`${f.dayData.windDir}° (${cDir(f.dayData.windDir)})`,w:"25%"},
+          {l:"Wind Direction",s:f.breakdown.dirScore,  v:<WindDirStatus fly={f} dayData={f.dayData}/>,w:"30%"},
           {l:"Wind Speed",    s:f.breakdown.speedScore, v:`${Math.round(f.dayData.windSpeed)} km/h`,w:"20%"},
           {l:"Precipitation", s:f.breakdown.precipScore,v:`${f.dayData.precipProb}% prob`,w:"15%"},
           {l:"Thermal Index", s:f.breakdown.thermalIdx, v:`CAPE ${Math.round(f.dayData.cape)} J/kg`,w:"15%"},
@@ -525,15 +632,12 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
           </div>
         ))}
       </div>
-      <div style={{marginBottom:12}}>
-        <div style={{fontFamily:"Barlow Condensed",fontSize:11,color:"#4a6a8a",letterSpacing:1,marginBottom:6}}>WIND ROSE</div>
-        <WindRose windDir={f.dayData.windDir} siteAspect={site.aspect} windSpeed={f.dayData.windSpeed} gustSpeed={f.dayData.gustSpeed}/>
-      </div>
+      <WindCompass site={site} windDir={f.dayData.windDir} windSpeed={f.dayData.windSpeed} gustSpeed={f.dayData.gustSpeed} inWindow={f.inWindow}/>
       <div style={{marginBottom:12}}>
         <button onClick={()=>setShowH(!showH)} style={{background:"none",border:"1px solid #1a2d4a",borderRadius:4,color:"#6a9abf",fontFamily:"Barlow Condensed",fontSize:11,fontWeight:700,letterSpacing:1,padding:"4px 10px",cursor:"pointer",width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <span>HOURLY WIND GRAPH</span><span>{showH?"▲":"▼"}</span>
         </button>
-        {showH&&<HourlyGraph data={f.dayData} siteMin={site.wind_range_min} siteMax={site.wind_range_max}/>}
+        {showH&&<HourlyGraph data={f.dayData} site={site} siteMin={site.wind_range_min} siteMax={site.wind_range_max}/>}
       </div>
       <div>
         <div style={{fontFamily:"Barlow Condensed",fontSize:11,color:"#4a6a8a",letterSpacing:1,marginBottom:6}}>DATA SOURCES</div>
@@ -552,51 +656,197 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
   </div>);
 }
 
-function HourlyGraph({data,siteMin,siteMax}){
-  const hrs=data.hourlyWindSpeed||[]; const gst=data.hourlyGusts||[];
-  if(!hrs.length) return <div style={{fontFamily:"JetBrains Mono",fontSize:9,color:"#4a6a8a",padding:8}}>No hourly data</div>;
-  const mx=Math.max(...gst.filter(Boolean),siteMax*1.2,10);
-  const W=268,H=80,pl=28,pr=8,pt=8,pb=18,gw=W-pl-pr,gh=H-pt-pb;
-  const ty=v=>pt+gh-(v/mx)*gh;
-  const sp=hrs.map((v,i)=>`${i===0?"M":"L"} ${pl+i*(gw/24)} ${ty(v||0)}`).join(" ");
-  const gp=gst.map((v,i)=>`${i===0?"M":"L"} ${pl+i*(gw/24)} ${ty(v||0)}`).join(" ");
-  return(<div style={{marginTop:8,background:"#080c14",borderRadius:6,padding:"8px 4px 4px",border:"1px solid #1a2d4a"}}>
-    <svg width={W} height={H}>
-      <rect x={pl} y={ty(siteMax)} width={gw} height={ty(siteMin)-ty(siteMax)} fill="#00e5ff08"/>
-      <line x1={pl} y1={ty(siteMin)} x2={pl+gw} y2={ty(siteMin)} stroke="#00e5ff33" strokeWidth={1} strokeDasharray="3,2"/>
-      <line x1={pl} y1={ty(siteMax)} x2={pl+gw} y2={ty(siteMax)} stroke="#ff3b3b33" strokeWidth={1} strokeDasharray="3,2"/>
-      {[0,mx*.5,mx].map(v=><g key={v}><line x1={pl} y1={ty(v)} x2={pl+gw} y2={ty(v)} stroke="#1a2d4a" strokeWidth={0.5}/><text x={pl-3} y={ty(v)+3} textAnchor="end" fill="#4a6a8a" fontSize={7} fontFamily="JetBrains Mono">{Math.round(v)}</text></g>)}
-      {[0,6,12,18,23].map(h=><text key={h} x={pl+h*(gw/24)} y={pt+gh+12} textAnchor="middle" fill="#4a6a8a" fontSize={7} fontFamily="JetBrains Mono">{String(h).padStart(2,"0")}h</text>)}
-      <path d={gp} fill="none" stroke="#ff3b3b66" strokeWidth={1} strokeDasharray="3,2"/>
-      <path d={sp} fill="none" stroke="#00e5ff" strokeWidth={1.5}/>
-      <text x={pl+2} y={ty(siteMin)-3} fill="#00e5ff55" fontSize={7} fontFamily="JetBrains Mono">MIN {siteMin}</text>
-      <text x={pl+2} y={ty(siteMax)+8} fill="#ff3b3b55" fontSize={7} fontFamily="JetBrains Mono">MAX {siteMax}</text>
-    </svg>
-    <div style={{display:"flex",gap:10,justifyContent:"center",marginTop:2}}>
-      {[["#00e5ff","Wind"],["#ff3b3b66","Gusts"],["#00e5ff08","Flyable zone"]].map(([c,l])=>(
-        <div key={l} style={{display:"flex",alignItems:"center",gap:3}}><div style={{width:12,height:2,background:c}}/><span style={{fontFamily:"JetBrains Mono",fontSize:7,color:"#4a6a8a"}}>{l}</span></div>
-      ))}
+// ── WIND COMPASS ─────────────────────────────────────────────────────────────
+// Shows the site's exact flyable wind window shaded in green, current wind
+// arrow, and a clear IN/OUT status — like ParaglidingMap.com
+function WindCompass({ site, windDir, windSpeed, gustSpeed, inWindow }) {
+  const sz = 180, cx = sz / 2, cy = sz / 2, r = 64;
+  const toRad = deg => ((deg - 90) * Math.PI) / 180;
+  const pt = (deg, radius) => ({
+    x: cx + radius * Math.cos(toRad(deg)),
+    y: cy + radius * Math.sin(toRad(deg))
+  });
+
+  // Build arc path for wind window sector
+  const sectorPath = (startDeg, endDeg, radius) => {
+    // Normalise to handle wrap-around (e.g. 340→055 goes through 0)
+    const steps = 60;
+    let span = endDeg >= startDeg ? endDeg - startDeg : (360 - startDeg) + endDeg;
+    const points = Array.from({ length: steps + 1 }, (_, i) => {
+      const deg = (startDeg + (span * i) / steps) % 360;
+      return pt(deg, radius);
+    });
+    return `M ${cx} ${cy} L ${points[0].x} ${points[0].y} ` +
+      points.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ') + ' Z';
+  };
+
+  // Wind window
+  const win = parseWindWindow(site.windNote);
+  const winLo = win ? win.lo : ((site.aspect - 60 + 360) % 360);
+  const winHi = win ? win.hi : ((site.aspect + 60) % 360);
+
+  // Wind arrow
+  const arrowTip = pt(windDir, r * 0.72);
+  const arrowBase = pt(windDir, r * 0.15);
+  // Arrow head
+  const headL = pt(windDir - 150, r * 0.18);
+  const headR = pt(windDir + 150, r * 0.18);
+
+  const arrowCol = inWindow ? '#00e596' : '#ff3b3b';
+
+  // Card-style label
+  const statusLabel = inWindow ? '✓ ON WINDOW' : '✗ OFF WINDOW';
+  const statusCol = inWindow ? '#00e596' : '#ff3b3b';
+
+  return (
+    <div style={{ background: '#080c14', border: '1px solid #1a2d4a', borderRadius: 8, padding: '10px 6px 6px', marginBottom: 12 }}>
+      <div style={{ fontFamily: 'Barlow Condensed', fontSize: 11, color: '#4a6a8a', letterSpacing: 1, textAlign: 'center', marginBottom: 4 }}>WIND COMPASS</div>
+      <svg width={sz} height={sz} style={{ display: 'block', margin: '0 auto' }}>
+        {/* Outer ring */}
+        <circle cx={cx} cy={cy} r={r + 14} fill="#040810" stroke="#1a2d4a" strokeWidth={1} />
+        {/* Grid rings */}
+        {[0.4, 0.7, 1].map(f => (
+          <circle key={f} cx={cx} cy={cy} r={r * f} fill="none" stroke="#1a2d4a" strokeWidth={0.5} strokeDasharray="3,3" />
+        ))}
+        {/* Cardinal lines */}
+        {[0, 90].map(a => {
+          const p1 = pt(a, r + 10), p2 = pt(a + 180, r + 10);
+          return <line key={a} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#1a2d4a" strokeWidth={0.5} />;
+        })}
+
+        {/* ── FLYABLE WINDOW SECTOR (the key feature) ── */}
+        <path d={sectorPath(winLo, winHi, r)} fill="#00e59618" stroke="none" />
+        {/* Window arc border */}
+        {(() => {
+          let span = winHi >= winLo ? winHi - winLo : (360 - winLo) + winHi;
+          const steps = 60;
+          const pts = Array.from({ length: steps + 1 }, (_, i) => {
+            const deg = (winLo + (span * i) / steps) % 360;
+            return pt(deg, r);
+          });
+          const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+          return <path d={d} fill="none" stroke="#00e596" strokeWidth={1.5} strokeDasharray="4,2" opacity={0.7} />;
+        })()}
+        {/* Window edge tick marks */}
+        {[winLo, winHi].map(deg => {
+          const inner = pt(deg, r * 0.85), outer = pt(deg, r * 1.05);
+          return <line key={deg} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} stroke="#00e596" strokeWidth={1.5} />;
+        })}
+        {/* Window label */}
+        {(() => {
+          let span = winHi >= winLo ? winHi - winLo : (360 - winLo) + winHi;
+          const midDeg = (winLo + span / 2) % 360;
+          const lp = pt(midDeg, r * 0.52);
+          return <text x={lp.x} y={lp.y} textAnchor="middle" dominantBaseline="middle" fill="#00e596" fontSize={7} fontFamily="JetBrains Mono" opacity={0.8}>FLY</text>;
+        })()}
+
+        {/* Cardinal labels */}
+        {['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'].map((d, i) => {
+          const p = pt(i * 45, r + 22);
+          return <text key={d} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle" fill={d === 'N' ? '#6a9abf' : '#3a5a7a'} fontSize={d === 'N' ? 8 : 7} fontFamily="JetBrains Mono" fontWeight={d === 'N' ? 700 : 400}>{d}</text>;
+        })}
+
+        {/* ── WIND DIRECTION ARROW ── */}
+        {/* Arrow shaft */}
+        <line x1={arrowBase.x} y1={arrowBase.y} x2={arrowTip.x} y2={arrowTip.y}
+          stroke={arrowCol} strokeWidth={2.5} strokeLinecap="round" />
+        {/* Arrow head */}
+        <polygon points={`${arrowTip.x},${arrowTip.y} ${headL.x},${headL.y} ${headR.x},${headR.y}`}
+          fill={arrowCol} />
+        {/* Centre dot */}
+        <circle cx={cx} cy={cy} r={4} fill={arrowCol} opacity={0.4} stroke={arrowCol} strokeWidth={1} />
+
+        {/* Wind speed in centre */}
+        <text x={cx} y={cy - 5} textAnchor="middle" fill="#9ab8d8" fontSize={10} fontFamily="JetBrains Mono" fontWeight={700}>{Math.round(windSpeed)}</text>
+        <text x={cx} y={cy + 7} textAnchor="middle" fill="#4a6a8a" fontSize={6} fontFamily="JetBrains Mono">km/h</text>
+      </svg>
+
+      {/* Status row below compass */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px 0', flexWrap: 'wrap', gap: 4 }}>
+        <span style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 13, color: statusCol, letterSpacing: 1 }}>{statusLabel}</span>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 8, color: '#9ab8d8' }}>{Math.round(windDir)}° {cDir(windDir)}</span>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 8, color: '#4a6a8a' }}>window: {win ? `${String(winLo).padStart(3, '0')}–${String(winHi).padStart(3, '0')}°` : `${cDir(site.aspect)}±60°`}</span>
+        </div>
+      </div>
+      <div style={{ fontFamily: 'JetBrains Mono', fontSize: 7, color: '#4a6a8a', textAlign: 'center', marginTop: 2 }}>
+        gusts {Math.round(gustSpeed)} km/h · {Math.round(gustSpeed / Math.max(windSpeed, 1) * 100 - 100)}% over mean
+      </div>
     </div>
-  </div>);
+  );
 }
 
-function WindRose({windDir,siteAspect,windSpeed,gustSpeed}){
-  const sz=130,cx=sz/2,cy=sz/2,r=46;
-  const xy=(deg,rad)=>{const a=((deg-90)*Math.PI)/180;return{x:cx+rad*Math.cos(a),y:cy+rad*Math.sin(a)};};
-  const arc=(cx,cy,r,s,e)=>{const toR=d=>((d-90)*Math.PI)/180;const sp={x:cx+r*Math.cos(toR(s)),y:cy+r*Math.sin(toR(s))};const ep={x:cx+r*Math.cos(toR(e)),y:cy+r*Math.sin(toR(e))};return `M ${cx} ${cy} L ${sp.x} ${sp.y} A ${r} ${r} 0 0 1 ${ep.x} ${ep.y} Z`;};
-  const we=xy(windDir,r*.78); const ae=xy(siteAspect,r*.88);
-  return(<svg width={sz} height={sz} style={{display:"block",margin:"0 auto"}}>
-    <circle cx={cx} cy={cy} r={r+8} fill="#080c14" stroke="#1a2d4a" strokeWidth={1}/>
-    {[.33,.66,1].map(f=><circle key={f} cx={cx} cy={cy} r={r*f} fill="none" stroke="#1a2d4a" strokeWidth={0.5} strokeDasharray="3,3"/>)}
-    {[0,90].map(a=>{const p1=xy(a,r),p2=xy(a+180,r);return<line key={a} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#1a2d4a" strokeWidth={0.5}/>;} )}
-    {["N","NE","E","SE","S","SW","W","NW"].map((d,i)=>{const p=xy(i*45,r+12);return<text key={d} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle" fill="#4a6a8a" fontSize={7} fontFamily="JetBrains Mono">{d}</text>;})}
-    <path d={arc(cx,cy,r*.92,siteAspect-45,siteAspect+45)} fill="#ffd70018" stroke="#ffd700" strokeWidth={1.5}/>
-    <text x={ae.x} y={ae.y} textAnchor="middle" dominantBaseline="middle" fill="#ffd700" fontSize={8} fontFamily="JetBrains Mono">★</text>
-    <line x1={cx} y1={cy} x2={we.x} y2={we.y} stroke="#00e5ff" strokeWidth={2}/>
-    <circle cx={we.x} cy={we.y} r={3} fill="#00e5ff"/>
-    <circle cx={cx} cy={cy} r={3} fill="#00e5ff22" stroke="#00e5ff" strokeWidth={1}/>
-    <text x={cx} y={cy+r+22} textAnchor="middle" fill="#6a9abf" fontSize={7} fontFamily="JetBrains Mono">{Math.round(windSpeed)}km/h · gusts {Math.round(gustSpeed)}km/h</text>
-  </svg>);
+// ── HOURLY WIND GRAPH ─────────────────────────────────────────────────────────
+// Shows speed/gusts AND per-hour direction bars coloured green/orange/red
+function HourlyGraph({ data, site, siteMin, siteMax }) {
+  const hrs = data.hourlyWindSpeed || [];
+  const gst = data.hourlyGusts || [];
+  const dirs = data.hourlyWindDir || [];
+  if (!hrs.length) return <div style={{ fontFamily: 'JetBrains Mono', fontSize: 9, color: '#4a6a8a', padding: 8 }}>No hourly data</div>;
+
+  const mx = Math.max(...gst.filter(Boolean), siteMax * 1.2, 10);
+  const W = 268, H = 100, pl = 28, pr = 8, pt = 8, pb = 24, gw = W - pl - pr, gh = H - pt - pb;
+  const ty = v => pt + gh - (v / mx) * gh;
+  const sp = hrs.map((v, i) => `${i === 0 ? 'M' : 'L'} ${pl + i * (gw / 24)} ${ty(v || 0)}`).join(' ');
+  const gp = gst.map((v, i) => `${i === 0 ? 'M' : 'L'} ${pl + i * (gw / 24)} ${ty(v || 0)}`).join(' ');
+
+  // Win window for per-hour direction colouring
+  const win = parseWindWindow(site.windNote);
+
+  const hourCol = (i) => {
+    const d = dirs[i];
+    if (d == null) return '#1a2d4a';
+    const inWin = win ? windInWindow(d, win.lo, win.hi) : (angleDiff(d, site.aspect) <= 60);
+    if (inWin) return '#00e59644';
+    const distLo = win ? angleDiff(d, win.lo) : null;
+    const distHi = win ? angleDiff(d, win.hi) : null;
+    const near = win ? Math.min(distLo, distHi) <= 20 : (angleDiff(d, site.aspect) <= 90);
+    return near ? '#ff8c0044' : '#ff3b3b33';
+  };
+
+  return (
+    <div style={{ marginTop: 8, background: '#080c14', borderRadius: 6, padding: '8px 4px 4px', border: '1px solid #1a2d4a' }}>
+      {/* Per-hour direction colour strip */}
+      <div style={{ display: 'flex', marginLeft: pl, marginRight: pr, marginBottom: 3, height: 10, borderRadius: 2, overflow: 'hidden' }}>
+        {hrs.map((_, i) => (
+          <div key={i} style={{ flex: 1, background: hourCol(i), borderRight: '1px solid #040810' }} title={dirs[i] != null ? `${Math.round(dirs[i])}° ${cDir(dirs[i])}` : ''} />
+        ))}
+      </div>
+      <svg width={W} height={H}>
+        {/* Flyable speed band */}
+        <rect x={pl} y={ty(siteMax)} width={gw} height={ty(siteMin) - ty(siteMax)} fill="#00e5ff08" />
+        <line x1={pl} y1={ty(siteMin)} x2={pl + gw} y2={ty(siteMin)} stroke="#00e5ff33" strokeWidth={1} strokeDasharray="3,2" />
+        <line x1={pl} y1={ty(siteMax)} x2={pl + gw} y2={ty(siteMax)} stroke="#ff3b3b33" strokeWidth={1} strokeDasharray="3,2" />
+        {[0, mx * .5, mx].map(v => (
+          <g key={v}>
+            <line x1={pl} y1={ty(v)} x2={pl + gw} y2={ty(v)} stroke="#1a2d4a" strokeWidth={0.5} />
+            <text x={pl - 3} y={ty(v) + 3} textAnchor="end" fill="#4a6a8a" fontSize={7} fontFamily="JetBrains Mono">{Math.round(v)}</text>
+          </g>
+        ))}
+        {[0, 6, 12, 18, 23].map(h => (
+          <text key={h} x={pl + h * (gw / 24)} y={pt + gh + 12} textAnchor="middle" fill="#4a6a8a" fontSize={7} fontFamily="JetBrains Mono">{String(h).padStart(2, '0')}h</text>
+        ))}
+        <path d={gp} fill="none" stroke="#ff3b3b66" strokeWidth={1} strokeDasharray="3,2" />
+        <path d={sp} fill="none" stroke="#00e5ff" strokeWidth={1.5} />
+        <text x={pl + 2} y={ty(siteMin) - 3} fill="#00e5ff55" fontSize={7} fontFamily="JetBrains Mono">MIN {siteMin}</text>
+        <text x={pl + 2} y={ty(siteMax) + 8} fill="#ff3b3b55" fontSize={7} fontFamily="JetBrains Mono">MAX {siteMax}</text>
+      </svg>
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 2, flexWrap: 'wrap' }}>
+        {[['#00e5ff', 'Wind speed'], ['#ff3b3b66', 'Gusts'], ['#00e59644', 'Dir on window'], ['#ff3b3b33', 'Dir off window']].map(([c, l]) => (
+          <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ width: 12, height: l.includes('Dir') ? 8 : 2, background: c, borderRadius: l.includes('Dir') ? 2 : 0 }} />
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: 6, color: '#4a6a8a' }}>{l}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Legacy WindRose kept as alias (unused, replaced by WindCompass)
+function WindRose({ windDir, siteAspect, windSpeed, gustSpeed }) {
+  return null; // replaced by WindCompass
 }
 
 function LoadOvl({total,loaded}){
