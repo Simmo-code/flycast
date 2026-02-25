@@ -333,19 +333,30 @@ function calcFlyability(site, day) {
 }
 
 function calcXC(site, day, score) {
-  if(score<38) return {label:"No XC",km:0,color:"#ff3b3b",detail:"Site unflyable"};
-  const {cape,blHeight,windSpeed,precipProb} = day;
-  const tv  = cape>0?Math.sqrt(2*cape/1000)*3.5:0;
-  const ts  = Math.min(5,tv);
-  const mo  = new Date().getMonth();
-  const dl  = 8+Math.sin((mo-2)*Math.PI/6)*4;
-  const sw  = Math.max(0,Math.min(dl-4,blHeight/400));
-  const km  = Math.round(((sw*(ts>0.5?4:2)*(blHeight*.7/1000)*8)+(windSpeed*sw*.3))*(precipProb>20?.6:1));
-  const det = `${ts.toFixed(1)}m/s thermals · ${sw.toFixed(1)}hr window`;
-  if(km>=100) return {label:"100km+ Epic day 🏆",km,color:"#00e5ff",detail:det};
-  if(km>=50)  return {label:`${km}km XC potential`,km,color:"#00e5ff",detail:det};
-  if(km>=20)  return {label:`${km}km XC possible`,km,color:"#ffd700",detail:det};
-  return {label:"Local soaring only",km,color:"#ff8c00",detail:"Weak thermals"};
+  if(score<38) return {label:"No XC",km:0,tier:0,color:"#ff3b3b",detail:"Site unflyable",emoji:"✗"};
+  const {cape,blHeight,windSpeed,precipProb,wStarMs,cloudBase,thermalTrigger,overcastKillsDay} = day;
+  // W* thermal velocity (m/s) — use pre-computed if available, else derive
+  const wStar = wStarMs || (cape>0?Math.sqrt(2*cape/1000)*3.0:0);
+  const ts = Math.min(5, wStar);
+  const mo = new Date().getMonth();
+  const dl = 8+Math.sin((mo-2)*Math.PI/6)*4; // daylight hours
+  const blAGL = Math.max(0, blHeight - site.altitude_m);
+  // Soaring window hours (limited by BL height and daylight)
+  const sw = Math.max(0, Math.min(dl-4, blAGL/350));
+  // Effective glide speed component from wind
+  const windBoost = Math.min(windSpeed*0.25*sw, 30);
+  // Base km: thermal climb rate × glide ratio × window
+  let km = Math.round(((sw*ts*3.5*(blAGL*0.75/1000)*7)+windBoost)*(precipProb>30?0.5:precipProb>15?0.75:1)*(overcastKillsDay?0.3:1));
+  km = Math.max(0, Math.min(250, km));
+  const det = `W*${ts.toFixed(1)}m/s · BL${Math.round(blAGL)}m AGL · ${sw.toFixed(1)}hr window`;
+  // Tiered labels matching real XC milestone distances
+  if(km>=200) return {label:"200km+ Epic XC! 🏆",km,tier:6,color:"#ff00ff",detail:det,emoji:"🏆"};
+  if(km>=150) return {label:"150km+ Exceptional",km,tier:5,color:"#00ffcc",detail:det,emoji:"🌟"};
+  if(km>=100) return {label:"100km+ Classic day",km,tier:4,color:"#00e5ff",detail:det,emoji:"✈"};
+  if(km>=50)  return {label:"50km+ XC day",km,tier:3,color:"#00e5ff",detail:det,emoji:"↗"};
+  if(km>=20)  return {label:"20km+ Local XC",km,tier:2,color:"#ffd700",detail:det,emoji:"↗"};
+  if(km>=5)   return {label:"Soaring day",km,tier:1,color:"#ff8c00",detail:"Thermal soaring possible",emoji:"~"};
+  return {label:"Ridge/local only",km:0,tier:0,color:"#ff8c00",detail:"Weak thermals",emoji:"~"};
 }
 
 // ─── APP ──────────────────────────────────────────────────────────────────────
@@ -397,7 +408,7 @@ export default function App() {
   [flyData,day]);
 
   const ukScore = useMemo(()=>
-    [0,1,2].map(i=>{const sc=UK_SITES.map(s=>flyData[s.id]?.[i]?.score??0);return Math.round(sc.reduce((a,b)=>a+b,0)/sc.length);}),
+    Array.from({length:7},(_,i)=>{const sc=UK_SITES.map(s=>flyData[s.id]?.[i]?.score??0);return Math.round(sc.reduce((a,b)=>a+b,0)/sc.length);}),
   [flyData]);
 
   const regions = useMemo(()=>["All",...Array.from(new Set(UK_SITES.map(s=>s.region))).sort()],[]);
@@ -436,8 +447,28 @@ export default function App() {
     markers.current.forEach(m=>m.remove());markers.current=[];
     UK_SITES.forEach(s=>{
       const f=flyData[s.id]?.[day];
-      const c=f?f.color:"#555";
-      const icon=window.L.divIcon({className:"",html:`<div style="width:34px;height:34px;border-radius:50%;background:${c}18;border:2px solid ${c};display:flex;align-items:center;justify-content:center;font-family:JetBrains Mono,monospace;font-size:10px;font-weight:700;color:${c};cursor:pointer;box-shadow:0 0 10px ${c}55">${f?f.score:"?"}</div>`,iconSize:[34,34],iconAnchor:[17,17]});
+      const col=f?f.color:"#444";
+      const sc=f?f.score:null;
+      const wd=f?.dayData?.windDir??null;
+      const inWin=f?.inWindow??false;
+      // Wind direction arrow SVG (points FROM wind source = where wind blows to)
+      const arrowSvg = wd!=null ? (() => {
+        const rad = ((wd-90)*Math.PI)/180;
+        const cx=20,cy=20,r=10;
+        const tx=cx+r*Math.cos(rad),ty=cy+r*Math.sin(rad);
+        const bx=cx-r*Math.cos(rad),by=cy-r*Math.sin(rad);
+        const ac=inWin?"#00e596":"#ff4444";
+        return `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="${ac}" stroke-width="2.5" stroke-linecap="round"/>
+          <polygon points="${tx},${ty} ${cx+r*.45*Math.cos(rad-2.4)},${cy+r*.45*Math.sin(rad-2.4)} ${cx+r*.45*Math.cos(rad+2.4)},${cy+r*.45*Math.sin(rad+2.4)}" fill="${ac}"/>`;
+      })() : "";
+      const html=`<div style="position:relative;width:42px;height:42px;cursor:pointer">
+        <svg width="42" height="42" style="position:absolute;top:0;left:0">
+          <circle cx="21" cy="21" r="18" fill="${col}18" stroke="${col}" stroke-width="2"/>
+          ${arrowSvg}
+          <text x="21" y="${wd!=null?16:24}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="${sc!=null&&sc>=100?10:11}" font-weight="700" font-family="JetBrains Mono,monospace">${sc??'?'}</text>
+        </svg>
+      </div>`;
+      const icon=window.L.divIcon({className:"",html,iconSize:[42,42],iconAnchor:[21,21]});
       markers.current.push(window.L.marker([s.lat,s.lon],{icon}).addTo(mapInst.current).on("click",()=>setSelSite(s)));
     });
   },[mapReady,flyData,day]);
@@ -485,12 +516,12 @@ export default function App() {
             const sc=ukScore[i]||0; const col=C(sc);
             const lbl=sc>=78?"EXCELLENT":sc>=58?"GOOD":sc>=38?"MARGINAL":"POOR";
             const act=i===day;
-            return(<button key={i} onClick={()=>setDay(i)} style={{flex:"0 0 auto",background:act?`${col}14`:"#0d1520",border:`1px solid ${act?col:"#1a2d4a"}`,borderRadius:6,padding:"7px 14px",cursor:"pointer",textAlign:"left",minWidth:90,transition:"all 0.2s"}}>
-              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:act?col:"#6a9abf",letterSpacing:1,textTransform:"uppercase"}}>{d.label}</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",marginTop:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
-              <div style={{marginTop:5,display:"flex",alignItems:"center",gap:5}}>
-                <div style={{width:26,height:26,borderRadius:"50%",background:`${col}18`,border:`1.5px solid ${col}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"JetBrains Mono",fontSize:13,fontWeight:700,color:col}}>{loading?"—":sc}</div>
-                <div style={{fontFamily:"Barlow Condensed",fontSize:14,fontWeight:600,color:col}}>{loading?"...":lbl}</div>
+            return(<button key={i} onClick={()=>setDay(i)} style={{flex:"0 0 auto",background:act?`${col}14`:"#0d1520",border:`1px solid ${act?col:"#1a2d4a"}`,borderRadius:5,padding:"4px 8px",cursor:"pointer",textAlign:"center",minWidth:58,transition:"all 0.2s"}}>
+              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:act?col:"#6a9abf",letterSpacing:0,textTransform:"uppercase"}}>{d.label}</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#4a6a8a",marginTop:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
+              <div style={{marginTop:3,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                <div style={{fontFamily:"JetBrains Mono",fontSize:14,fontWeight:700,color:col}}>{loading?"—":sc}</div>
+                
               </div>
             </button>);
           })}
@@ -560,7 +591,7 @@ export default function App() {
                   <WindDirPill fly={f}/>
                   <Pill label="WIND" value={`${kmhToMph(Math.round(f.dayData.windSpeed))} mph`} score={f.breakdown.speedScore}/>
                   <Pill label="RAIN" value={`${f.dayData.precipProb}%`}           score={f.breakdown.precipScore}/>
-                  <Pill label="BASE" value={`${f.dayData.cloudBase}m`}            score={f.breakdown.cloudScore}/>
+                  <Pill label="BASE" value={`${f.dayData.cloudBase}m/${Math.round(f.dayData.cloudBase*3.281)}ft`} score={f.breakdown.cloudScore}/>
                   <Pill label="CAPE" value={`${Math.round(f.dayData.cape)}`}      score={f.breakdown.thermalIdx}/>
                 </div>}
               </button>);
@@ -697,7 +728,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:21,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/><ClubBadge club={site.club}/></div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",marginTop:1}}>{site.region} · {site.altitude_m}m ASL</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#4a6a8a",marginTop:1}}>{site.region} · {site.altitude_m}m / {Math.round(site.altitude_m*3.281)}ft ASL</div>
         </div>
         <button onClick={onClose} style={{background:"#1a2d4a",border:"none",color:"#6a9abf",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
       </div>
@@ -723,8 +754,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
         </div>
         <div>
           <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:22,color:col,letterSpacing:1}}>{f.label.toUpperCase()}</div>
-          <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:f.xc.color,marginTop:1}}>✈ {f.xc.label}</div>
-          {f.xc.detail&&<div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",marginTop:2}}>{f.xc.detail}</div>}
+          <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:f.xc.color,marginTop:1}}>{f.xc.emoji} {f.xc.label}</div>
         </div>
       </div>
       {/* Dynamic confidence badge based on model agreement */}
@@ -744,6 +774,56 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
           </div>
         );
       })()}
+      {/* ── XC TIER INDICATOR ── */}
+      {f.xc&&(()=>{
+        const tiers=[
+          {km:0,label:"Ridge",color:"#4a6a8a"},
+          {km:5,label:"Soar",color:"#ff8c00"},
+          {km:20,label:"20km",color:"#ffd700"},
+          {km:50,label:"50km",color:"#ffd700"},
+          {km:100,label:"100km",color:"#00e5ff"},
+          {km:150,label:"150km",color:"#00ffcc"},
+          {km:200,label:"200km",color:"#ff00ff"},
+        ];
+        const activeTier = tiers.reduce((p,t)=>f.xc.km>=t.km?t:p,tiers[0]);
+        return(
+          <div style={{marginBottom:12,background:"#080c14",border:"1px solid #1a2d4a",borderRadius:6,padding:"8px 10px"}}>
+            <div style={{fontFamily:"Barlow Condensed",fontSize:14,color:"#4a6a8a",letterSpacing:1,marginBottom:5}}>XC POTENTIAL</div>
+            <div style={{display:"flex",gap:2,marginBottom:5,alignItems:"center"}}>
+              {tiers.slice(1).map(t=>{
+                const active=f.xc.km>=t.km;
+                return <div key={t.km} style={{flex:1,height:8,borderRadius:2,background:active?t.color:`${t.color}22`,transition:"background 0.4s",position:"relative"}}/>;
+              })}
+            </div>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+              {tiers.slice(1).map(t=><span key={t.km} style={{flex:1,fontFamily:"JetBrains Mono",fontSize:12,color:f.xc.km>=t.km?t.color:"#2a3d5a",textAlign:"center"}}>{t.label}</span>)}
+            </div>
+            <div style={{fontFamily:"Barlow Condensed",fontSize:18,fontWeight:700,color:activeTier.color}}>
+              {f.xc.emoji} {f.xc.label}
+            </div>
+            {f.xc.detail&&<div style={{fontFamily:"JetBrains Mono",fontSize:13,color:"#4a6a8a",marginTop:2}}>{f.xc.detail}</div>}
+          </div>
+        );
+      })()}
+      {/* ── RASP BLIPspot link ── */}
+      <div style={{marginBottom:12,display:"flex",gap:6,flexWrap:"wrap"}}>
+        <a href={`http://www.blipspot.com/tools/point/?lat=${site.lat.toFixed(3)}&lon=${site.lon.toFixed(3)}`} target="_blank" rel="noopener noreferrer"
+          style={{flex:1,display:"flex",alignItems:"center",gap:6,background:"#080c14",border:"1px solid #00e5ff33",borderRadius:5,padding:"6px 10px",textDecoration:"none",cursor:"pointer"}}>
+          <span style={{fontSize:16}}>📡</span>
+          <div>
+            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:"#00e5ff",letterSpacing:1}}>RASP BLIPspot</div>
+            <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a"}}>Open sounding data →</div>
+          </div>
+        </a>
+        <a href={`https://xcweather.co.uk/#${site.lat.toFixed(2)},${site.lon.toFixed(2)},13`} target="_blank" rel="noopener noreferrer"
+          style={{flex:1,display:"flex",alignItems:"center",gap:6,background:"#080c14",border:"1px solid #ffd70033",borderRadius:5,padding:"6px 10px",textDecoration:"none",cursor:"pointer"}}>
+          <span style={{fontSize:16}}>🌤</span>
+          <div>
+            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:"#ffd700",letterSpacing:1}}>XCWeather</div>
+            <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a"}}>Wind forecast →</div>
+          </div>
+        </a>
+      </div>
       <div style={{marginBottom:12}}>
         <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#4a6a8a",letterSpacing:1,marginBottom:8}}>FLYABILITY BREAKDOWN</div>
         {[
@@ -751,7 +831,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
           {l:"Wind Speed",    s:f.breakdown.speedScore, v:f.dayData.windMin!=null&&f.dayData.windMax!=f.dayData.windMin?`${kmhToMph(Math.round(f.dayData.windMin))}–${kmhToMph(Math.round(f.dayData.windMax))} mph`:fmtSpeedBoth(f.dayData.windSpeed),w:"20%"},
           {l:"Precipitation", s:f.breakdown.precipScore,v:`${f.dayData.precipProb}% prob`,w:"15%"},
           {l:"Thermal Index", s:f.breakdown.thermalIdx, v:`CAPE ${Math.round(f.dayData.cape)} J/kg`,w:"15%"},
-          {l:"Cloud Base",    s:f.breakdown.cloudScore, v:`${f.dayData.cloudBase}m AGL`,w:"10%"},
+          {l:"Cloud Base",    s:f.breakdown.cloudScore, v:`${f.dayData.cloudBase}m / ${Math.round(f.dayData.cloudBase*3.281)}ft AGL`,w:"10%"},
           {l:"Gust Factor",   s:f.breakdown.gustScore,  v:fmtSpeedBoth(f.dayData.gustSpeed),w:"10%"},
           {l:"Visibility",    s:f.breakdown.visScore,   v:`${(f.dayData.visibility/1000).toFixed(1)}km`,w:"5%"},
         ].map(it=>(
@@ -853,7 +933,7 @@ function SoaringIndex({ dayData, site }) {
           {/* Site altitude fill zone */}
           <rect x={pl} y={siteY} width={gw} height={H - pb - siteY + ptop} fill="#ffd70006" />
           <line x1={pl} y1={siteY} x2={pl+gw} y2={siteY} stroke="#ffd70044" strokeWidth={1} strokeDasharray="4,3"/>
-          <text x={pl-3} y={siteY+3} textAnchor="end" fill="#ffd70077" fontSize={6} fontFamily="JetBrains Mono">{siteAlt}m</text>
+          <text x={pl-3} y={siteY+3} textAnchor="end" fill="#ffd70077" fontSize={6} fontFamily="JetBrains Mono">{siteAlt}m/{Math.round(siteAlt*3.281)}ft</text>
           {/* BL curve */}
           <path d={blPath} fill="none" stroke="#00e5ff" strokeWidth={1.5}/>
           <path d={blPath + ` L ${pl+gw} ${H-pb} L ${pl} ${H-pb} Z`} fill="#00e5ff08"/>
@@ -866,7 +946,7 @@ function SoaringIndex({ dayData, site }) {
             </>);
           })()}
           {/* Peak BL label */}
-          <text x={pl+gw-2} y={ptop+8} textAnchor="end" fill="#00e5ff88" fontSize={6} fontFamily="JetBrains Mono">peak {Math.round(blPeak)}m</text>
+          <text x={pl+gw-2} y={ptop+8} textAnchor="end" fill="#00e5ff88" fontSize={6} fontFamily="JetBrains Mono">peak {Math.round(blPeak)}m / {Math.round(blPeak*3.281)}ft</text>
           {/* Hour labels */}
           {[6,10,14,18].map(h => (
             <text key={h} x={pl+h*(gw/24)} y={H-2} textAnchor="middle" fill="#3a5a7a" fontSize={6} fontFamily="JetBrains Mono">{String(h).padStart(2,'0')}h</text>
@@ -897,7 +977,7 @@ function SoaringIndex({ dayData, site }) {
           { lbl:'LIFTED INDEX', val: isNaN(liftedIdx) ? '—' : liftedIdx.toFixed(1), col: liCol, sub: liLabel, tip:'< 0 = unstable/thermal' },
           { lbl:'CAPE', val:`${Math.round(cape)} J/kg`, col: cape>500?'#00e5ff':cape>100?'#ffd700':'#4a6a8a', sub: cape>500?'Good thermals':cape>100?'Some thermals':'Weak thermals', tip:'Convective energy' },
           { lbl:'CIN', val:`${Math.round(Math.abs(cin||0))} J/kg`, col: Math.abs(cin||0)<50?'#00e5ff':'#ff8c00', sub: Math.abs(cin||0)<50?'Low cap':'Capping present', tip:'Convective inhibition' },
-          { lbl:'BL AGL', val:`${Math.round(blAboveSite)}m`, col: blAboveSite>1000?'#00e5ff':blAboveSite>500?'#ffd700':'#4a6a8a', sub:`${Math.round(blAboveSite*3.281)}ft`, tip:'BL height above site' },
+          { lbl:'BL AGL', val:`${Math.round(blAboveSite)}m / ${Math.round(blAboveSite*3.281)}ft`, col: blAboveSite>1000?'#00e5ff':blAboveSite>500?'#ffd700':'#4a6a8a', sub: blAboveSite>1500?'Excellent ceiling':blAboveSite>800?'Good ceiling':blAboveSite>400?'Moderate':'Low ceiling', tip:'BL height above site' },
         ].map(({lbl,val,col,sub,tip}) => (
           <div key={lbl} title={tip} style={{ flex:'1 1 60px', background:'#0d1520', borderRadius:5, padding:'5px 7px', border:`1px solid ${col}22` }}>
             <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#3a5a7a', marginBottom:1 }}>{lbl}</div>
@@ -906,6 +986,55 @@ function SoaringIndex({ dayData, site }) {
           </div>
         ))}
       </div>
+      {/* ── DETAILED CLOUD BASE PANEL ── */}
+      {cloudBase > 0 && (() => {
+        const cbASL = cloudBase + siteAlt; // cloud base above sea level
+        const cbFt  = Math.round(cloudBase * 3.281); // AGL feet
+        const cbASLFt = Math.round(cbASL * 3.281); // ASL feet
+        const blAGL = Math.max(0, blHeight - siteAlt);
+        const blFt  = Math.round(blAGL * 3.281);
+        const blASLFt = Math.round(blHeight * 3.281);
+        // Cu-nimb risk: cloud base below BL height → thermals hitting base → possible over-development
+        const cuNimbRisk = blAGL > cloudBase * 0.85;
+        const cbCol = cloudBase < 300 ? '#ff3b3b' : cloudBase < 600 ? '#ff8c00' : cloudBase < 1200 ? '#ffd700' : '#00e5ff';
+        return (
+          <div style={{ background:'#080c14', border:`1px solid ${cbCol}44`, borderRadius:6, padding:'8px 10px', marginTop:8 }}>
+            <div style={{ fontFamily:'Barlow Condensed', fontSize:14, color:'#4a6a8a', letterSpacing:1, marginBottom:5 }}>CLOUD BASE DETAIL</div>
+            <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:6 }}>
+              <div style={{ flex:'1 1 80px', background:'#0d1520', borderRadius:4, padding:'5px 7px' }}>
+                <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>AGL</div>
+                <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:18, color:cbCol }}>{cloudBase}m</div>
+                <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color:cbCol }}>{cbFt}ft</div>
+              </div>
+              <div style={{ flex:'1 1 80px', background:'#0d1520', borderRadius:4, padding:'5px 7px' }}>
+                <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>ASL</div>
+                <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:18, color:'#9ab8d8' }}>{cbASL}m</div>
+                <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color:'#9ab8d8' }}>{cbASLFt}ft</div>
+              </div>
+              <div style={{ flex:'1 1 80px', background:'#0d1520', borderRadius:4, padding:'5px 7px' }}>
+                <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>BL AGL</div>
+                <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:18, color: blFt > cbFt ? '#ff8c00' : '#00e5ff' }}>{blAGL}m</div>
+                <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color: blFt > cbFt ? '#ff8c00' : '#00e5ff' }}>{blFt}ft</div>
+              </div>
+            </div>
+            {cuNimbRisk && (
+              <div style={{ background:'#2a1000', border:'1px solid #ff8c0044', borderRadius:4, padding:'5px 8px', display:'flex', gap:6, alignItems:'center' }}>
+                <span>⚡</span>
+                <div>
+                  <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:15, color:'#ff8c00' }}>Cu-Nimb Risk</div>
+                  <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#ff8c00' }}>BL height exceeds cloud base — thermals may overdevelop</div>
+                </div>
+              </div>
+            )}
+            {!cuNimbRisk && cloudBase >= 1200 && (
+              <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color:'#00e5ff' }}>✓ High cloud base — excellent XC conditions</div>
+            )}
+            {cloudBase < 600 && !cuNimbRisk && (
+              <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color:'#ff8c00' }}>⚠ Low cloud base — restricted altitude ceiling</div>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }
@@ -920,7 +1049,7 @@ function ModelComparison({ dayData }) {
   const fmt = v => v != null ? fmtSpeedBoth(v) : '—';
   const fmtDir = v => v != null ? `${Math.round(v)}° ${cDir(v)}` : '—';
   const fmtPct = v => v != null ? `${Math.round(v)}%` : '—';
-  const fmtBL  = v => v != null && v > 0 ? `${Math.round(v)}m` : '—';
+  const fmtBL  = v => v != null && v > 0 ? `${Math.round(v)}m/${Math.round(v*3.281)}ft` : '—';
 
   // Model colours
   const MC = { ECMWF:'#00e5ff', UKMO:'#00ff9d', ICON:'#ffd700', GFS:'#9ab8d8' };
