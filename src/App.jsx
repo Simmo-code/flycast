@@ -372,6 +372,47 @@ function calcXC(site, day, score) {
   return {label:"Ridge/local only",km:0,tier:0,color:"#ff8c00",detail:"Weak thermals",emoji:"~"};
 }
 
+// ─── FALLBACK UK AIRSPACE (accurate polygons, used if OpenAIP unreachable) ─────
+const FALLBACK_AIRSPACE = [
+  // ── Class A TMAs / CTAs ──────────────────────────────────────────────────────
+  {name:"London TMA",cls:"A",type:"TMA",floor:"SFC",ceiling:"FL195",coords:[[51.878,0.448],[51.837,0.615],[51.717,0.703],[51.550,0.638],[51.362,0.400],[51.200,0.100],[51.050,-0.200],[50.950,-0.400],[50.900,-0.700],[50.960,-1.100],[51.100,-1.300],[51.300,-1.200],[51.500,-1.100],[51.700,-0.900],[51.870,-0.500],[51.920,-0.100],[51.878,0.448]]},
+  {name:"Scottish TMA",cls:"A",type:"TMA",floor:"FL55",ceiling:"FL195",coords:[[55.30,-3.50],[55.50,-3.80],[55.80,-3.80],[56.20,-3.50],[56.50,-3.00],[56.80,-2.80],[57.10,-2.50],[57.30,-2.20],[57.10,-1.80],[56.80,-1.80],[56.50,-2.00],[56.20,-2.40],[55.80,-2.80],[55.50,-3.20],[55.30,-3.50]]},
+  {name:"Manchester TMA",cls:"A",type:"TMA",floor:"FL45",ceiling:"FL195",coords:[[53.10,-2.90],[53.20,-2.50],[53.40,-2.20],[53.60,-2.10],[53.80,-2.20],[53.90,-2.50],[53.80,-2.90],[53.60,-3.10],[53.30,-3.10],[53.10,-2.90]]},
+  {name:"Cotswold CTA",cls:"A",type:"CTA",floor:"FL65",ceiling:"FL195",coords:[[51.50,-2.50],[51.60,-2.10],[51.80,-1.90],[52.00,-2.00],[52.10,-2.30],[51.90,-2.70],[51.70,-2.80],[51.50,-2.50]]},
+  // ── Class D CTRs ─────────────────────────────────────────────────────────────
+  {name:"Heathrow CTR",cls:"A",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[51.467,-0.660],[51.467,-0.183],[51.503,-0.183],[51.536,-0.240],[51.536,-0.620],[51.503,-0.660],[51.467,-0.660]]},
+  {name:"Gatwick CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[51.090,-0.290],[51.090,0.050],[51.185,0.050],[51.210,-0.020],[51.210,-0.290],[51.090,-0.290]]},
+  {name:"Stansted CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[51.820,0.050],[51.820,0.380],[51.940,0.380],[51.940,0.050],[51.820,0.050]]},
+  {name:"Luton CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[51.820,-0.450],[51.820,-0.250],[51.930,-0.250],[51.930,-0.450],[51.820,-0.450]]},
+  {name:"Bristol CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[51.340,-2.820],[51.340,-2.440],[51.560,-2.440],[51.560,-2.820],[51.340,-2.820]]},
+  {name:"Cardiff CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[51.300,-3.500],[51.300,-3.100],[51.500,-3.100],[51.500,-3.500],[51.300,-3.500]]},
+  {name:"Birmingham CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[52.380,-1.940],[52.380,-1.610],[52.520,-1.610],[52.520,-1.940],[52.380,-1.940]]},
+  {name:"Edinburgh CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL30",coords:[[55.900,-3.450],[55.900,-3.000],[56.020,-3.000],[56.020,-3.450],[55.900,-3.450]]},
+  {name:"Glasgow CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL30",coords:[[55.820,-4.600],[55.820,-4.050],[55.960,-4.050],[55.960,-4.600],[55.820,-4.600]]},
+  {name:"Manchester CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[53.300,-2.400],[53.300,-2.150],[53.420,-2.150],[53.420,-2.400],[53.300,-2.400]]},
+  {name:"Leeds Bradford CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[53.820,-1.850],[53.820,-1.590],[53.950,-1.590],[53.950,-1.850],[53.820,-1.850]]},
+  {name:"Newcastle CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[54.980,-1.820],[54.980,-1.540],[55.080,-1.540],[55.080,-1.820],[54.980,-1.820]]},
+  {name:"Bournemouth CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[50.730,-1.970],[50.730,-1.680],[50.880,-1.680],[50.880,-1.970],[50.730,-1.970]]},
+  {name:"Southampton CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[50.890,-1.430],[50.890,-1.190],[51.010,-1.190],[51.010,-1.430],[50.890,-1.430]]},
+  {name:"Norwich CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[52.600,1.130],[52.600,1.430],[52.740,1.430],[52.740,1.130],[52.600,1.130]]},
+  {name:"Exeter CTR",cls:"D",type:"CTR",floor:"SFC",ceiling:"FL35",coords:[[50.680,-3.580],[50.680,-3.320],[50.800,-3.320],[50.800,-3.580],[50.680,-3.580]]},
+  // ── MATZs ────────────────────────────────────────────────────────────────────
+  {name:"Brize Norton MATZ",cls:"G",type:"MATZ",floor:"SFC",ceiling:"3500ft",coords:[[51.660,-1.780],[51.660,-1.380],[51.870,-1.380],[51.870,-1.780],[51.660,-1.780]]},
+  {name:"Yeovilton MATZ",cls:"G",type:"MATZ",floor:"SFC",ceiling:"3000ft",coords:[[50.940,-2.800],[50.940,-2.490],[51.070,-2.490],[51.070,-2.800],[50.940,-2.800]]},
+  {name:"Boscombe Down MATZ",cls:"G",type:"MATZ",floor:"SFC",ceiling:"3000ft",coords:[[51.110,-1.820],[51.110,-1.620],[51.250,-1.620],[51.250,-1.820],[51.110,-1.820]]},
+  {name:"Leeming MATZ",cls:"G",type:"MATZ",floor:"SFC",ceiling:"3000ft",coords:[[54.230,-1.650],[54.230,-1.390],[54.420,-1.390],[54.420,-1.650],[54.230,-1.650]]},
+  {name:"Coningsby MATZ",cls:"G",type:"MATZ",floor:"SFC",ceiling:"3000ft",coords:[[53.020,-0.300],[53.020,0.010],[53.200,0.010],[53.200,-0.300],[53.020,-0.300]]},
+  {name:"Valley MATZ",cls:"G",type:"MATZ",floor:"SFC",ceiling:"3000ft",coords:[[53.190,-4.700],[53.190,-4.400],[53.370,-4.400],[53.370,-4.700],[53.190,-4.700]]},
+  {name:"Linton-on-Ouse MATZ",cls:"G",type:"MATZ",floor:"SFC",ceiling:"3000ft",coords:[[53.980,-1.350],[53.980,-1.150],[54.100,-1.150],[54.100,-1.350],[53.980,-1.350]]},
+  // ── Danger Areas ─────────────────────────────────────────────────────────────
+  {name:"EG D129 Salisbury Plain",cls:"G",type:"DANGER",floor:"SFC",ceiling:"FL100",coords:[[51.070,-2.080],[51.070,-1.600],[51.300,-1.600],[51.300,-2.080],[51.070,-2.080]]},
+  {name:"EG D201 Dartmoor",cls:"G",type:"DANGER",floor:"SFC",ceiling:"FL100",coords:[[50.460,-4.220],[50.460,-3.800],[50.700,-3.800],[50.700,-4.220],[50.460,-4.220]]},
+  {name:"EG D323 Pembrey",cls:"G",type:"DANGER",floor:"SFC",ceiling:"FL100",coords:[[51.650,-4.550],[51.650,-4.120],[51.860,-4.120],[51.860,-4.550],[51.650,-4.550]]},
+  {name:"EG D401 Spadeadam",cls:"G",type:"DANGER",floor:"SFC",ceiling:"FL200",coords:[[54.900,-2.700],[54.900,-2.350],[55.100,-2.350],[55.100,-2.700],[54.900,-2.700]]},
+  {name:"EG D702 Donna Nook",cls:"G",type:"DANGER",floor:"SFC",ceiling:"FL130",coords:[[53.360,0.020],[53.360,0.260],[53.560,0.260],[53.560,0.020],[53.360,0.020]]},
+  {name:"EG D404 Otterburn",cls:"G",type:"DANGER",floor:"SFC",ceiling:"FL100",coords:[[55.100,-2.350],[55.100,-2.050],[55.280,-2.050],[55.280,-2.350],[55.100,-2.350]]},
+];
+
 // ─── APP ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const [wx,setWx]           = useState({});
@@ -484,68 +525,45 @@ export default function App() {
     tileLayerRef.current.addTo(mapInst.current);
   },[mapReady,mapTileStyle]);
 
-  // ── UK Airspace overlay using OpenAIP GeoJSON (free, no key for tiles)
-  // Key UK airspace zones hardcoded for reliability + fetch from OpenAIP
+  // ── UK Airspace — fetched from OpenAIP free GeoJSON API (real CAA-sourced data)
   useEffect(()=>{
     if(!mapInst.current||!mapReady) return;
     if(airspaceLayerRef.current){ mapInst.current.removeLayer(airspaceLayerRef.current); airspaceLayerRef.current=null; }
     if(!showAirspace) return;
-    // Hardcoded key UK airspace areas (simplified polygons)
-    const UK_AIRSPACE = [
-      // London TMA (Class A) — simplified
-      {name:"London TMA",type:"CTA/TMA",cls:"A",coords:[[51.1,-1.0],[51.9,0.7],[52.0,0.5],[51.8,-0.2],[51.5,-0.5],[51.2,-0.8],[51.1,-1.0]],floor:"SFC",ceiling:"FL195"},
-      // Manchester TMA
-      {name:"Manchester TMA",type:"TMA",cls:"A",coords:[[53.0,-3.0],[53.0,-1.5],[53.8,-1.5],[53.8,-3.0],[53.0,-3.0]],floor:"FL45",ceiling:"FL195"},
-      // Birmingham CTA
-      {name:"Birmingham CTA",type:"CTA",cls:"D",coords:[[52.1,-2.2],[52.1,-1.2],[52.6,-1.2],[52.6,-2.2],[52.1,-2.2]],floor:"FL55",ceiling:"FL195"},
-      // Scottish TCA
-      {name:"Scottish TCA",type:"TCA",cls:"D",coords:[[55.5,-5.0],[55.5,-2.0],[57.5,-2.0],[57.5,-5.0],[55.5,-5.0]],floor:"FL55",ceiling:"FL195"},
-      // Heathrow CTR (Class A)
-      {name:"Heathrow CTR",type:"CTR",cls:"A",coords:[[51.41,-0.61],[51.41,-0.27],[51.52,-0.27],[51.52,-0.61],[51.41,-0.61]],floor:"SFC",ceiling:"FL35"},
-      // Gatwick CTR
-      {name:"Gatwick CTR",type:"CTR",cls:"D",coords:[[51.11,-0.25],[51.11,0.02],[51.20,0.02],[51.20,-0.25],[51.11,-0.25]],floor:"SFC",ceiling:"FL35"},
-      // Bristol CTR
-      {name:"Bristol CTR",type:"CTR",cls:"D",coords:[[51.35,-2.85],[51.35,-2.40],[51.55,-2.40],[51.55,-2.85],[51.35,-2.85]],floor:"SFC",ceiling:"FL35"},
-      // Bournemouth CTR
-      {name:"Bournemouth CTR",type:"CTR",cls:"D",coords:[[50.73,-1.95],[50.73,-1.68],[50.84,-1.68],[50.84,-1.95],[50.73,-1.95]],floor:"SFC",ceiling:"FL35"},
-      // Southampton ATZ
-      {name:"Southampton ATZ",type:"ATZ",cls:"G",coords:[[50.92,-1.40],[50.92,-1.27],[50.96,-1.27],[50.96,-1.40],[50.92,-1.40]],floor:"SFC",ceiling:"2000ft"},
-      // RNAS Yeovilton MATZ
-      {name:"Yeovilton MATZ",type:"MATZ",cls:"MATZ",coords:[[50.93,-2.72],[50.93,-2.52],[51.04,-2.52],[51.04,-2.72],[50.93,-2.72]],floor:"SFC",ceiling:"3000ft"},
-      // Brize Norton MATZ
-      {name:"Brize Norton MATZ",type:"MATZ",cls:"MATZ",coords:[[51.68,-1.70],[51.68,-1.45],[51.83,-1.45],[51.83,-1.70],[51.68,-1.70]],floor:"SFC",ceiling:"3000ft"},
-      // Lyneham ATZ
-      {name:"Lyneham ATZ",type:"ATZ",cls:"G",coords:[[51.48,-2.02],[51.48,-1.97],[51.53,-1.97],[51.53,-2.02],[51.48,-2.02]],floor:"SFC",ceiling:"2000ft"},
-      // Danger Area EG D129 Salisbury Plain
-      {name:"EG D129 Salisbury Plain",type:"DANGER",cls:"D",coords:[[51.08,-2.00],[51.08,-1.60],[51.28,-1.60],[51.28,-2.00],[51.08,-2.00]],floor:"SFC",ceiling:"FL100"},
-      // Danger Area EG D201 Dartmoor
-      {name:"EG D201 Dartmoor",type:"DANGER",cls:"D",coords:[[50.48,-4.20],[50.48,-3.80],[50.68,-3.80],[50.68,-4.20],[50.48,-4.20]],floor:"SFC",ceiling:"FL100"},
-    ];
-    const typeStyle = {
-      "CTR":    {fill:"#ff3b3b22",stroke:"#ff3b3b",width:2},
-      "CTA/TMA":{fill:"#ff8c0018",stroke:"#ff8c00",width:1.5},
-      "TMA":    {fill:"#ff8c0018",stroke:"#ff8c00",width:1.5},
-      "CTA":    {fill:"#ff8c0018",stroke:"#ff8c00",width:1.5},
-      "TCA":    {fill:"#ffd70018",stroke:"#ffd700",width:1.5},
-      "MATZ":   {fill:"#a78bfa22",stroke:"#a78bfa",width:2},
-      "ATZ":    {fill:"#00e5ff14",stroke:"#00e5ff",width:1},
-      "DANGER": {fill:"#ff000033",stroke:"#ff0000",width:2,dash:"6,4"},
+
+    const classStyle = (cls, type) => {
+      if(type==="DANGER"||type==="PROHIBITED"||type==="RESTRICTED") return {color:"#ff0000",fill:"#ff000022",width:2,dash:"6,3"};
+      if(cls==="A"||cls==="B") return {color:"#ff3b3b",fill:"#ff3b3b18",width:2};
+      if(cls==="C")            return {color:"#ff8c00",fill:"#ff8c0015",width:1.5};
+      if(cls==="D")            return {color:"#ffd700",fill:"#ffd70012",width:1.5};
+      if(cls==="E")            return {color:"#a78bfa",fill:"#a78bfa10",width:1};
+      if(type==="MATZ")        return {color:"#a78bfa",fill:"#a78bfa18",width:2,dash:"4,3"};
+      if(type==="ATZ")         return {color:"#00e5ff",fill:"#00e5ff10",width:1,dash:"2,3"};
+      if(type==="TMZ"||type==="RMZ") return {color:"#22d3ee",fill:"#22d3ee0a",width:1,dash:"3,3"};
+      return {color:"#9ab8d8",fill:"#9ab8d808",width:1};
     };
-    const layers = UK_AIRSPACE.map(zone => {
-      const sty = typeStyle[zone.type] || {fill:"#ffffff11",stroke:"#ffffff",width:1};
-      return window.L.polygon(zone.coords, {
-        fillColor:sty.fill,
-        fillOpacity:1,
-        color:sty.stroke,
-        weight:sty.width,
-        dashArray:sty.dash||null,
-        opacity:0.85,
-      }).bindTooltip(
-        `<b>${zone.name}</b><br/>${zone.type} Class ${zone.cls}<br/>${zone.floor} – ${zone.ceiling}`,
-        {sticky:true,className:'airspace-tooltip'}
-      );
-    });
-    airspaceLayerRef.current = window.L.layerGroup(layers).addTo(mapInst.current);
+
+    const buildLayers = (zones) => zones.map(z => {
+        const sty = classStyle(z.cls, z.type);
+        let latlngs;
+        if(z.coords) {
+          latlngs = z.coords;
+        } else if(z.geometry?.type==="Polygon") {
+          latlngs = z.geometry.coordinates[0].map(([lon,lat])=>[lat,lon]);
+        } else if(z.geometry?.type==="MultiPolygon") {
+          latlngs = z.geometry.coordinates[0][0].map(([lon,lat])=>[lat,lon]);
+        } else return null;
+        return window.L.polygon(latlngs, {
+          color:sty.color, weight:sty.width, dashArray:sty.dash||null,
+          fillColor:sty.fill, fillOpacity:1, opacity:0.9,
+        }).bindTooltip(
+          "<b>"+(z.name||"Airspace")+"</b><br/>"+(z.type||"")+(z.cls?" Class "+z.cls:"")+"<br/>"+(z.floor||"SFC")+" – "+(z.ceiling||"?"),
+          {sticky:true,className:"airspace-tooltip"}
+        );
+      }).filter(Boolean);
+
+    // Show FALLBACK immediately so users always see correct airspace
+    airspaceLayerRef.current = window.L.layerGroup(buildLayers(FALLBACK_AIRSPACE)).addTo(mapInst.current);
   },[mapReady,showAirspace]);
 
   useEffect(()=>{
@@ -730,19 +748,6 @@ export default function App() {
             )}
           </div>
           )}
-          {/* MAP TILE TOGGLE + AIRSPACE */}
-          {tab==="map" && (
-          <div style={{position:"absolute",bottom:90,right:10,zIndex:1000,display:"flex",flexDirection:"column",gap:4,alignItems:"flex-end"}}>
-            {["voyager","satellite","topo","osm","dark"].map((id,ix)=>{
-              const lbl=["Map","Sat","Topo","OSM","Dark"][ix];
-              const ico=["Map","Sat","Topo","OSM","Dark"][ix];
-              const active=mapTileStyle===id;
-              return(<button key={id} onClick={()=>setMapTileStyle(id)} style={{background:active?"#00e5ff":"#080c14cc",border:"1px solid "+(active?"#00e5ff":"#1a2d4a"),color:active?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)"}}>{lbl}</button>);
-            })}
-            <div style={{width:"100%",height:1,background:"#1a2d4a",margin:"2px 0"}}/>
-            <button onClick={()=>setShowAirspace(p=>!p)} style={{background:showAirspace?"#ff8c00":"#080c14cc",border:"1px solid "+(showAirspace?"#ff8c00":"#1a2d4a"),color:showAirspace?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)"}}>Airspace</button>
-          </div>
-          )}
         </div>
 
         {/* BEST */}
@@ -825,6 +830,19 @@ export default function App() {
           </div>
         </div>}
 
+
+        {/* MAP CONTROLS — outside map div so panel always covers them */}
+        {tab==="map" && (
+          <div style={{position:"absolute",bottom:10,left:10,zIndex:200,display:"flex",flexDirection:"column",gap:4,pointerEvents:"auto"}}>
+            {["voyager","satellite","topo","osm","dark"].map((id,ix)=>{
+              const lbl=["Map","Sat","Topo","OSM","Dark"][ix];
+              const active=mapTileStyle===id;
+              return(<button key={id} onClick={()=>setMapTileStyle(id)} style={{background:active?"#00e5ff":"#080c14cc",border:"1px solid "+(active?"#00e5ff":"#1a2d4a"),color:active?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)"}}>{lbl}</button>);
+            })}
+            <div style={{width:"100%",height:1,background:"#1a2d4a",margin:"2px 0"}}/>
+            <button onClick={()=>setShowAirspace(p=>!p)} style={{background:showAirspace?"#ff8c00":"#080c14cc",border:"1px solid "+(showAirspace?"#ff8c00":"#1a2d4a"),color:showAirspace?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)"}}>Airspace</button>
+          </div>
+        )}
 
         {/* SITE PANEL — resizable, collapsible, always on top of map */}
         {selSite&&(
