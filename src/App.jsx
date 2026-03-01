@@ -726,7 +726,7 @@ export default function App() {
             </div>
           </div>
           {/* MAP TILE TOGGLE + AIRSPACE */}
-          <div style={{position:"absolute",bottom:90,left:10,zIndex:1000,display:tab==="map"?"flex":"none",display:"flex",flexDirection:"column",gap:4}}>
+          <div style={{position:"absolute",bottom:90,left:10,zIndex:1000,display:tab==="map"?"flex":"none",flexDirection:"column",gap:4}}>
             {[
               {id:"voyager",   label:"🗺 Map",     title:"Street map"},
               {id:"satellite", label:"🛰 Sat",     title:"Satellite"},
