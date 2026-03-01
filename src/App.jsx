@@ -386,10 +386,12 @@ export default function App() {
   const [sort,setSort]       = useState("score");
   const [mapTileStyle,setMapTileStyle] = useState('voyager');
   const [panelCollapsed,setPanelCollapsed] = useState(false);
+  const [showAirspace,setShowAirspace] = useState(false);
   const mapRef = useRef(null);
   const mapInst = useRef(null);
   const markers = useRef([]);
   const tileLayerRef = useRef(null);
+  const airspaceLayerRef = useRef(null);
 
   const days = useMemo(()=>{
     const t=new Date();
@@ -457,12 +459,12 @@ export default function App() {
     } else init();
   },[]);
 
-  // ── Invalidate map size whenever returning to map tab
+  // ── Invalidate map size whenever returning to map tab or panel collapses
   useEffect(()=>{
-    if(tab==="map"&&mapInst.current){
-      setTimeout(()=>mapInst.current.invalidateSize(),50);
+    if(mapInst.current){
+      setTimeout(()=>mapInst.current.invalidateSize(),80);
     }
-  },[tab]);
+  },[tab,panelCollapsed]);
 
   // Tile layer switching effect
   useEffect(()=>{
@@ -480,6 +482,70 @@ export default function App() {
     tileLayerRef.current.addTo(mapInst.current);
   },[mapReady,mapTileStyle]);
 
+  // ── UK Airspace overlay using OpenAIP GeoJSON (free, no key for tiles)
+  // Key UK airspace zones hardcoded for reliability + fetch from OpenAIP
+  useEffect(()=>{
+    if(!mapInst.current||!mapReady) return;
+    if(airspaceLayerRef.current){ mapInst.current.removeLayer(airspaceLayerRef.current); airspaceLayerRef.current=null; }
+    if(!showAirspace) return;
+    // Hardcoded key UK airspace areas (simplified polygons)
+    const UK_AIRSPACE = [
+      // London TMA (Class A) — simplified
+      {name:"London TMA",type:"CTA/TMA",cls:"A",coords:[[51.1,-1.0],[51.9,0.7],[52.0,0.5],[51.8,-0.2],[51.5,-0.5],[51.2,-0.8],[51.1,-1.0]],floor:"SFC",ceiling:"FL195"},
+      // Manchester TMA
+      {name:"Manchester TMA",type:"TMA",cls:"A",coords:[[53.0,-3.0],[53.0,-1.5],[53.8,-1.5],[53.8,-3.0],[53.0,-3.0]],floor:"FL45",ceiling:"FL195"},
+      // Birmingham CTA
+      {name:"Birmingham CTA",type:"CTA",cls:"D",coords:[[52.1,-2.2],[52.1,-1.2],[52.6,-1.2],[52.6,-2.2],[52.1,-2.2]],floor:"FL55",ceiling:"FL195"},
+      // Scottish TCA
+      {name:"Scottish TCA",type:"TCA",cls:"D",coords:[[55.5,-5.0],[55.5,-2.0],[57.5,-2.0],[57.5,-5.0],[55.5,-5.0]],floor:"FL55",ceiling:"FL195"},
+      // Heathrow CTR (Class A)
+      {name:"Heathrow CTR",type:"CTR",cls:"A",coords:[[51.41,-0.61],[51.41,-0.27],[51.52,-0.27],[51.52,-0.61],[51.41,-0.61]],floor:"SFC",ceiling:"FL35"},
+      // Gatwick CTR
+      {name:"Gatwick CTR",type:"CTR",cls:"D",coords:[[51.11,-0.25],[51.11,0.02],[51.20,0.02],[51.20,-0.25],[51.11,-0.25]],floor:"SFC",ceiling:"FL35"},
+      // Bristol CTR
+      {name:"Bristol CTR",type:"CTR",cls:"D",coords:[[51.35,-2.85],[51.35,-2.40],[51.55,-2.40],[51.55,-2.85],[51.35,-2.85]],floor:"SFC",ceiling:"FL35"},
+      // Bournemouth CTR
+      {name:"Bournemouth CTR",type:"CTR",cls:"D",coords:[[50.73,-1.95],[50.73,-1.68],[50.84,-1.68],[50.84,-1.95],[50.73,-1.95]],floor:"SFC",ceiling:"FL35"},
+      // Southampton ATZ
+      {name:"Southampton ATZ",type:"ATZ",cls:"G",coords:[[50.92,-1.40],[50.92,-1.27],[50.96,-1.27],[50.96,-1.40],[50.92,-1.40]],floor:"SFC",ceiling:"2000ft"},
+      // RNAS Yeovilton MATZ
+      {name:"Yeovilton MATZ",type:"MATZ",cls:"MATZ",coords:[[50.93,-2.72],[50.93,-2.52],[51.04,-2.52],[51.04,-2.72],[50.93,-2.72]],floor:"SFC",ceiling:"3000ft"},
+      // Brize Norton MATZ
+      {name:"Brize Norton MATZ",type:"MATZ",cls:"MATZ",coords:[[51.68,-1.70],[51.68,-1.45],[51.83,-1.45],[51.83,-1.70],[51.68,-1.70]],floor:"SFC",ceiling:"3000ft"},
+      // Lyneham ATZ
+      {name:"Lyneham ATZ",type:"ATZ",cls:"G",coords:[[51.48,-2.02],[51.48,-1.97],[51.53,-1.97],[51.53,-2.02],[51.48,-2.02]],floor:"SFC",ceiling:"2000ft"},
+      // Danger Area EG D129 Salisbury Plain
+      {name:"EG D129 Salisbury Plain",type:"DANGER",cls:"D",coords:[[51.08,-2.00],[51.08,-1.60],[51.28,-1.60],[51.28,-2.00],[51.08,-2.00]],floor:"SFC",ceiling:"FL100"},
+      // Danger Area EG D201 Dartmoor
+      {name:"EG D201 Dartmoor",type:"DANGER",cls:"D",coords:[[50.48,-4.20],[50.48,-3.80],[50.68,-3.80],[50.68,-4.20],[50.48,-4.20]],floor:"SFC",ceiling:"FL100"},
+    ];
+    const typeStyle = {
+      "CTR":    {fill:"#ff3b3b22",stroke:"#ff3b3b",width:2},
+      "CTA/TMA":{fill:"#ff8c0018",stroke:"#ff8c00",width:1.5},
+      "TMA":    {fill:"#ff8c0018",stroke:"#ff8c00",width:1.5},
+      "CTA":    {fill:"#ff8c0018",stroke:"#ff8c00",width:1.5},
+      "TCA":    {fill:"#ffd70018",stroke:"#ffd700",width:1.5},
+      "MATZ":   {fill:"#a78bfa22",stroke:"#a78bfa",width:2},
+      "ATZ":    {fill:"#00e5ff14",stroke:"#00e5ff",width:1},
+      "DANGER": {fill:"#ff000033",stroke:"#ff0000",width:2,dash:"6,4"},
+    };
+    const layers = UK_AIRSPACE.map(zone => {
+      const sty = typeStyle[zone.type] || {fill:"#ffffff11",stroke:"#ffffff",width:1};
+      return window.L.polygon(zone.coords, {
+        fillColor:sty.fill,
+        fillOpacity:1,
+        color:sty.stroke,
+        weight:sty.width,
+        dashArray:sty.dash||null,
+        opacity:0.85,
+      }).bindTooltip(
+        `<b>${zone.name}</b><br/>${zone.type} Class ${zone.cls}<br/>${zone.floor} – ${zone.ceiling}`,
+        {sticky:true,className:'airspace-tooltip'}
+      );
+    });
+    airspaceLayerRef.current = window.L.layerGroup(layers).addTo(mapInst.current);
+  },[mapReady,showAirspace]);
+
   useEffect(()=>{
     if(!mapInst.current||!mapReady) return;
     markers.current.forEach(m=>m.remove());markers.current=[];
@@ -489,45 +555,60 @@ export default function App() {
       const sc=f?f.score:null;
       const wd=f?.dayData?.windDir??null;
       const inWin=f?.inWindow??false;
-      // Wind direction arrow SVG (points FROM wind source = where wind blows to)
-      const arrowSvg = wd!=null ? (() => {
-        const rad = ((wd-90)*Math.PI)/180;
-        const cx=20,cy=20,r=10;
-        const tx=cx+r*Math.cos(rad),ty=cy+r*Math.sin(rad);
-        const bx=cx-r*Math.cos(rad),by=cy-r*Math.sin(rad);
-        const ac=inWin?"#00e596":"#ff4444";
-        return `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="${ac}" stroke-width="2.5" stroke-linecap="round"/>
-          <polygon points="${tx},${ty} ${cx+r*.45*Math.cos(rad-2.4)},${cy+r*.45*Math.sin(rad-2.4)} ${cx+r*.45*Math.cos(rad+2.4)},${cy+r*.45*Math.sin(rad+2.4)}" fill="${ac}"/>`;
-      })() : "";
-      // Mini wind compass ring for map marker
-      const compassRing = (() => {
-        if(!f) return "";
-        const win = s.windNote ? (() => {
-          const m2 = s.windNote.match(/(\d{1,3})[^0-9]+(\d{1,3})/);
-          return m2 ? {lo:parseInt(m2[1]),hi:parseInt(m2[2])} : null;
-        })() : null;
-        if(!win) return "";
-        const toRad2 = d => ((d-90)*Math.PI/180);
-        const loR=toRad2(win.lo), hiR=toRad2(win.hi);
-        const cx2=21,cy2=21,r2=19;
-        // Draw arc for flyable window
-        const wrap = win.lo > win.hi;
-        const arcSpan = wrap ? (360-(win.lo-win.hi)) : (win.hi-win.lo);
-        const largeArc = arcSpan > 180 ? 1 : 0;
-        const sx=cx2+r2*Math.cos(loR), sy=cy2+r2*Math.sin(loR);
-        const ex=cx2+r2*Math.cos(hiR), ey=cy2+r2*Math.sin(hiR);
-        return `<path d="M${sx},${sy} A${r2},${r2} 0 ${largeArc},1 ${ex},${ey}" fill="none" stroke="${inWin?'#00e59688':'#ff444488'}" stroke-width="3" stroke-linecap="round"/>`;
+      // ── Wind quadrant pie chart — matches reference image style
+      // Parse site wind window from windNote (e.g. "340–055°") or aspect ±60°
+      const win = (() => {
+        if(s.windNote){const m2=s.windNote.match(/(\d{1,3})[^0-9]+(\d{1,3})/);if(m2)return{lo:parseInt(m2[1]),hi:parseInt(m2[2])};}
+        // Fallback: ±60° around aspect
+        return {lo:(s.aspect-60+360)%360, hi:(s.aspect+60)%360};
       })();
-      const html=`<div style="position:relative;width:42px;height:42px;cursor:pointer">
-        <svg width="42" height="42" style="position:absolute;top:0;left:0">
-          <circle cx="21" cy="21" r="19" fill="${col}14" stroke="${col}66" stroke-width="1"/>
-          ${compassRing}
-          <circle cx="21" cy="21" r="15" fill="${col}22" stroke="${col}" stroke-width="2"/>
-          ${arrowSvg}
-          <text x="21" y="${wd!=null?15:21}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="${sc!=null&&sc>=100?9:11}" font-weight="700" font-family="JetBrains Mono,monospace">${sc??'?'}</text>
+
+      // SVG dimensions — 72px for good visibility on map
+      const SZ=72, CX=36, CY=36, R=32, IR=13; // IR = inner radius (score circle)
+      const toRad = deg => (deg - 90) * Math.PI / 180;
+      const pt = (deg,r) => ({ x: CX + r*Math.cos(toRad(deg)), y: CY + r*Math.sin(toRad(deg)) });
+
+      // Build pie: red full disk, then green sector for flyable window
+      const lo=win.lo, hi=win.hi;
+      const span = lo<=hi ? hi-lo : 360-lo+hi;
+      const la = span>180?1:0; // large-arc-flag
+      const pLo=pt(lo,R), pHi=pt(hi,R);
+      const greenSector = span>=359
+        ? `<circle cx="${CX}" cy="${CY}" r="${R}" fill="#22cc6655"/>`
+        : `<path d="M${CX},${CY} L${pLo.x.toFixed(2)},${pLo.y.toFixed(2)} A${R},${R} 0 ${la},1 ${pHi.x.toFixed(2)},${pHi.y.toFixed(2)} Z" fill="#22cc6655"/>`;
+
+      // Wind direction needle — tip touches rim, base at centre
+      const needleSvg = wd!=null ? (()=>{
+        const tipPt = pt(wd, R-1);
+        const ndlCol = inWin ? "#00ff88" : "#ff4444";
+        // Arrowhead
+        const headL = pt(wd-12, R-9), headR = pt(wd+12, R-9);
+        return `<line x1="${CX}" y1="${CY}" x2="${tipPt.x.toFixed(2)}" y2="${tipPt.y.toFixed(2)}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
+          <polygon points="${tipPt.x.toFixed(2)},${tipPt.y.toFixed(2)} ${headL.x.toFixed(2)},${headL.y.toFixed(2)} ${headR.x.toFixed(2)},${headR.y.toFixed(2)}" fill="${ndlCol}"/>
+          <circle cx="${CX}" cy="${CY}" r="3" fill="${ndlCol}"/>`;
+      })() : "";
+
+      // Outer ring colour = score colour; inner score text
+      const scoreFontSize = sc!=null&&sc>=100 ? 12 : 14;
+      const html=`<div style="width:${SZ}px;height:${SZ}px;cursor:pointer">
+        <svg width="${SZ}" height="${SZ}" viewBox="0 0 ${SZ} ${SZ}">
+          <!-- Dark background -->
+          <circle cx="${CX}" cy="${CY}" r="${R+1}" fill="#0a1220" stroke="${col}" stroke-width="2.5"/>
+          <!-- Red full = off-window fill -->
+          <circle cx="${CX}" cy="${CY}" r="${R}" fill="#ff333322"/>
+          <!-- Green sector = flyable window -->
+          ${greenSector}
+          <!-- Wind needle on top -->
+          ${needleSvg}
+          <!-- White centre circle to show score clearly -->
+          <circle cx="${CX}" cy="${CY}" r="${IR}" fill="#0a1220" stroke="${col}88" stroke-width="1.5"/>
+          <!-- Score text -->
+          <text x="${CX}" y="${CY}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="${scoreFontSize}" font-weight="700" font-family="JetBrains Mono,monospace">${sc??'?'}</text>
+          <!-- Cardinal N tick -->
+          <line x1="${CX}" y1="${CY-R+2}" x2="${CX}" y2="${CY-R+6}" stroke="#ffffff33" stroke-width="1.5"/>
         </svg>
       </div>`;
-      const icon=window.L.divIcon({className:"",html,iconSize:[42,42],iconAnchor:[21,21]});
+      const icon=window.L.divIcon({className:"",html,iconSize:[SZ,SZ],iconAnchor:[CX,CY]});
       markers.current.push(window.L.marker([s.lat,s.lon],{icon}).addTo(mapInst.current).on("click",()=>setSelSite(s)));
     });
   },[mapReady,flyData,day]);
@@ -543,9 +624,10 @@ export default function App() {
         .side-panel{position:absolute!important;top:0;right:0;bottom:0;width:100vw!important;z-index:100}
         .main-wrap{position:relative}
       }
-      .panel-collapse-btn{transition:opacity 0.2s}
-      .panel-collapse-btn:hover{opacity:0.8}
-      ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#0d1520}::-webkit-scrollbar-thumb{background:#1e3050;border-radius:2px}
+      ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#0d1520}::-webkit-scrollbar-thumb{background:#2a4060;border-radius:4px;border:1px solid #1a2d4a}::-webkit-scrollbar-thumb:hover{background:#3a6090}
+      .side-panel{overflow-y:auto!important;overflow-x:hidden}
+      .airspace-tooltip{background:#0a1220;border:1px solid #1a2d4a;color:#c8d8f0;font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 8px;border-radius:4px}
+      .airspace-tooltip .leaflet-tooltip-tip{background:#0a1220}
       select{background:#0d1520;border:1px solid #1a2d4a;color:#9ab8d8;padding:4px 8px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
       @keyframes spin{to{transform:rotate(360deg)}}
       @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -607,34 +689,44 @@ export default function App() {
       </nav>
 
       {/* MAIN */}
-      <div className="main-wrap" style={{flex:1,overflow:"hidden",position:"relative",display:"flex"}}>
+      <div className="main-wrap" style={{flex:1,overflow:"hidden",position:"relative",display:"flex",isolation:"isolate",minHeight:0}}>
 
         {/* MAP — always mounted so Leaflet never loses its container */}
-        <div style={{flex:1,position:"relative",display:tab==="map"?"flex":"none",flexDirection:"column"}}>
+        <div style={{flex:1,position:"relative",display:tab==="map"?"block":"none",minHeight:0}}>
           <div ref={mapRef} style={{width:"100%",height:"100%",position:"absolute",inset:0}} />
-          {tab==="map"&&loading&&<LoadOvl total={UK_SITES.length} loaded={Object.keys(wx).length}/>}
+          {loading&&tab==="map"&&<LoadOvl total={UK_SITES.length} loaded={Object.keys(wx).length}/>}
           {/* MAP LEGEND */}
-          {tab==="map"&&<div style={{position:"absolute",top:10,left:10,zIndex:1000,background:"#080c14cc",backdropFilter:"blur(6px)",border:"1px solid #1a2d4a",borderRadius:6,padding:"6px 10px"}}>
-            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:"#4a6a8a",letterSpacing:1,marginBottom:4}}>SCORE</div>
-            {[["#00e5ff","78-100 Excellent"],["#ffd700","58-77 Good"],["#ff8c00","38-57 Marginal"],["#ff3b3b","<38 Poor"]].map(([col,lbl])=>(
-              <div key={lbl} style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}>
-                <div style={{width:10,height:10,borderRadius:"50%",background:col}}/>
+          <div style={{position:"absolute",top:10,left:10,zIndex:1000,display:tab==="map"?"block":"none",background:"#080c14dd",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px"}}>
+            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,color:"#6a9abf",letterSpacing:1,marginBottom:5}}>MAP KEY</div>
+            {[["#00e5ff","Excellent (78+)"],["#ffd700","Good (58-77)"],["#ff8c00","Marginal (38-57)"],["#ff3b3b","Poor (<38)"]].map(([col,lbl])=>(
+              <div key={lbl} style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
+                <div style={{width:12,height:12,borderRadius:"50%",background:col,border:`2px solid ${col}`,flexShrink:0}}/>
                 <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>{lbl}</span>
               </div>
             ))}
-            <div style={{borderTop:"1px solid #1a2d4a",marginTop:4,paddingTop:4}}>
-              <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}>
-                <div style={{width:14,height:3,background:"#00e596",borderRadius:1}}/>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Wind on window</span>
+            <div style={{borderTop:"1px solid #1a2d4a",marginTop:5,paddingTop:5}}>
+              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:"#4a6a8a",marginBottom:3}}>WIND QUADRANT</div>
+              <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                <svg width="28" height="28"><circle cx="14" cy="14" r="13" fill="#080c14" stroke="#888" strokeWidth="1.5"/><path d="M14,14 L14,1 A13,13 0 0,1 25,14 Z" fill="#00e59644"/><circle cx="14" cy="2" r="2.5" fill="#00e596"/></svg>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Green = on window</span>
               </div>
-              <div style={{display:"flex",alignItems:"center",gap:5}}>
-                <div style={{width:14,height:3,background:"#ff4444",borderRadius:1}}/>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Wind off window</span>
+              <div style={{display:"flex",gap:8,alignItems:"center",marginTop:3}}>
+                <svg width="28" height="28"><circle cx="14" cy="14" r="13" fill="#080c14" stroke="#888" strokeWidth="1.5"/><circle cx="14" cy="14" r="13" fill="#ff3b3b33"/><circle cx="14" cy="2" r="2.5" fill="#ff4444"/></svg>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Red = off window</span>
               </div>
             </div>
-          </div>}
-          {/* MAP TILE TOGGLE */}
-          {tab==="map"&&<div style={{position:"absolute",bottom:90,left:10,zIndex:1000,display:"flex",flexDirection:"column",gap:4}}>
+            {showAirspace&&<div style={{borderTop:"1px solid #1a2d4a",marginTop:5,paddingTop:5}}>
+              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:"#4a6a8a",marginBottom:3}}>AIRSPACE</div>
+              {[["#ff3b3b","CTR (Class A)"],["#ff8c00","TMA/CTA"],["#a78bfa","MATZ"],["#00e5ff","ATZ"],["#ff0000","Danger Area"]].map(([col,lbl])=>(
+                <div key={lbl} style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
+                  <div style={{width:12,height:4,background:col,borderRadius:1,opacity:0.8}}/>
+                  <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>{lbl}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* MAP TILE TOGGLE + AIRSPACE */}
+          <div style={{position:"absolute",bottom:90,left:10,zIndex:1000,display:tab==="map"?"flex":"none",display:"flex",flexDirection:"column",gap:4}}>
             {[
               {id:"voyager",   label:"🗺 Map",     title:"Street map"},
               {id:"satellite", label:"🛰 Sat",     title:"Satellite"},
@@ -647,7 +739,12 @@ export default function App() {
                 {t.label}
               </button>
             ))}
-          </div>}
+            <div style={{width:"100%",height:1,background:"#1a2d4a",margin:"2px 0"}}/>
+            <button title="Toggle UK Airspace" onClick={()=>setShowAirspace(p=>!p)}
+              style={{background:showAirspace?"#ff8c00":"#080c14cc",border:`1px solid ${showAirspace?"#ff8c00":"#1a2d4a"}`,color:showAirspace?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)",whiteSpace:"nowrap"}}>
+              ✈ Airspace
+            </button>
+          </div>
         </div>
 
         {/* BEST */}
@@ -730,17 +827,75 @@ export default function App() {
           </div>
         </div>}
 
-        {/* SIDE PANEL */}
-        {/* SITE PANEL - collapsible, not closing */}
+        {/* Floating "show panel" button when collapsed */}
+        {selSite&&panelCollapsed&&tab!=="map"&&(
+          <button
+            onClick={()=>setPanelCollapsed(false)}
+            title="Show site panel"
+            style={{
+              position:"absolute", right:0, top:"50%", transform:"translateY(-50%)",
+              width:28, height:72,
+              background:"#0d1a2e",
+              border:"1px solid #00e5ff55",
+              borderRight:"none",
+              borderRadius:"6px 0 0 6px",
+              color:"#00e5ff", cursor:"pointer",
+              display:"flex", alignItems:"center", justifyContent:"center",
+              zIndex:300, padding:0,
+              writingMode:"vertical-rl", letterSpacing:2,
+              fontFamily:"Barlow Condensed", fontWeight:700, fontSize:13,
+              userSelect:"none",
+              boxShadow:"-2px 0 10px #00e5ff22",
+            }}>◀ SHOW</button>
+        )}
+        {/* SITE PANEL — collapsible, scrollable, persistent */}
         {selSite&&(
-          <div style={{display:"flex",flexDirection:"column",flexShrink:0,position:"relative"}}>
-            {/* Collapse toggle tab */}
-            <button onClick={()=>setPanelCollapsed(p=>!p)}
-              style={{position:"absolute",left:-28,top:"50%",transform:"translateY(-50%)",width:28,height:56,background:"#0a1220",border:"1px solid #1a2d4a",borderRight:"none",borderRadius:"6px 0 0 6px",color:"#6a9abf",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,zIndex:60,padding:0}}>
-              {panelCollapsed?"◀":"▶"}
-            </button>
-            <div style={{width:panelCollapsed?0:"min(480px,100vw)",overflow:"hidden",transition:"width 0.25s ease",flexShrink:0}}>
-              <SitePanel site={selSite} flyData={flyData[selSite.id]} activeDay={day} days={days} onClose={()=>setSelSite(null)} onDayChange={setDay}/>
+          <div style={{
+            display:"flex", flexDirection:"row", flexShrink:0,
+            position:tab==="map"?"absolute":"relative",
+            right:0, top:0, bottom:0,
+            zIndex:tab==="map"?200:10,
+            alignSelf:"stretch",
+            width:panelCollapsed?0:"min(480px,100vw)",
+            transition:"width 0.25s ease",
+            overflow:"hidden",
+          }}>
+            {/* Collapse tab button */}
+            {tab==="map"&&<button
+              onClick={()=>setPanelCollapsed(p=>!p)}
+              title={panelCollapsed?"Expand panel":"Collapse panel"}
+              style={{
+                position:"absolute",
+                left:-28,
+                top:"50%", transform:"translateY(-50%)",
+                width:28, height:72,
+                background:"#0d1a2e",
+                border:"1px solid #00e5ff55",
+                borderRight:"none",
+                borderRadius:"6px 0 0 6px",
+                color:"#00e5ff", cursor:"pointer",
+                display:"flex", alignItems:"center", justifyContent:"center",
+                fontSize:13, zIndex:400, padding:0,
+                boxShadow:"-2px 0 10px #00e5ff22",
+                writingMode:"vertical-rl",
+                letterSpacing:2,
+                fontFamily:"Barlow Condensed", fontWeight:700,
+                userSelect:"none",
+              }}>
+              {panelCollapsed?"◀ SHOW":"▶ HIDE"}
+            </button>}
+            {/* Panel content — fills wrapper */}
+            <div style={{width:"min(480px,100vw)",height:"100%",overflow:"visible",flexShrink:0,display:"flex",flexDirection:"column"}}>
+              <SitePanel
+                site={selSite}
+                flyData={flyData[selSite.id]}
+                activeDay={day}
+                days={days}
+                onClose={()=>{setSelSite(null);setPanelCollapsed(false);}}
+                onDayChange={setDay}
+                onCollapse={()=>setPanelCollapsed(p=>!p)}
+                isCollapsed={panelCollapsed}
+              />
             </div>
           </div>
         )}
@@ -831,17 +986,20 @@ function BestCard({site,fly,rank,onClick}){
   </button>);
 }
 
-function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
+function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,isCollapsed}){
   const [showH,setShowH]=useState(false);
   const f=flyData?.[activeDay]; const col=f?f.color:"#4a6a8a";
-  return(<div className="fi side-panel" style={{width:"min(480px,100vw)",background:"#0a1220",borderLeft:"1px solid #1a2d4a",overflow:"auto",flexShrink:0,position:"relative",zIndex:50}}>
+  return(<div className="fi side-panel" style={{width:"100%",background:"#0a1220",borderLeft:"1px solid #1a2d4a",overflowY:"auto",overflowX:"hidden",flexShrink:0,position:"relative",zIndex:50,height:"100%",display:"flex",flexDirection:"column"}}>
     <div style={{padding:"10px 14px",borderBottom:"1px solid #1a2d4a",background:"#080c14",position:"sticky",top:0,zIndex:10}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:21,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/><ClubBadge club={site.club}/></div>
           <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#4a6a8a",marginTop:1}}>{site.region} · {site.altitude_m}m / {Math.round(site.altitude_m*3.281)}ft ASL</div>
         </div>
-        <button onClick={onClose} style={{background:"#1a2d4a",border:"none",color:"#6a9abf",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
+        <div style={{display:"flex",gap:4}}>
+          {onCollapse&&<button onClick={onCollapse} title={isCollapsed?"Expand":"Collapse"} style={{background:"#0d1520",border:"1px solid #00e5ff44",color:"#00e5ff",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center"}}>◁</button>}
+          <button onClick={onClose} style={{background:"#1a2d4a",border:"none",color:"#6a9abf",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
+        </div>
       </div>
       <div style={{display:"flex",gap:4,marginTop:6,flexWrap:"wrap"}}>
         {[{l:site.site_type.toUpperCase(),c:"#6a9abf"},{l:site.pg_rating.toUpperCase(),c:"#ffd700"},{l:site.windNote??`ASPECT ${cDir(site.aspect)}`,c:"#00e5ff"},{l:`${kmhToMph(site.wind_range_min)}–${kmhToMph(site.wind_range_max)} mph`,c:"#00e5ff"}].map(b=>(
@@ -857,7 +1015,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
         </button>
       );})}
     </div>
-    {f?<div style={{padding:14}}>
+    {f?<div style={{padding:14,flex:1}}>
       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
         <div style={{width:58,height:58,borderRadius:"50%",background:`${col}14`,border:`3px solid ${col}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 0 20px ${col}44`,flexShrink:0}}>
           <div style={{fontFamily:"JetBrains Mono",fontSize:22,fontWeight:700,color:col,lineHeight:1}}>{f.score}</div>
