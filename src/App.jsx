@@ -152,6 +152,18 @@ function processWeatherData(raw, rawUKMO, rawICON, rawGFS) {
     const slP = arr => sl(arr).slice(6,18);
     const avg = arr => arr.length ? arr.reduce((a,b)=>a+(b||0),0)/arr.length : 0;
     const tempMax = d.temperature_2m_max[i]??15;
+    const hourlyTemp2m = sl(raw.hourly.temperature_2m ?? []);
+    const hourlyDew2m  = sl(raw.hourly.dewpoint_2m ?? []);
+    // Hourly cloud base AGL: (T - Td) * 400 feet per degree (standard Wobus/lifted condensation formula)
+    // Convert feet→metres: * 0.3048. Use surface temp and dewpoint at each hour.
+    const hourlyCloudBase = hourlyTemp2m.map((t,h) => {
+      const td = hourlyDew2m[h] ?? null;
+      if (t == null || td == null) return null;
+      const spread = Math.max(0, t - td);
+      return Math.round(spread * 400 * 0.3048); // metres AGL
+    });
+    // Daytime average cloud base (06-18h)
+    const dayCB = hourlyCloudBase.slice(6,18).filter(v=>v!=null);
     const dewpoint = avg(slP(raw.hourly.dewpoint_2m)) || ((d.temperature_2m_min[i]??8)-2);
     const hourlyBL = sl(raw.hourly.boundary_layer_height);
     const avgBL    = avg(slP(raw.hourly.boundary_layer_height));
@@ -212,7 +224,8 @@ function processWeatherData(raw, rawUKMO, rawICON, rawGFS) {
       tempMax, cape: avgCAPE,
       blHeight:  avgBL,
       visibility:avg(slP(raw.hourly.visibility))||8000,
-      cloudBase: Math.round(Math.max(0,(tempMax-dewpoint)*400)),
+      cloudBase: dayCB.length ? Math.round(dayCB.reduce((a,b)=>a+b,0)/dayCB.length) : Math.round(Math.max(0,(tempMax-dewpoint)*400*0.3048)),
+      hourlyCloudBase,
       cloudCover:Math.round(avgCloud),
       hourlyWindSpeed: sl(raw.hourly.windspeed_10m),
       hourlyGusts:     sl(raw.hourly.windgusts_10m),
@@ -371,9 +384,12 @@ export default function App() {
   const [region,setRegion]   = useState("All");
   const [sport,setSport]     = useState("All");
   const [sort,setSort]       = useState("score");
+  const [mapTileStyle,setMapTileStyle] = useState('voyager');
+  const [panelCollapsed,setPanelCollapsed] = useState(false);
   const mapRef = useRef(null);
   const mapInst = useRef(null);
   const markers = useRef([]);
+  const tileLayerRef = useRef(null);
 
   const days = useMemo(()=>{
     const t=new Date();
@@ -427,12 +443,11 @@ export default function App() {
 
   useEffect(()=>{load();},[load]);
 
+  // ── Map init: run once on mount, keep alive always (never unmount map)
   useEffect(()=>{
-    if(tab!=="map") return;
     const init=()=>{
       if(!window.L||!mapRef.current||mapInst.current) return;
       mapInst.current=window.L.map(mapRef.current,{zoomControl:false}).setView([52.5,-2.8],6);
-      window.L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"&copy; CARTO",maxZoom:19}).addTo(mapInst.current);
       window.L.control.zoom({position:"bottomright"}).addTo(mapInst.current);
       setMapReady(true);
     };
@@ -440,7 +455,30 @@ export default function App() {
       const lnk=document.createElement("link");lnk.rel="stylesheet";lnk.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";document.head.appendChild(lnk);
       const scr=document.createElement("script");scr.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";scr.onload=init;document.head.appendChild(scr);
     } else init();
+  },[]);
+
+  // ── Invalidate map size whenever returning to map tab
+  useEffect(()=>{
+    if(tab==="map"&&mapInst.current){
+      setTimeout(()=>mapInst.current.invalidateSize(),50);
+    }
   },[tab]);
+
+  // Tile layer switching effect
+  useEffect(()=>{
+    if(!mapInst.current||!mapReady) return;
+    const TILES = {
+      voyager:   {url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",    attr:"© OpenStreetMap © CARTO"},
+      satellite: {url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",attr:"© Esri"},
+      dark:      {url:"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",              attr:"© OpenStreetMap © CARTO"},
+      topo:      {url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",                           attr:"© OpenTopoMap"},
+      osm:       {url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",                         attr:"© OpenStreetMap"},
+    };
+    const t = TILES[mapTileStyle] || TILES.voyager;
+    if(tileLayerRef.current){ mapInst.current.removeLayer(tileLayerRef.current); }
+    tileLayerRef.current = window.L.tileLayer(t.url,{attribution:t.attr,maxZoom:19});
+    tileLayerRef.current.addTo(mapInst.current);
+  },[mapReady,mapTileStyle]);
 
   useEffect(()=>{
     if(!mapInst.current||!mapReady) return;
@@ -461,11 +499,32 @@ export default function App() {
         return `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="${ac}" stroke-width="2.5" stroke-linecap="round"/>
           <polygon points="${tx},${ty} ${cx+r*.45*Math.cos(rad-2.4)},${cy+r*.45*Math.sin(rad-2.4)} ${cx+r*.45*Math.cos(rad+2.4)},${cy+r*.45*Math.sin(rad+2.4)}" fill="${ac}"/>`;
       })() : "";
+      // Mini wind compass ring for map marker
+      const compassRing = (() => {
+        if(!f) return "";
+        const win = s.windNote ? (() => {
+          const m2 = s.windNote.match(/(\d{1,3})[^0-9]+(\d{1,3})/);
+          return m2 ? {lo:parseInt(m2[1]),hi:parseInt(m2[2])} : null;
+        })() : null;
+        if(!win) return "";
+        const toRad2 = d => ((d-90)*Math.PI/180);
+        const loR=toRad2(win.lo), hiR=toRad2(win.hi);
+        const cx2=21,cy2=21,r2=19;
+        // Draw arc for flyable window
+        const wrap = win.lo > win.hi;
+        const arcSpan = wrap ? (360-(win.lo-win.hi)) : (win.hi-win.lo);
+        const largeArc = arcSpan > 180 ? 1 : 0;
+        const sx=cx2+r2*Math.cos(loR), sy=cy2+r2*Math.sin(loR);
+        const ex=cx2+r2*Math.cos(hiR), ey=cy2+r2*Math.sin(hiR);
+        return `<path d="M${sx},${sy} A${r2},${r2} 0 ${largeArc},1 ${ex},${ey}" fill="none" stroke="${inWin?'#00e59688':'#ff444488'}" stroke-width="3" stroke-linecap="round"/>`;
+      })();
       const html=`<div style="position:relative;width:42px;height:42px;cursor:pointer">
         <svg width="42" height="42" style="position:absolute;top:0;left:0">
-          <circle cx="21" cy="21" r="18" fill="${col}18" stroke="${col}" stroke-width="2"/>
+          <circle cx="21" cy="21" r="19" fill="${col}14" stroke="${col}66" stroke-width="1"/>
+          ${compassRing}
+          <circle cx="21" cy="21" r="15" fill="${col}22" stroke="${col}" stroke-width="2"/>
           ${arrowSvg}
-          <text x="21" y="${wd!=null?16:24}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="${sc!=null&&sc>=100?10:11}" font-weight="700" font-family="JetBrains Mono,monospace">${sc??'?'}</text>
+          <text x="21" y="${wd!=null?15:21}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="${sc!=null&&sc>=100?9:11}" font-weight="700" font-family="JetBrains Mono,monospace">${sc??'?'}</text>
         </svg>
       </div>`;
       const icon=window.L.divIcon({className:"",html,iconSize:[42,42],iconAnchor:[21,21]});
@@ -480,10 +539,12 @@ export default function App() {
       @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap');
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
       html,body{height:100%;background:#080c14;color:#c8d8f0;font-family:'Barlow Condensed',sans-serif}
-      @media(max-width:600px){
-        .side-panel{position:absolute!important;top:0;right:0;bottom:0;width:100%!important;z-index:100}
+      @media(max-width:700px){
+        .side-panel{position:absolute!important;top:0;right:0;bottom:0;width:100vw!important;z-index:100}
         .main-wrap{position:relative}
       }
+      .panel-collapse-btn{transition:opacity 0.2s}
+      .panel-collapse-btn:hover{opacity:0.8}
       ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#0d1520}::-webkit-scrollbar-thumb{background:#1e3050;border-radius:2px}
       select{background:#0d1520;border:1px solid #1a2d4a;color:#9ab8d8;padding:4px 8px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
       @keyframes spin{to{transform:rotate(360deg)}}
@@ -548,8 +609,46 @@ export default function App() {
       {/* MAIN */}
       <div className="main-wrap" style={{flex:1,overflow:"hidden",position:"relative",display:"flex"}}>
 
-        {/* MAP */}
-        {tab==="map"&&<div style={{flex:1,position:"relative"}}><div ref={mapRef} style={{width:"100%",height:"100%"}} />{loading&&<LoadOvl total={UK_SITES.length} loaded={Object.keys(wx).length}/>}</div>}
+        {/* MAP — always mounted so Leaflet never loses its container */}
+        <div style={{flex:1,position:"relative",display:tab==="map"?"flex":"none",flexDirection:"column"}}>
+          <div ref={mapRef} style={{width:"100%",height:"100%",position:"absolute",inset:0}} />
+          {tab==="map"&&loading&&<LoadOvl total={UK_SITES.length} loaded={Object.keys(wx).length}/>}
+          {/* MAP LEGEND */}
+          {tab==="map"&&<div style={{position:"absolute",top:10,left:10,zIndex:1000,background:"#080c14cc",backdropFilter:"blur(6px)",border:"1px solid #1a2d4a",borderRadius:6,padding:"6px 10px"}}>
+            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:"#4a6a8a",letterSpacing:1,marginBottom:4}}>SCORE</div>
+            {[["#00e5ff","78-100 Excellent"],["#ffd700","58-77 Good"],["#ff8c00","38-57 Marginal"],["#ff3b3b","<38 Poor"]].map(([col,lbl])=>(
+              <div key={lbl} style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}>
+                <div style={{width:10,height:10,borderRadius:"50%",background:col}}/>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>{lbl}</span>
+              </div>
+            ))}
+            <div style={{borderTop:"1px solid #1a2d4a",marginTop:4,paddingTop:4}}>
+              <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}>
+                <div style={{width:14,height:3,background:"#00e596",borderRadius:1}}/>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Wind on window</span>
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:5}}>
+                <div style={{width:14,height:3,background:"#ff4444",borderRadius:1}}/>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Wind off window</span>
+              </div>
+            </div>
+          </div>}
+          {/* MAP TILE TOGGLE */}
+          {tab==="map"&&<div style={{position:"absolute",bottom:90,left:10,zIndex:1000,display:"flex",flexDirection:"column",gap:4}}>
+            {[
+              {id:"voyager",   label:"🗺 Map",     title:"Street map"},
+              {id:"satellite", label:"🛰 Sat",     title:"Satellite"},
+              {id:"topo",      label:"⛰ Topo",    title:"Topographic"},
+              {id:"osm",       label:"🌍 OSM",     title:"OpenStreetMap"},
+              {id:"dark",      label:"🌑 Dark",    title:"Dark mode"},
+            ].map(t=>(
+              <button key={t.id} title={t.title} onClick={()=>setMapTileStyle(t.id)}
+                style={{background:mapTileStyle===t.id?"#00e5ff":"#080c14cc",border:`1px solid ${mapTileStyle===t.id?"#00e5ff":"#1a2d4a"}`,color:mapTileStyle===t.id?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)",whiteSpace:"nowrap"}}>
+                {t.label}
+              </button>
+            ))}
+          </div>}
+        </div>
 
         {/* BEST */}
         {tab==="best"&&<div style={{flex:1,overflow:"auto",padding:12}} className="fi">
@@ -632,7 +731,19 @@ export default function App() {
         </div>}
 
         {/* SIDE PANEL */}
-        {selSite&&<SitePanel site={selSite} flyData={flyData[selSite.id]} activeDay={day} days={days} onClose={()=>setSelSite(null)} onDayChange={setDay}/>}
+        {/* SITE PANEL - collapsible, not closing */}
+        {selSite&&(
+          <div style={{display:"flex",flexDirection:"column",flexShrink:0,position:"relative"}}>
+            {/* Collapse toggle tab */}
+            <button onClick={()=>setPanelCollapsed(p=>!p)}
+              style={{position:"absolute",left:-28,top:"50%",transform:"translateY(-50%)",width:28,height:56,background:"#0a1220",border:"1px solid #1a2d4a",borderRight:"none",borderRadius:"6px 0 0 6px",color:"#6a9abf",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,zIndex:60,padding:0}}>
+              {panelCollapsed?"◀":"▶"}
+            </button>
+            <div style={{width:panelCollapsed?0:"min(480px,100vw)",overflow:"hidden",transition:"width 0.25s ease",flexShrink:0}}>
+              <SitePanel site={selSite} flyData={flyData[selSite.id]} activeDay={day} days={days} onClose={()=>setSelSite(null)} onDayChange={setDay}/>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* FOOTER */}
@@ -723,7 +834,7 @@ function BestCard({site,fly,rank,onClick}){
 function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
   const [showH,setShowH]=useState(false);
   const f=flyData?.[activeDay]; const col=f?f.color:"#4a6a8a";
-  return(<div className="fi side-panel" style={{width:"min(400px,100vw)",background:"#0a1220",borderLeft:"1px solid #1a2d4a",overflow:"auto",flexShrink:0,position:"relative",zIndex:50}}>
+  return(<div className="fi side-panel" style={{width:"min(480px,100vw)",background:"#0a1220",borderLeft:"1px solid #1a2d4a",overflow:"auto",flexShrink:0,position:"relative",zIndex:50}}>
     <div style={{padding:"10px 14px",borderBottom:"1px solid #1a2d4a",background:"#080c14",position:"sticky",top:0,zIndex:10}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div>
@@ -869,7 +980,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange}){
 // Shows BL height trend, W* thermal strength, trigger time, lifted index
 // Mirrors what pilots look for on RASP BLIPMAPs and Skylight
 function SoaringIndex({ dayData, site }) {
-  const { wStarMs, thermalTrigger, liftedIdx, cin, blHeight, cloudBase, hourlyBL, cape, sunrise, sunset, overcastKillsDay, cloudCover } = dayData;
+  const { wStarMs, thermalTrigger, liftedIdx, cin, blHeight, cloudBase, hourlyBL, hourlyCloudBase, cape, sunrise, sunset, overcastKillsDay, cloudCover } = dayData;
   const siteAlt = site.altitude_m;
 
   // RASP star rating (1-5) based on W* and BL height above site
@@ -937,12 +1048,13 @@ function SoaringIndex({ dayData, site }) {
           {/* BL curve */}
           <path d={blPath} fill="none" stroke="#00e5ff" strokeWidth={1.5}/>
           <path d={blPath + ` L ${pl+gw} ${H-pb} L ${pl} ${H-pb} Z`} fill="#00e5ff08"/>
-          {/* Cloud base line */}
+          {/* Cloud base line (ASL = cloudBase AGL + site altitude) */}
           {cloudBase > 0 && (() => {
-            const cbY = blY(cloudBase + siteAlt);
+            const cbASL = cloudBase + siteAlt;
+            const cbLineY = blY(cbASL);
             return (<>
-              <line x1={pl} y1={cbY} x2={pl+gw} y2={cbY} stroke="#9ab8d844" strokeWidth={1} strokeDasharray="2,4"/>
-              <text x={pl-3} y={cbY+3} textAnchor="end" fill="#9ab8d877" fontSize={6} fontFamily="JetBrains Mono">{cloudBase+siteAlt}m</text>
+              <line x1={pl} y1={cbLineY} x2={pl+gw} y2={cbLineY} stroke="#9ab8d866" strokeWidth={1.5} strokeDasharray="3,3"/>
+              <text x={pl-3} y={cbLineY+3} textAnchor="end" fill="#9ab8d888" fontSize={6} fontFamily="JetBrains Mono">{cloudBase}m AGL</text>
             </>);
           })()}
           {/* Peak BL label */}
@@ -970,6 +1082,85 @@ function SoaringIndex({ dayData, site }) {
           ))}
         </div>
       </div>
+
+      {/* ── CLOUD BASE GRAPH ── */}
+      {hourlyCloudBase && hourlyCloudBase.some(v=>v!=null) && (() => {
+        const cbVals = hourlyCloudBase || [];
+        const cbMax  = Math.max(...cbVals.filter(Boolean), 3000);
+        const WC=340, HC=60, plC=40, prC=8, ptC=6, pbC=16;
+        const gwC=WC-plC-prC, ghC=HC-ptC-pbC;
+        const cbY = v => ptC + ghC - ((v||0)/cbMax)*ghC;
+        // Fill area path
+        const cbPath = cbVals.map((v,i)=>`${i===0?'M':'L'} ${plC+i*(gwC/24)} ${cbY(v||0)}`).join(' ');
+        // Good cb threshold (>600m = good for XC)
+        const goodY  = cbY(600);
+        const siteAltY = cbY(siteAlt);
+        // Find min/max cb during 09-17
+        const dayCBVals = cbVals.slice(9,17).filter(Boolean);
+        const minCB = dayCBVals.length ? Math.min(...dayCBVals) : null;
+        const maxCB = dayCBVals.length ? Math.max(...dayCBVals) : null;
+        const cbColor = minCB == null ? '#9ab8d8' : minCB < 300 ? '#ff3b3b' : minCB < 600 ? '#ff8c00' : minCB < 1200 ? '#ffd700' : '#00e5ff';
+        // Y-axis labels
+        const yLabels = [500,1000,1500,2000].filter(v=>v<cbMax*0.95);
+        return (
+          <div style={{ marginBottom:10, background:'#080c14', border:`1px solid ${cbColor}33`, borderRadius:6, padding:'8px 10px' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:4 }}>
+              <span style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a' }}>CLOUD BASE HEIGHT (AGL)</span>
+              {minCB&&<span style={{ fontFamily:'JetBrains Mono', fontSize:13, color:cbColor }}>{minCB}–{maxCB}m · {Math.round(minCB*3.281)}–{Math.round((maxCB||0)*3.281)}ft</span>}
+            </div>
+            <svg viewBox={`0 0 ${WC} ${HC}`} style={{ display:'block', width:'100%', height:HC }}>
+              {/* Y-axis labels */}
+              {yLabels.map(v=>(
+                <g key={v}>
+                  <line x1={plC} y1={cbY(v)} x2={plC+gwC} y2={cbY(v)} stroke="#1a2d4a" strokeWidth={0.5}/>
+                  <text x={plC-3} y={cbY(v)+3} textAnchor="end" fill="#2a4a6a" fontSize={6} fontFamily="JetBrains Mono">{v}m</text>
+                </g>
+              ))}
+              {/* Site altitude line */}
+              {siteAlt < cbMax * 0.9 && (
+                <>
+                  <line x1={plC} y1={siteAltY} x2={plC+gwC} y2={siteAltY} stroke="#ffd70033" strokeWidth={1} strokeDasharray="3,3"/>
+                  <text x={plC-3} y={siteAltY-2} textAnchor="end" fill="#ffd70066" fontSize={5} fontFamily="JetBrains Mono">site</text>
+                </>
+              )}
+              {/* 600m good-XC threshold line */}
+              {600 < cbMax * 0.9 && (
+                <>
+                  <line x1={plC} y1={goodY} x2={plC+gwC} y2={goodY} stroke="#00e5ff22" strokeWidth={1} strokeDasharray="2,4"/>
+                  <text x={plC+gwC+2} y={goodY+3} textAnchor="start" fill="#00e5ff44" fontSize={5} fontFamily="JetBrains Mono">600m</text>
+                </>
+              )}
+              {/* Cloud base fill */}
+              <path d={cbPath + ` L ${plC+gwC} ${HC-pbC} L ${plC} ${HC-pbC} Z`} fill={`${cbColor}12`}/>
+              {/* Cloud base line */}
+              <path d={cbPath} fill="none" stroke={cbColor} strokeWidth={2}/>
+              {/* Hour dots at key times */}
+              {[8,10,12,14,16].map(h=>{
+                const v=cbVals[h]; if(!v) return null;
+                return <circle key={h} cx={plC+h*(gwC/24)} cy={cbY(v)} r={2} fill={cbColor}/>;
+              })}
+              {/* Hour labels */}
+              {[6,9,12,15,18].map(h=>(
+                <text key={h} x={plC+h*(gwC/24)} y={HC-2} textAnchor="middle" fill="#3a5a7a" fontSize={6} fontFamily="JetBrains Mono">{String(h).padStart(2,'0')}h</text>
+              ))}
+            </svg>
+            {/* Quick interpretation */}
+            <div style={{ display:'flex', gap:8, marginTop:4, flexWrap:'wrap' }}>
+              {[
+                {col:'#ff3b3b', lbl:'<300m Too low'},
+                {col:'#ff8c00', lbl:'300-600m Low'},
+                {col:'#ffd700', lbl:'600-1200m Fair'},
+                {col:'#00e5ff', lbl:'>1200m Good XC'},
+              ].map(({col,lbl})=>(
+                <div key={lbl} style={{ display:'flex', alignItems:'center', gap:3 }}>
+                  <div style={{ width:10, height:3, background:col, borderRadius:1 }}/>
+                  <span style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>{lbl}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Lifted Index + CAPE + CIN row */}
       <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
