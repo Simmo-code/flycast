@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 
-// ─── SITES DATABASE ────────────────────────────────────────────────────────────
+// ─── SITES DATABASE sim────────────────────────────────────────────────────────────
 // sport: "PG" = paragliding only, "HG" = hang gliding only, "PGHG" = both
 const UK_SITES = [
   // ── SKY SURFING CLUB (Hampshire South Downs) — exact data from skysurfingclub.co.uk ──
@@ -696,55 +696,49 @@ export default function App() {
           <div ref={mapRef} style={{width:"100%",height:"100%",position:"absolute",inset:0}} />
           {loading&&tab==="map"&&<LoadOvl total={UK_SITES.length} loaded={Object.keys(wx).length}/>}
           {/* MAP LEGEND */}
-          <div style={{position:"absolute",top:10,left:10,zIndex:1000,display:tab==="map"?"block":"none",background:"#080c14dd",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px"}}>
+          {tab==="map" && (
+          <div style={{position:"absolute",top:10,left:10,zIndex:1000,background:"#080c14dd",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px"}}>
             <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,color:"#6a9abf",letterSpacing:1,marginBottom:5}}>MAP KEY</div>
-            {[["#00e5ff","Excellent (78+)"],["#ffd700","Good (58-77)"],["#ff8c00","Marginal (38-57)"],["#ff3b3b","Poor (under 38)"]].map(([col,lbl])=>(
-              <div key={lbl} style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-                <div style={{width:12,height:12,borderRadius:"50%",background:col,border:`2px solid ${col}`,flexShrink:0}}/>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>{lbl}</span>
-              </div>
-            ))}
-            <div style={{borderTop:"1px solid #1a2d4a",marginTop:5,paddingTop:5}}>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:12,height:12,borderRadius:"50%",background:"#00e5ff",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Excellent 78+</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:12,height:12,borderRadius:"50%",background:"#ffd700",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Good 58-77</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:12,height:12,borderRadius:"50%",background:"#ff8c00",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Marginal 38-57</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}><div style={{width:12,height:12,borderRadius:"50%",background:"#ff3b3b",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Poor 0-37</span></div>
+            <div style={{borderTop:"1px solid #1a2d4a",paddingTop:5}}>
               <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:"#4a6a8a",marginBottom:3}}>WIND QUADRANT</div>
-              <div style={{display:"flex",gap:8,alignItems:"center"}}>
-                <svg width="28" height="28"><circle cx="14" cy="14" r="13" fill="#080c14" stroke="#888" strokeWidth="1.5"/><path d="M14,14 L14,1 A13,13 0 0,1 25,14 Z" fill="#00e59644"/><circle cx="14" cy="2" r="2.5" fill="#00e596"/></svg>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Green = on window</span>
+              <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:3}}>
+                <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#0a1220" stroke="#444" strokeWidth="1"/><path d="M10,10 L10,1 A9,9 0 0,1 19,10 Z" fill="#00e59655"/><circle cx="10" cy="2" r="1.5" fill="#00e596"/></svg>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>On window</span>
               </div>
-              <div style={{display:"flex",gap:8,alignItems:"center",marginTop:3}}>
-                <svg width="28" height="28"><circle cx="14" cy="14" r="13" fill="#080c14" stroke="#888" strokeWidth="1.5"/><circle cx="14" cy="14" r="13" fill="#ff3b3b33"/><circle cx="14" cy="2" r="2.5" fill="#ff4444"/></svg>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Red = off window</span>
+              <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#ff333322" stroke="#ff4444" strokeWidth="1"/><circle cx="10" cy="2" r="1.5" fill="#ff4444"/></svg>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Off window</span>
               </div>
             </div>
-            {showAirspace&&<div style={{borderTop:"1px solid #1a2d4a",marginTop:5,paddingTop:5}}>
-              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:"#4a6a8a",marginBottom:3}}>AIRSPACE</div>
-              {[["#ff3b3b","CTR (Class A)"],["#ff8c00","TMA/CTA"],["#a78bfa","MATZ"],["#00e5ff","ATZ"],["#ff0000","Danger Area"]].map(([col,lbl])=>(
-                <div key={lbl} style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
-                  <div style={{width:12,height:4,background:col,borderRadius:1,opacity:0.8}}/>
-                  <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>{lbl}</span>
-                </div>
-              ))}
-            </div>
+            {showAirspace && (
+              <div style={{borderTop:"1px solid #1a2d4a",marginTop:5,paddingTop:5}}>
+                <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:"#4a6a8a",marginBottom:3}}>AIRSPACE</div>
+                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}><div style={{width:12,height:4,background:"#ff3b3b",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>CTR Class A</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}><div style={{width:12,height:4,background:"#ff8c00",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>TMA/CTA</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}><div style={{width:12,height:4,background:"#a78bfa",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>MATZ</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}><div style={{width:12,height:4,background:"#00e5ff",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>ATZ</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:12,height:4,background:"#ff0000",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Danger Area</span></div>
+              </div>
+            )}
           </div>
+          )}
           {/* MAP TILE TOGGLE + AIRSPACE */}
-          <div style={{position:"absolute",bottom:90,left:10,zIndex:1000,display:tab==="map"?"flex":"none",flexDirection:"column",gap:4}}>
-            {[
-              {id:"voyager",   label:"🗺 Map",     title:"Street map"},
-              {id:"satellite", label:"🛰 Sat",     title:"Satellite"},
-              {id:"topo",      label:"⛰ Topo",    title:"Topographic"},
-              {id:"osm",       label:"🌍 OSM",     title:"OpenStreetMap"},
-              {id:"dark",      label:"🌑 Dark",    title:"Dark mode"},
-            ].map(t=>(
-              <button key={t.id} title={t.title} onClick={()=>setMapTileStyle(t.id)}
-                style={{background:mapTileStyle===t.id?"#00e5ff":"#080c14cc",border:`1px solid ${mapTileStyle===t.id?"#00e5ff":"#1a2d4a"}`,color:mapTileStyle===t.id?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)",whiteSpace:"nowrap"}}>
-                {t.label}
-              </button>
-            ))}
+          {tab==="map" && (
+          <div style={{position:"absolute",bottom:90,left:10,zIndex:1000,display:"flex",flexDirection:"column",gap:4}}>
+            {["voyager","satellite","topo","osm","dark"].map((id,ix)=>{
+              const lbl=["Map","Sat","Topo","OSM","Dark"][ix];
+              const ico=["Map","Sat","Topo","OSM","Dark"][ix];
+              const active=mapTileStyle===id;
+              return(<button key={id} onClick={()=>setMapTileStyle(id)} style={{background:active?"#00e5ff":"#080c14cc",border:"1px solid "+(active?"#00e5ff":"#1a2d4a"),color:active?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)"}}>{lbl}</button>);
+            })}
             <div style={{width:"100%",height:1,background:"#1a2d4a",margin:"2px 0"}}/>
-            <button title="Toggle UK Airspace" onClick={()=>setShowAirspace(p=>!p)}
-              style={{background:showAirspace?"#ff8c00":"#080c14cc",border:`1px solid ${showAirspace?"#ff8c00":"#1a2d4a"}`,color:showAirspace?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)",whiteSpace:"nowrap"}}>
-              ✈ Airspace
-            </button>
+            <button onClick={()=>setShowAirspace(p=>!p)} style={{background:showAirspace?"#ff8c00":"#080c14cc",border:"1px solid "+(showAirspace?"#ff8c00":"#1a2d4a"),color:showAirspace?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)"}}>Airspace</button>
           </div>
+          )}
         </div>
 
         {/* BEST */}
