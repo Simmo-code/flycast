@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 
-// ─── SITES DATABASE sim────────────────────────────────────────────────────────────
+// ─── SITES DATABASE ────────────────────────────────────────────────────────────
 // sport: "PG" = paragliding only, "HG" = hang gliding only, "PGHG" = both
 const UK_SITES = [
   // ── SKY SURFING CLUB (Hampshire South Downs) — exact data from skysurfingclub.co.uk ──
@@ -386,6 +386,8 @@ export default function App() {
   const [sort,setSort]       = useState("score");
   const [mapTileStyle,setMapTileStyle] = useState('voyager');
   const [panelCollapsed,setPanelCollapsed] = useState(false);
+  const [panelWidth,setPanelWidth] = useState(480);
+  const dragRef = useRef(null);
   const [showAirspace,setShowAirspace] = useState(false);
   const mapRef = useRef(null);
   const mapInst = useRef(null);
@@ -632,6 +634,8 @@ export default function App() {
       @keyframes spin{to{transform:rotate(360deg)}}
       @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
       .fi{animation:fi 0.25s ease-out forwards}
+      .drag-handle:hover{background:linear-gradient(180deg,transparent,#00e5ffaa,transparent)!important;border-color:#00e5ff88!important}
+      .drag-handle{user-select:none}
     `}</style>
     <div style={{display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}}>
 
@@ -728,7 +732,7 @@ export default function App() {
           )}
           {/* MAP TILE TOGGLE + AIRSPACE */}
           {tab==="map" && (
-          <div style={{position:"absolute",bottom:90,left:10,zIndex:1000,display:"flex",flexDirection:"column",gap:4}}>
+          <div style={{position:"absolute",bottom:90,right:10,zIndex:1000,display:"flex",flexDirection:"column",gap:4,alignItems:"flex-end"}}>
             {["voyager","satellite","topo","osm","dark"].map((id,ix)=>{
               const lbl=["Map","Sat","Topo","OSM","Dark"][ix];
               const ico=["Map","Sat","Topo","OSM","Dark"][ix];
@@ -821,46 +825,59 @@ export default function App() {
           </div>
         </div>}
 
-        {/* Floating "show panel" button when collapsed */}
-        {selSite&&panelCollapsed&&tab!=="map"&&(
-          <button
-            onClick={()=>setPanelCollapsed(false)}
-            title="Show site panel"
-            style={{
-              position:"absolute", right:0, top:"50%", transform:"translateY(-50%)",
-              width:28, height:72,
-              background:"#0d1a2e",
-              border:"1px solid #00e5ff55",
-              borderRight:"none",
-              borderRadius:"6px 0 0 6px",
-              color:"#00e5ff", cursor:"pointer",
-              display:"flex", alignItems:"center", justifyContent:"center",
-              zIndex:300, padding:0,
-              writingMode:"vertical-rl", letterSpacing:2,
-              fontFamily:"Barlow Condensed", fontWeight:700, fontSize:13,
-              userSelect:"none",
-              boxShadow:"-2px 0 10px #00e5ff22",
-            }}>◀ SHOW</button>
-        )}
-        {/* SITE PANEL — collapsible, scrollable, persistent */}
+
+        {/* SITE PANEL — resizable, collapsible, always on top of map */}
         {selSite&&(
           <div style={{
             display:"flex", flexDirection:"row", flexShrink:0,
             position:tab==="map"?"absolute":"relative",
             right:0, top:0, bottom:0,
-            zIndex:tab==="map"?200:10,
+            zIndex:tab==="map"?500:10,
+            width:panelCollapsed?0:`min(${panelWidth}px,100vw)`,
+            transition:panelCollapsed?"width 0.25s ease":"none",
+            overflow:"visible",
             alignSelf:"stretch",
-            width:panelCollapsed?0:"min(480px,100vw)",
-            transition:"width 0.25s ease",
-            overflow:"hidden",
+            pointerEvents:"auto",
           }}>
-            {/* Collapse tab button */}
-            {tab==="map"&&<button
+            {/* Drag-resize handle — left edge of panel */}
+            {!panelCollapsed&&(
+              <div
+                onMouseDown={e=>{
+                  e.preventDefault();
+                  const startX=e.clientX, startW=panelWidth;
+                  const onMove=mv=>{
+                    const delta=startX-mv.clientX;
+                    setPanelWidth(Math.max(320,Math.min(900,startW+delta)));
+                  };
+                  const onUp=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);};
+                  document.addEventListener('mousemove',onMove);
+                  document.addEventListener('mouseup',onUp);
+                }}
+                onTouchStart={e=>{
+                  const t=e.touches[0];
+                  const startX=t.clientX, startW=panelWidth;
+                  const onMove=mv=>{const tc=mv.touches[0];const delta=startX-tc.clientX;setPanelWidth(Math.max(320,Math.min(900,startW+delta)));};
+                  const onUp=()=>{document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onUp);};
+                  document.addEventListener('touchmove',onMove,{passive:false});
+                  document.addEventListener('touchend',onUp);
+                }}
+                className="drag-handle"
+                style={{
+                  width:8, flexShrink:0, cursor:"col-resize",
+                  background:"linear-gradient(180deg,transparent,#00e5ff44,transparent)",
+                  borderLeft:"2px solid #00e5ff33",
+                  position:"relative", zIndex:600,
+                }}
+                title="Drag to resize panel"
+              />
+            )}
+            {/* Collapse/expand tab */}
+            <button
               onClick={()=>setPanelCollapsed(p=>!p)}
-              title={panelCollapsed?"Expand panel":"Collapse panel"}
+              title={panelCollapsed?"Show panel":"Hide panel"}
               style={{
                 position:"absolute",
-                left:-28,
+                left:panelCollapsed?-34:-34,
                 top:"50%", transform:"translateY(-50%)",
                 width:28, height:72,
                 background:"#0d1a2e",
@@ -869,17 +886,18 @@ export default function App() {
                 borderRadius:"6px 0 0 6px",
                 color:"#00e5ff", cursor:"pointer",
                 display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:13, zIndex:400, padding:0,
-                boxShadow:"-2px 0 10px #00e5ff22",
-                writingMode:"vertical-rl",
-                letterSpacing:2,
+                fontSize:13, zIndex:600, padding:0,
+                boxShadow:"-2px 0 12px #00e5ff33",
+                writingMode:"vertical-rl", letterSpacing:2,
                 fontFamily:"Barlow Condensed", fontWeight:700,
                 userSelect:"none",
+                pointerEvents:"auto",
               }}>
-              {panelCollapsed?"◀ SHOW":"▶ HIDE"}
-            </button>}
-            {/* Panel content — fills wrapper */}
-            <div style={{width:"min(480px,100vw)",height:"100%",overflow:"visible",flexShrink:0,display:"flex",flexDirection:"column"}}>
+              {panelCollapsed?"◀ SITE":"▶ HIDE"}
+            </button>
+            {/* Panel content */}
+            {!panelCollapsed&&(
+            <div style={{flex:1,height:"100%",overflow:"hidden",display:"flex",flexDirection:"column",minWidth:0}}>
               <SitePanel
                 site={selSite}
                 flyData={flyData[selSite.id]}
@@ -891,6 +909,7 @@ export default function App() {
                 isCollapsed={panelCollapsed}
               />
             </div>
+            )}
           </div>
         )}
       </div>
