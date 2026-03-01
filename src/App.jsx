@@ -470,11 +470,11 @@ export default function App() {
   useEffect(()=>{
     if(!mapInst.current||!mapReady) return;
     const TILES = {
-      voyager:   {url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",    attr:"© OpenStreetMap © CARTO"},
-      satellite: {url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",attr:"© Esri"},
-      dark:      {url:"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",              attr:"© OpenStreetMap © CARTO"},
-      topo:      {url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",                           attr:"© OpenTopoMap"},
-      osm:       {url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",                         attr:"© OpenStreetMap"},
+      voyager:   {url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",    attr:"\u00a9 OpenStreetMap \u00a9 CARTO"},
+      satellite: {url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",attr:"\u00a9 Esri"},
+      dark:      {url:"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",              attr:"\u00a9 OpenStreetMap \u00a9 CARTO"},
+      topo:      {url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",                           attr:"\u00a9 OpenTopoMap"},
+      osm:       {url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",                         attr:"\u00a9 OpenStreetMap"},
     };
     const t = TILES[mapTileStyle] || TILES.voyager;
     if(tileLayerRef.current){ mapInst.current.removeLayer(tileLayerRef.current); }
@@ -698,7 +698,7 @@ export default function App() {
           {/* MAP LEGEND */}
           <div style={{position:"absolute",top:10,left:10,zIndex:1000,display:tab==="map"?"block":"none",background:"#080c14dd",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px"}}>
             <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,color:"#6a9abf",letterSpacing:1,marginBottom:5}}>MAP KEY</div>
-            {[["#00e5ff","Excellent (78+)"],["#ffd700","Good (58-77)"],["#ff8c00","Marginal (38-57)"],["#ff3b3b","Poor (<38)"]].map(([col,lbl])=>(
+            {[["#00e5ff","Excellent (78+)"],["#ffd700","Good (58-77)"],["#ff8c00","Marginal (38-57)"],["#ff3b3b","Poor (under 38)"]].map(([col,lbl])=>(
               <div key={lbl} style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
                 <div style={{width:12,height:12,borderRadius:"50%",background:col,border:`2px solid ${col}`,flexShrink:0}}/>
                 <span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>{lbl}</span>
