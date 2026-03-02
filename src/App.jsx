@@ -102,13 +102,14 @@ async function fetchOpenMeteo(lat, lon) {
   return res.json();
 }
 
-// ── UKMO UKV 2km — actual Met Office model, highest UK resolution
+// ── UKMO UKV 2km — Met Office model via Open-Meteo ukmo_seamless
+// UKMO provides up to 7 days via the seamless blend endpoint
 async function fetchUKMO(lat, lon) {
   const base = `latitude=${lat}&longitude=${lon}`;
   const hourly = `hourly=windspeed_10m,winddirection_10m,windgusts_10m,precipitation_probability,boundary_layer_height,cape,cloud_cover`;
   const daily  = `daily=windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant,precipitation_probability_max`;
-  const opts   = `wind_speed_unit=kmh&forecast_days=3&timezone=Europe%2FLondon`;
-  return tryFetch(`https://api.open-meteo.com/v1/ukmo?${base}&${hourly}&${daily}&${opts}`);
+  const opts   = `wind_speed_unit=kmh&forecast_days=7&timezone=Europe%2FLondon&models=ukmo_seamless`;
+  return tryFetch(`https://api.open-meteo.com/v1/forecast?${base}&${hourly}&${daily}&${opts}`);
 }
 
 // ── DWD ICON-EU 7km — German weather service, highly reliable for Europe
@@ -596,17 +597,19 @@ export default function App() {
       const la = span>180?1:0; // large-arc-flag
       const pLo=pt(lo,R), pHi=pt(hi,R);
       const greenSector = span>=359
-        ? `<circle cx="${CX}" cy="${CY}" r="${R}" fill="#00ee4440"/>`
-        : `<path d="M${CX},${CY} L${pLo.x.toFixed(2)},${pLo.y.toFixed(2)} A${R},${R} 0 ${la},1 ${pHi.x.toFixed(2)},${pHi.y.toFixed(2)} Z" fill="#00ee4440"/>`;
+        ? `<circle cx="${CX}" cy="${CY}" r="${R}" fill="#00ff5566"/>`
+        : `<path d="M${CX},${CY} L${pLo.x.toFixed(2)},${pLo.y.toFixed(2)} A${R},${R} 0 ${la},1 ${pHi.x.toFixed(2)},${pHi.y.toFixed(2)} Z" fill="#00ff5566"/>`;
 
-      // Wind direction needle: line from centre to rim, arrowhead at rim pointing INWARD
-      // The tip of the triangle is at the rim; wings are pulled toward centre → points inward
+      // Wind direction needle: same position but arrow rotated 180°
+      // Line from centre to rim at wd. Triangle tip at rim, wings pulled toward centre,
+      // but entire arrow flipped — tip now at wd+180 side (pointing away from wind source)
       const needleSvg = wd!=null ? (()=>{
-        const tipPt  = pt(wd, R-1);       // triangle tip: at rim
-        const wingL  = pt(wd-13, R-10);   // left wing: pulled back toward centre
-        const wingR  = pt(wd+13, R-10);   // right wing: pulled back toward centre
+        const rimPt  = pt(wd, R-1);          // line end at rim (wind direction side)
+        const tipPt  = pt(wd+180, R-1);      // arrow tip: opposite rim (rotated 180°)
+        const wingL  = pt(wd+180-13, R-10);  // left wing
+        const wingR  = pt(wd+180+13, R-10);  // right wing
         const ndlCol = inWin ? "#00ff88" : "#ff4444";
-        return `<line x1="${CX}" y1="${CY}" x2="${tipPt.x.toFixed(2)}" y2="${tipPt.y.toFixed(2)}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
+        return `<line x1="${rimPt.x.toFixed(2)}" y1="${rimPt.y.toFixed(2)}" x2="${tipPt.x.toFixed(2)}" y2="${tipPt.y.toFixed(2)}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
           <polygon points="${tipPt.x.toFixed(2)},${tipPt.y.toFixed(2)} ${wingL.x.toFixed(2)},${wingL.y.toFixed(2)} ${wingR.x.toFixed(2)},${wingR.y.toFixed(2)}" fill="${ndlCol}"/>
           <circle cx="${CX}" cy="${CY}" r="3" fill="${ndlCol}"/>`;
       })() : "";
@@ -618,7 +621,7 @@ export default function App() {
           <!-- Dark background -->
           <circle cx="${CX}" cy="${CY}" r="${R+1}" fill="#0a1220" stroke="${col}" stroke-width="2.5"/>
           <!-- Red full = off-window fill -->
-          <circle cx="${CX}" cy="${CY}" r="${R}" fill="#ff000040"/>
+          <circle cx="${CX}" cy="${CY}" r="${R}" fill="#cc000044"/>
           <!-- Green sector = flyable window -->
           ${greenSector}
           <!-- Wind needle on top -->
@@ -741,7 +744,7 @@ export default function App() {
               <div style={{borderTop:"1px solid #1a2d4a",paddingTop:5}}>
                 <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:11,color:"#4a6a8a",marginBottom:3}}>WIND QUADRANT</div>
                 <div style={{display:"flex",gap:5,alignItems:"center",marginBottom:3}}>
-                  <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#0a1220" stroke="#444" strokeWidth="1"/><path d="M10,10 L10,1 A9,9 0 0,1 19,10 Z" fill="#00ee4440"/><circle cx="10" cy="2" r="1.5" fill="#00e596"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#0a1220" stroke="#444" strokeWidth="1"/><path d="M10,10 L10,1 A9,9 0 0,1 19,10 Z" fill="#00ff5566"/><circle cx="10" cy="2" r="1.5" fill="#00e596"/></svg>
                   <span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>On window</span>
                 </div>
                 <div style={{display:"flex",gap:5,alignItems:"center"}}>
