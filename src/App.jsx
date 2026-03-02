@@ -596,20 +596,19 @@ export default function App() {
       const la = span>180?1:0; // large-arc-flag
       const pLo=pt(lo,R), pHi=pt(hi,R);
       const greenSector = span>=359
-        ? `<circle cx="${CX}" cy="${CY}" r="${R}" fill="#22cc6655"/>`
-        : `<path d="M${CX},${CY} L${pLo.x.toFixed(2)},${pLo.y.toFixed(2)} A${R},${R} 0 ${la},1 ${pHi.x.toFixed(2)},${pHi.y.toFixed(2)} Z" fill="#22cc6655"/>`;
+        ? `<circle cx="${CX}" cy="${CY}" r="${R}" fill="#00ee4440"/>`
+        : `<path d="M${CX},${CY} L${pLo.x.toFixed(2)},${pLo.y.toFixed(2)} A${R},${R} 0 ${la},1 ${pHi.x.toFixed(2)},${pHi.y.toFixed(2)} Z" fill="#00ee4440"/>`;
 
-      // Wind direction needle — shows where wind is COMING FROM
-      // Arrow points FROM the rim (wind source) toward centre
+      // Wind direction needle: line from centre to rim, arrowhead at rim pointing INWARD
+      // The tip of the triangle is at the rim; wings are pulled toward centre → points inward
       const needleSvg = wd!=null ? (()=>{
-        const fromPt = pt(wd, R-2);       // tail: at rim, direction wind comes FROM
-        const toPt   = pt(wd+180, IR+2);  // tip: toward centre (downwind)
+        const tipPt  = pt(wd, R-1);       // triangle tip: at rim
+        const wingL  = pt(wd-13, R-10);   // left wing: pulled back toward centre
+        const wingR  = pt(wd+13, R-10);   // right wing: pulled back toward centre
         const ndlCol = inWin ? "#00ff88" : "#ff4444";
-        // Arrowhead at the "to" end (downwind tip)
-        const headL = pt(wd+180-14, IR+8), headR = pt(wd+180+14, IR+8);
-        return `<line x1="${fromPt.x.toFixed(2)}" y1="${fromPt.y.toFixed(2)}" x2="${toPt.x.toFixed(2)}" y2="${toPt.y.toFixed(2)}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
-          <polygon points="${toPt.x.toFixed(2)},${toPt.y.toFixed(2)} ${headL.x.toFixed(2)},${headL.y.toFixed(2)} ${headR.x.toFixed(2)},${headR.y.toFixed(2)}" fill="${ndlCol}"/>
-          <circle cx="${fromPt.x.toFixed(2)}" cy="${fromPt.y.toFixed(2)}" r="2.5" fill="${ndlCol}88"/>`;
+        return `<line x1="${CX}" y1="${CY}" x2="${tipPt.x.toFixed(2)}" y2="${tipPt.y.toFixed(2)}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
+          <polygon points="${tipPt.x.toFixed(2)},${tipPt.y.toFixed(2)} ${wingL.x.toFixed(2)},${wingL.y.toFixed(2)} ${wingR.x.toFixed(2)},${wingR.y.toFixed(2)}" fill="${ndlCol}"/>
+          <circle cx="${CX}" cy="${CY}" r="3" fill="${ndlCol}"/>`;
       })() : "";
 
       // Outer ring colour = score colour; inner score text
@@ -619,7 +618,7 @@ export default function App() {
           <!-- Dark background -->
           <circle cx="${CX}" cy="${CY}" r="${R+1}" fill="#0a1220" stroke="${col}" stroke-width="2.5"/>
           <!-- Red full = off-window fill -->
-          <circle cx="${CX}" cy="${CY}" r="${R}" fill="#ff333326"/>
+          <circle cx="${CX}" cy="${CY}" r="${R}" fill="#ff000040"/>
           <!-- Green sector = flyable window -->
           ${greenSector}
           <!-- Wind needle on top -->
@@ -742,11 +741,11 @@ export default function App() {
               <div style={{borderTop:"1px solid #1a2d4a",paddingTop:5}}>
                 <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:11,color:"#4a6a8a",marginBottom:3}}>WIND QUADRANT</div>
                 <div style={{display:"flex",gap:5,alignItems:"center",marginBottom:3}}>
-                  <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#0a1220" stroke="#444" strokeWidth="1"/><path d="M10,10 L10,1 A9,9 0 0,1 19,10 Z" fill="#22dd6626"/><circle cx="10" cy="2" r="1.5" fill="#00e596"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#0a1220" stroke="#444" strokeWidth="1"/><path d="M10,10 L10,1 A9,9 0 0,1 19,10 Z" fill="#00ee4440"/><circle cx="10" cy="2" r="1.5" fill="#00e596"/></svg>
                   <span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>On window</span>
                 </div>
                 <div style={{display:"flex",gap:5,alignItems:"center"}}>
-                  <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#ff333326" stroke="#ff4444" strokeWidth="1"/><circle cx="10" cy="2" r="1.5" fill="#ff4444"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#ff000040" stroke="#ff4444" strokeWidth="1"/><circle cx="10" cy="2" r="1.5" fill="#ff4444"/></svg>
                   <span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>Off window</span>
                 </div>
               </div>
@@ -1252,7 +1251,7 @@ function SoaringIndex({ dayData, site }) {
       {/* BL Height sparkline */}
       <div style={{ marginBottom:8 }}>
         <div style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a', marginBottom:3 }}>BOUNDARY LAYER HEIGHT (RASP BL TOP)</div>
-        <svg viewBox={`0 0 ${W} ${H}`} style={{ display:'block', width:'100%', height:H, minHeight:160 }}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ display:'block', width:'100%', height:180 }} preserveAspectRatio='none'>
           {/* Site altitude fill zone */}
           <rect x={pl} y={siteY} width={gw} height={H - pb - siteY + ptop} fill="#ffd70006" />
           <line x1={pl} y1={siteY} x2={pl+gw} y2={siteY} stroke="#ffd70044" strokeWidth={1} strokeDasharray="4,3"/>
@@ -1320,7 +1319,7 @@ function SoaringIndex({ dayData, site }) {
               <span style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a' }}>CLOUD BASE HEIGHT (AGL)</span>
               {minCB&&<span style={{ fontFamily:'JetBrains Mono', fontSize:15, color:cbColor }}>{minCB}–{maxCB}m · {Math.round(minCB*3.281)}–{Math.round((maxCB||0)*3.281)}ft</span>}
             </div>
-            <svg viewBox={`0 0 ${WC} ${HC}`} style={{ display:'block', width:'100%', height:HC, minHeight:170 }}>
+            <svg viewBox={`0 0 ${WC} ${HC}`} style={{ display:'block', width:'100%', height:190 }} preserveAspectRatio='none'>
               {/* Y-axis labels */}
               {yLabels.map(v=>(
                 <g key={v}>
