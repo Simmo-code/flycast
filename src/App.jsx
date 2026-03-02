@@ -600,23 +600,23 @@ export default function App() {
         ? `<circle cx="${CX}" cy="${CY}" r="${R}" fill="#00ff5566"/>`
         : `<path d="M${CX},${CY} L${pLo.x.toFixed(2)},${pLo.y.toFixed(2)} A${R},${R} 0 ${la},1 ${pHi.x.toFixed(2)},${pHi.y.toFixed(2)} Z" fill="#00ff5566"/>`;
 
-      // Wind direction needle: same position but arrow rotated 180°
-      // Line from centre to rim at wd. Triangle tip at rim, wings pulled toward centre,
-      // but entire arrow flipped — tip now at wd+180 side (pointing away from wind source)
+      // Wind needle: line from rim (wind FROM side) to centre, arrowhead sits
+      // in the FIRST HALF only (between rim and centre), pointing inward.
+      // tip at 55% of radius from centre = well within first half
       const needleSvg = wd!=null ? (()=>{
-        const rimPt  = pt(wd, R-1);          // line end at rim (wind direction side)
-        const tipPt  = pt(wd+180, R-1);      // arrow tip: opposite rim (rotated 180°)
-        const wingL  = pt(wd+180-13, R-10);  // left wing
-        const wingR  = pt(wd+180+13, R-10);  // right wing
+        const tailPt = pt(wd, R-2);          // tail: at rim, wind-source side
+        const tipPt  = pt(wd, R*0.52);       // tip: ~halfway, same direction side
+        const wingL  = pt(wd-14, R*0.72);    // left wing: behind tip toward rim
+        const wingR  = pt(wd+14, R*0.72);    // right wing: behind tip toward rim
         const ndlCol = inWin ? "#00ff88" : "#ff4444";
-        return `<line x1="${rimPt.x.toFixed(2)}" y1="${rimPt.y.toFixed(2)}" x2="${tipPt.x.toFixed(2)}" y2="${tipPt.y.toFixed(2)}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
+        return `<line x1="${tailPt.x.toFixed(2)}" y1="${tailPt.y.toFixed(2)}" x2="${CX}" y2="${CY}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
           <polygon points="${tipPt.x.toFixed(2)},${tipPt.y.toFixed(2)} ${wingL.x.toFixed(2)},${wingL.y.toFixed(2)} ${wingR.x.toFixed(2)},${wingR.y.toFixed(2)}" fill="${ndlCol}"/>
           <circle cx="${CX}" cy="${CY}" r="3" fill="${ndlCol}"/>`;
       })() : "";
 
       // Outer ring colour = score colour; inner score text
       const scoreFontSize = sc!=null&&sc>=100 ? 12 : 14;
-      const html=`<div style="width:${SZ}px;height:${SZ}px;cursor:pointer">
+      const html=`<div title="${s.name}" style="width:${SZ}px;height:${SZ}px;cursor:pointer">
         <svg width="${SZ}" height="${SZ}" viewBox="0 0 ${SZ} ${SZ}">
           <!-- Dark background -->
           <circle cx="${CX}" cy="${CY}" r="${R+1}" fill="#0a1220" stroke="${col}" stroke-width="2.5"/>
@@ -737,7 +737,7 @@ export default function App() {
             {/* Score key panel */}
             <div style={{background:"#080c14ee",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px",minWidth:148}}>
               <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:"#6a9abf",letterSpacing:1,marginBottom:5}}>MAP KEY</div>
-              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#00e5ff",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Excellent 78+</span></div>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#00e566",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Excellent 78+</span></div>
               <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#ffd700",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Good 58-77</span></div>
               <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#ff8c00",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Marginal 38-57</span></div>
               <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}><div style={{width:11,height:11,borderRadius:"50%",background:"#ff3b3b",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Poor 0-37</span></div>
@@ -1268,7 +1268,7 @@ function SoaringIndex({ dayData, site }) {
             const cbLineY = blY(cbASL);
             return (<>
               <line x1={pl} y1={cbLineY} x2={pl+gw} y2={cbLineY} stroke="#9ab8d866" strokeWidth={1.5} strokeDasharray="3,3"/>
-              <text x={pl-3} y={cbLineY+3} textAnchor="end" fill="#9ab8d888" fontSize={9} fontFamily="JetBrains Mono">{cloudBase}m AGL</text>
+              <text x={pl-3} y={cbLineY+3} textAnchor="end" fill="#9ab8d888" fontSize={9} fontFamily="JetBrains Mono">{cloudBase}m/{Math.round(cloudBase*3.281)}ft</text>
             </>);
           })()}
           {/* Peak BL label */}
@@ -1320,14 +1320,14 @@ function SoaringIndex({ dayData, site }) {
           <div style={{ marginBottom:10, background:'#080c14', border:`1px solid ${cbColor}33`, borderRadius:6, padding:'8px 10px' }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:4 }}>
               <span style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a' }}>CLOUD BASE HEIGHT (AGL)</span>
-              {minCB&&<span style={{ fontFamily:'JetBrains Mono', fontSize:15, color:cbColor }}>{minCB}–{maxCB}m · {Math.round(minCB*3.281)}–{Math.round((maxCB||0)*3.281)}ft</span>}
+              {minCB&&<span style={{ fontFamily:'JetBrains Mono', fontSize:15, color:cbColor }}>{Math.round(minCB*3.281)}–{Math.round((maxCB||0)*3.281)}ft AGL</span>}
             </div>
             <svg viewBox={`0 0 ${WC} ${HC}`} style={{ display:'block', width:'100%', height:190 }} preserveAspectRatio='none'>
               {/* Y-axis labels */}
               {yLabels.map(v=>(
                 <g key={v}>
                   <line x1={plC} y1={cbY(v)} x2={plC+gwC} y2={cbY(v)} stroke="#1a2d4a" strokeWidth={0.5}/>
-                  <text x={plC-3} y={cbY(v)+3} textAnchor="end" fill="#2a4a6a" fontSize={9} fontFamily="JetBrains Mono">{v}m</text>
+                  <text x={plC-3} y={cbY(v)+3} textAnchor="end" fill="#2a4a6a" fontSize={9} fontFamily="JetBrains Mono">{Math.round(v*3.281)}ft</text>
                 </g>
               ))}
               {/* Site altitude line */}
@@ -1341,7 +1341,7 @@ function SoaringIndex({ dayData, site }) {
               {600 < cbMax * 0.9 && (
                 <>
                   <line x1={plC} y1={goodY} x2={plC+gwC} y2={goodY} stroke="#00e5ff22" strokeWidth={1} strokeDasharray="2,4"/>
-                  <text x={plC+gwC+2} y={goodY+3} textAnchor="start" fill="#00e5ff44" fontSize={9} fontFamily="JetBrains Mono">600m</text>
+                  <text x={plC+gwC+2} y={goodY+3} textAnchor="start" fill="#00e5ff44" fontSize={9} fontFamily="JetBrains Mono">2000ft</text>
                 </>
               )}
               {/* Cloud base fill */}
@@ -1361,10 +1361,10 @@ function SoaringIndex({ dayData, site }) {
             {/* Quick interpretation */}
             <div style={{ display:'flex', gap:8, marginTop:4, flexWrap:'wrap' }}>
               {[
-                {col:'#ff3b3b', lbl:'<300m Too low'},
-                {col:'#ff8c00', lbl:'300-600m Low'},
-                {col:'#ffd700', lbl:'600-1200m Fair'},
-                {col:'#00e5ff', lbl:'>1200m Good XC'},
+                {col:'#ff3b3b', lbl:'<1000ft Too low'},
+                {col:'#ff8c00', lbl:'1000-2000ft Low'},
+                {col:'#ffd700', lbl:'2000-4000ft Fair'},
+                {col:'#00e5ff', lbl:'>4000ft Good XC'},
               ].map(({col,lbl})=>(
                 <div key={lbl} style={{ display:'flex', alignItems:'center', gap:3 }}>
                   <div style={{ width:10, height:3, background:col, borderRadius:1 }}/>
@@ -1407,7 +1407,7 @@ function SoaringIndex({ dayData, site }) {
             <div style={{ fontFamily:'Barlow Condensed', fontSize:14, color:'#4a6a8a', letterSpacing:1, marginBottom:5 }}>CLOUD BASE DETAIL</div>
             <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:6 }}>
               <div style={{ flex:'1 1 80px', background:'#0d1520', borderRadius:4, padding:'5px 7px' }}>
-                <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>AGL</div>
+                <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>AGL ft</div>
                 <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:18, color:cbCol }}>{cloudBase}m</div>
                 <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color:cbCol }}>{cbFt}ft</div>
               </div>
