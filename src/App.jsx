@@ -430,6 +430,8 @@ export default function App() {
   const [panelWidth,setPanelWidth] = useState(480);
   const dragRef = useRef(null);
   const [showAirspace,setShowAirspace] = useState(false);
+  const [showMapMenu,setShowMapMenu] = useState(false);
+  const mapMenuRef = useRef(null);
   const mapRef = useRef(null);
   const mapInst = useRef(null);
   const markers = useRef([]);
@@ -597,15 +599,17 @@ export default function App() {
         ? `<circle cx="${CX}" cy="${CY}" r="${R}" fill="#22cc6655"/>`
         : `<path d="M${CX},${CY} L${pLo.x.toFixed(2)},${pLo.y.toFixed(2)} A${R},${R} 0 ${la},1 ${pHi.x.toFixed(2)},${pHi.y.toFixed(2)} Z" fill="#22cc6655"/>`;
 
-      // Wind direction needle — tip touches rim, base at centre
+      // Wind direction needle — shows where wind is COMING FROM
+      // Arrow points FROM the rim (wind source) toward centre
       const needleSvg = wd!=null ? (()=>{
-        const tipPt = pt(wd, R-1);
+        const fromPt = pt(wd, R-2);       // tail: at rim, direction wind comes FROM
+        const toPt   = pt(wd+180, IR+2);  // tip: toward centre (downwind)
         const ndlCol = inWin ? "#00ff88" : "#ff4444";
-        // Arrowhead
-        const headL = pt(wd-12, R-9), headR = pt(wd+12, R-9);
-        return `<line x1="${CX}" y1="${CY}" x2="${tipPt.x.toFixed(2)}" y2="${tipPt.y.toFixed(2)}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
-          <polygon points="${tipPt.x.toFixed(2)},${tipPt.y.toFixed(2)} ${headL.x.toFixed(2)},${headL.y.toFixed(2)} ${headR.x.toFixed(2)},${headR.y.toFixed(2)}" fill="${ndlCol}"/>
-          <circle cx="${CX}" cy="${CY}" r="3" fill="${ndlCol}"/>`;
+        // Arrowhead at the "to" end (downwind tip)
+        const headL = pt(wd+180-14, IR+8), headR = pt(wd+180+14, IR+8);
+        return `<line x1="${fromPt.x.toFixed(2)}" y1="${fromPt.y.toFixed(2)}" x2="${toPt.x.toFixed(2)}" y2="${toPt.y.toFixed(2)}" stroke="${ndlCol}" stroke-width="2.5" stroke-linecap="round"/>
+          <polygon points="${toPt.x.toFixed(2)},${toPt.y.toFixed(2)} ${headL.x.toFixed(2)},${headL.y.toFixed(2)} ${headR.x.toFixed(2)},${headR.y.toFixed(2)}" fill="${ndlCol}"/>
+          <circle cx="${fromPt.x.toFixed(2)}" cy="${fromPt.y.toFixed(2)}" r="2.5" fill="${ndlCol}88"/>`;
       })() : "";
 
       // Outer ring colour = score colour; inner score text
@@ -615,7 +619,7 @@ export default function App() {
           <!-- Dark background -->
           <circle cx="${CX}" cy="${CY}" r="${R+1}" fill="#0a1220" stroke="${col}" stroke-width="2.5"/>
           <!-- Red full = off-window fill -->
-          <circle cx="${CX}" cy="${CY}" r="${R}" fill="#ff333322"/>
+          <circle cx="${CX}" cy="${CY}" r="${R}" fill="#ff333326"/>
           <!-- Green sector = flyable window -->
           ${greenSector}
           <!-- Wind needle on top -->
@@ -629,9 +633,17 @@ export default function App() {
         </svg>
       </div>`;
       const icon=window.L.divIcon({className:"",html,iconSize:[SZ,SZ],iconAnchor:[CX,CY]});
-      markers.current.push(window.L.marker([s.lat,s.lon],{icon}).addTo(mapInst.current).on("click",()=>setSelSite(s)));
+      markers.current.push(window.L.marker([s.lat,s.lon],{icon}).addTo(mapInst.current).on("click",()=>{setSelSite(s);setPanelCollapsed(false);}));
     });
   },[mapReady,flyData,day]);
+
+  // Close map menu when clicking outside
+  useEffect(()=>{
+    if(!showMapMenu) return;
+    const handler=(e)=>{ if(mapMenuRef.current&&!mapMenuRef.current.contains(e.target)) setShowMapMenu(false); };
+    document.addEventListener('mousedown',handler);
+    return()=>document.removeEventListener('mousedown',handler);
+  },[showMapMenu]);
 
   const C = (score)=>score>=78?"#00e5ff":score>=58?"#ffd700":score>=38?"#ff8c00":"#ff3b3b";
 
@@ -717,35 +729,58 @@ export default function App() {
         <div style={{flex:1,position:"relative",display:tab==="map"?"block":"none",minHeight:0}}>
           <div ref={mapRef} style={{width:"100%",height:"100%",position:"absolute",inset:0}} />
           {loading&&tab==="map"&&<LoadOvl total={UK_SITES.length} loaded={Object.keys(wx).length}/>}
-          {/* MAP LEGEND */}
+          {/* MAP LEGEND + MAP MENU (dropdown) */}
           {tab==="map" && (
-          <div style={{position:"absolute",top:10,left:10,zIndex:1000,background:"#080c14dd",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px"}}>
-            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,color:"#6a9abf",letterSpacing:1,marginBottom:5}}>MAP KEY</div>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:12,height:12,borderRadius:"50%",background:"#00e5ff",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Excellent 78+</span></div>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:12,height:12,borderRadius:"50%",background:"#ffd700",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Good 58-77</span></div>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:12,height:12,borderRadius:"50%",background:"#ff8c00",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Marginal 38-57</span></div>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}><div style={{width:12,height:12,borderRadius:"50%",background:"#ff3b3b",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#9ab8d8"}}>Poor 0-37</span></div>
-            <div style={{borderTop:"1px solid #1a2d4a",paddingTop:5}}>
-              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:"#4a6a8a",marginBottom:3}}>WIND QUADRANT</div>
-              <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:3}}>
-                <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#0a1220" stroke="#444" strokeWidth="1"/><path d="M10,10 L10,1 A9,9 0 0,1 19,10 Z" fill="#00e59655"/><circle cx="10" cy="2" r="1.5" fill="#00e596"/></svg>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>On window</span>
+          <div style={{position:"absolute",top:10,left:10,zIndex:1000,display:"flex",gap:8,alignItems:"flex-start"}}>
+            {/* Score key panel */}
+            <div style={{background:"#080c14ee",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px",minWidth:148}}>
+              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:"#6a9abf",letterSpacing:1,marginBottom:5}}>MAP KEY</div>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#00e5ff",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Excellent 78+</span></div>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#ffd700",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Good 58-77</span></div>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#ff8c00",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Marginal 38-57</span></div>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}><div style={{width:11,height:11,borderRadius:"50%",background:"#ff3b3b",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Poor 0-37</span></div>
+              <div style={{borderTop:"1px solid #1a2d4a",paddingTop:5}}>
+                <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:11,color:"#4a6a8a",marginBottom:3}}>WIND QUADRANT</div>
+                <div style={{display:"flex",gap:5,alignItems:"center",marginBottom:3}}>
+                  <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#0a1220" stroke="#444" strokeWidth="1"/><path d="M10,10 L10,1 A9,9 0 0,1 19,10 Z" fill="#22dd6626"/><circle cx="10" cy="2" r="1.5" fill="#00e596"/></svg>
+                  <span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>On window</span>
+                </div>
+                <div style={{display:"flex",gap:5,alignItems:"center"}}>
+                  <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#ff333326" stroke="#ff4444" strokeWidth="1"/><circle cx="10" cy="2" r="1.5" fill="#ff4444"/></svg>
+                  <span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>Off window</span>
+                </div>
               </div>
-              <div style={{display:"flex",gap:6,alignItems:"center"}}>
-                <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#ff333322" stroke="#ff4444" strokeWidth="1"/><circle cx="10" cy="2" r="1.5" fill="#ff4444"/></svg>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Off window</span>
-              </div>
+              {showAirspace && (
+                <div style={{borderTop:"1px solid #1a2d4a",marginTop:5,paddingTop:5}}>
+                  <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:11,color:"#4a6a8a",marginBottom:3}}>AIRSPACE</div>
+                  <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}><div style={{width:12,height:3,background:"#ff3b3b",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>CTR Class A/B</span></div>
+                  <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}><div style={{width:12,height:3,background:"#ffd700",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>Class D TMA/CTA</span></div>
+                  <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}><div style={{width:12,height:3,background:"#a78bfa",borderRadius:1,borderTop:"1px dashed #a78bfa"}}/><span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>MATZ</span></div>
+                  <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}><div style={{width:12,height:3,background:"#00e5ff",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>ATZ</span></div>
+                  <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:12,height:3,background:"#ff0000",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#9ab8d8"}}>Danger/Restricted</span></div>
+                </div>
+              )}
             </div>
-            {showAirspace && (
-              <div style={{borderTop:"1px solid #1a2d4a",marginTop:5,paddingTop:5}}>
-                <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:"#4a6a8a",marginBottom:3}}>AIRSPACE</div>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}><div style={{width:12,height:4,background:"#ff3b3b",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>CTR Class A</span></div>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}><div style={{width:12,height:4,background:"#ff8c00",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>TMA/CTA</span></div>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}><div style={{width:12,height:4,background:"#a78bfa",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>MATZ</span></div>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}><div style={{width:12,height:4,background:"#00e5ff",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>ATZ</span></div>
-                <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:12,height:4,background:"#ff0000",borderRadius:1}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Danger Area</span></div>
-              </div>
-            )}
+            {/* Map menu dropdown */}
+            <div ref={mapMenuRef} style={{position:"relative"}}>
+              <button
+                onClick={()=>setShowMapMenu(p=>!p)}
+                style={{background:"#080c14ee",backdropFilter:"blur(8px)",border:"1px solid "+(showMapMenu?"#00e5ff":"#1a2d4a"),borderRadius:8,padding:"7px 11px",cursor:"pointer",display:"flex",alignItems:"center",gap:6,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:showMapMenu?"#00e5ff":"#9ab8d8",whiteSpace:"nowrap"}}>
+                MAP {showMapMenu?"▴":"▾"}
+              </button>
+              {showMapMenu && (
+                <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,background:"#080c14ee",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px",zIndex:1100,minWidth:130,display:"flex",flexDirection:"column",gap:3}}>
+                  <div style={{fontFamily:"Barlow Condensed",fontSize:11,color:"#4a6a8a",letterSpacing:1,marginBottom:3,paddingLeft:2}}>TILE STYLE</div>
+                  {["voyager","satellite","topo","osm","dark"].map((id,ix)=>{
+                    const lbl=["Street Map","Satellite","Topographic","OpenStreetMap","Dark"][ix];
+                    const active=mapTileStyle===id;
+                    return(<button key={id} onClick={()=>setMapTileStyle(id)} style={{background:active?"#00e5ff22":"transparent",border:"1px solid "+(active?"#00e5ff44":"transparent"),color:active?"#00e5ff":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:active?700:400,fontSize:13,cursor:"pointer",textAlign:"left",width:"100%"}}>{active?"✓ ":""}{lbl}</button>);
+                  })}
+                  <div style={{height:1,background:"#1a2d4a",margin:"3px 0"}}/>
+                  <button onClick={()=>setShowAirspace(p=>!p)} style={{background:showAirspace?"#ff8c0022":"transparent",border:"1px solid "+(showAirspace?"#ff8c0044":"transparent"),color:showAirspace?"#ff8c00":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:showAirspace?700:400,fontSize:13,cursor:"pointer",textAlign:"left",width:"100%"}}>{showAirspace?"✓ ":""}Airspace</button>
+                </div>
+              )}
+            </div>
           </div>
           )}
         </div>
@@ -831,18 +866,7 @@ export default function App() {
         </div>}
 
 
-        {/* MAP CONTROLS — outside map div so panel always covers them */}
-        {tab==="map" && (
-          <div style={{position:"absolute",bottom:10,left:10,zIndex:200,display:"flex",flexDirection:"column",gap:4,pointerEvents:"auto"}}>
-            {["voyager","satellite","topo","osm","dark"].map((id,ix)=>{
-              const lbl=["Map","Sat","Topo","OSM","Dark"][ix];
-              const active=mapTileStyle===id;
-              return(<button key={id} onClick={()=>setMapTileStyle(id)} style={{background:active?"#00e5ff":"#080c14cc",border:"1px solid "+(active?"#00e5ff":"#1a2d4a"),color:active?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)"}}>{lbl}</button>);
-            })}
-            <div style={{width:"100%",height:1,background:"#1a2d4a",margin:"2px 0"}}/>
-            <button onClick={()=>setShowAirspace(p=>!p)} style={{background:showAirspace?"#ff8c00":"#080c14cc",border:"1px solid "+(showAirspace?"#ff8c00":"#1a2d4a"),color:showAirspace?"#080c14":"#9ab8d8",padding:"5px 8px",borderRadius:5,fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,cursor:"pointer",backdropFilter:"blur(4px)"}}>Airspace</button>
-          </div>
-        )}
+
 
         {/* SITE PANEL — resizable, collapsible, always on top of map */}
         {selSite&&(
@@ -1024,37 +1048,36 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,i
     <div style={{padding:"10px 14px",borderBottom:"1px solid #1a2d4a",background:"#080c14",position:"sticky",top:0,zIndex:10}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div>
-          <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:21,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/><ClubBadge club={site.club}/></div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#4a6a8a",marginTop:1}}>{site.region} · {site.altitude_m}m / {Math.round(site.altitude_m*3.281)}ft ASL</div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:25,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/><ClubBadge club={site.club}/></div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:16,color:"#4a6a8a",marginTop:1}}>{site.region} · {site.altitude_m}m / {Math.round(site.altitude_m*3.281)}ft ASL</div>
         </div>
         <div style={{display:"flex",gap:4}}>
-          {onCollapse&&<button onClick={onCollapse} title={isCollapsed?"Expand":"Collapse"} style={{background:"#0d1520",border:"1px solid #00e5ff44",color:"#00e5ff",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center"}}>◁</button>}
-          <button onClick={onClose} style={{background:"#1a2d4a",border:"none",color:"#6a9abf",width:26,height:26,borderRadius:4,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
+          {onCollapse&&<button onClick={onCollapse} title={isCollapsed?"Expand":"Collapse"} style={{background:"#0d1520",border:"1px solid #00e5ff44",color:"#00e5ff",width:28,height:28,borderRadius:4,cursor:"pointer",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>◁</button>}
         </div>
       </div>
       <div style={{display:"flex",gap:4,marginTop:6,flexWrap:"wrap"}}>
         {[{l:site.site_type.toUpperCase(),c:"#6a9abf"},{l:site.pg_rating.toUpperCase(),c:"#ffd700"},{l:site.windNote??`ASPECT ${cDir(site.aspect)}`,c:"#00e5ff"},{l:`${kmhToMph(site.wind_range_min)}–${kmhToMph(site.wind_range_max)} mph`,c:"#00e5ff"}].map(b=>(
-          <span key={b.l} style={{fontFamily:"JetBrains Mono",fontSize:14,color:b.c,background:`${b.c}11`,border:`1px solid ${b.c}33`,borderRadius:3,padding:"1px 5px"}}>{b.l}</span>
+          <span key={b.l} style={{fontFamily:"JetBrains Mono",fontSize:16,color:b.c,background:`${b.c}11`,border:`1px solid ${b.c}33`,borderRadius:3,padding:"2px 6px"}}>{b.l}</span>
         ))}
       </div>
     </div>
     <div style={{display:"flex",borderBottom:"1px solid #1a2d4a"}}>
       {days.map((d,i)=>{const fd=flyData?.[i];const c=fd?fd.color:"#4a6a8a";return(
         <button key={i} onClick={()=>onDayChange(i)} style={{flex:1,padding:"6px 4px",background:"none",border:"none",borderBottom:`2px solid ${i===activeDay?c:"transparent"}`,cursor:"pointer",textAlign:"center"}}>
-          <div style={{fontFamily:"Barlow Condensed",fontSize:15,fontWeight:700,color:i===activeDay?c:"#4a6a8a"}}>{d.label.slice(0,3).toUpperCase()}</div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:16,color:c,marginTop:2}}>{fd?fd.score:"—"}</div>
+          <div style={{fontFamily:"Barlow Condensed",fontSize:16,fontWeight:700,color:i===activeDay?c:"#4a6a8a"}}>{d.label.slice(0,3).toUpperCase()}</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:18,color:c,marginTop:2}}>{fd?fd.score:"—"}</div>
         </button>
       );})}
     </div>
     {f?<div style={{padding:14,flex:1}}>
       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
         <div style={{width:58,height:58,borderRadius:"50%",background:`${col}14`,border:`3px solid ${col}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 0 20px ${col}44`,flexShrink:0}}>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:22,fontWeight:700,color:col,lineHeight:1}}>{f.score}</div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:col}}>/ 100</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:26,fontWeight:700,color:col,lineHeight:1}}>{f.score}</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:16,color:col}}>/ 100</div>
         </div>
         <div>
-          <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:22,color:col,letterSpacing:1}}>{f.label.toUpperCase()}</div>
-          <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:f.xc.color,marginTop:1}}>{f.xc.emoji} {f.xc.label}</div>
+          <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:26,color:col,letterSpacing:1}}>{f.label.toUpperCase()}</div>
+          <div style={{fontFamily:"Barlow Condensed",fontSize:17,color:f.xc.color,marginTop:1}}>{f.xc.emoji} {f.xc.label}</div>
         </div>
       </div>
       {/* Dynamic confidence badge based on model agreement */}
@@ -1067,7 +1090,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,i
           <div style={{background:"#080c14",border:`1px solid ${col}33`,borderRadius:6,padding:"6px 10px",marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
             <div style={{width:8,height:8,borderRadius:"50%",background:col,boxShadow:`0 0 6px ${col}88`,flexShrink:0}}/>
             <div>
-              <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:col,fontWeight:700}}>{lbl}</div>
+              <div style={{fontFamily:"Barlow Condensed",fontSize:17,color:col,fontWeight:700}}>{lbl}</div>
               <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#4a6a8a"}}>{sub}</div>
             </div>
             {ag!=null&&<div style={{marginLeft:"auto",fontFamily:"JetBrains Mono",fontSize:16,fontWeight:700,color:col}}>{ag}%</div>}
@@ -1188,7 +1211,7 @@ function SoaringIndex({ dayData, site }) {
   // BL height sparkline (hourly through the day)
   const blVals = hourlyBL || [];
   const blPeak = Math.max(...blVals.filter(Boolean), 500);
-  const W = 340, H = 55, pl = 36, pr = 8, ptop = 6, pb = 16;
+  const W = 340, H = 160, pl = 48, pr = 10, ptop = 8, pb = 22;
   const gw = W - pl - pr, gh = H - ptop - pb;
   const blY = v => ptop + gh - ((v||0) / blPeak) * gh;
   const blPath = blVals.map((v,i) => `${i===0?'M':'L'} ${pl + i*(gw/24)} ${blY(v||0)}`).join(' ');
@@ -1197,12 +1220,12 @@ function SoaringIndex({ dayData, site }) {
 
   return (
     <div style={{ background:'#080c14', border:'1px solid #1a2d4a', borderRadius:8, padding:'10px 12px', marginBottom:12 }}>
-      <div style={{ fontFamily:'Barlow Condensed', fontSize:14, color:'#4a6a8a', letterSpacing:1, marginBottom:8 }}>SOARING INDEX (RASP / SKYLIGHT)</div>
+      <div style={{ fontFamily:'Barlow Condensed', fontSize:16, color:'#4a6a8a', letterSpacing:1, marginBottom:8 }}>SOARING INDEX (RASP / SKYLIGHT)</div>
 
       {/* RASP star rating + W* */}
       <div style={{ display:'flex', gap:12, marginBottom:10, flexWrap:'wrap' }}>
         <div style={{ flex:1, background:'#0d1520', borderRadius:6, padding:'7px 10px', border:`1px solid ${starCol}33` }}>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a', marginBottom:3 }}>RASP RATING</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a', marginBottom:3 }}>RASP RATING</div>
           <div style={{ display:'flex', gap:2, alignItems:'center' }}>
             {[1,2,3,4,5].map(n => (
               <span key={n} style={{ fontSize:15, opacity: n <= raspStars ? 1 : 0.15 }}>★</span>
@@ -1211,16 +1234,16 @@ function SoaringIndex({ dayData, site }) {
           </div>
         </div>
         <div style={{ flex:1, background:'#0d1520', borderRadius:6, padding:'7px 10px', border:`1px solid ${thermalCol}33` }}>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a', marginBottom:3 }}>W* THERMAL STRENGTH</div>
-          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:17, color:thermalCol }}>{wStarMs.toFixed(1)} m/s</div>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a' }}>{thermalLabel}</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a', marginBottom:3 }}>W* THERMAL STRENGTH</div>
+          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:19, color:thermalCol }}>{wStarMs.toFixed(1)} m/s</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a' }}>{thermalLabel}</div>
         </div>
         <div style={{ flex:1, background:'#0d1520', borderRadius:6, padding:'7px 10px', border:'1px solid #1a2d4a' }}>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a', marginBottom:3 }}>TRIGGER TIME</div>
-          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:17, color: thermalTrigger ? '#ffd700' : '#3a5a7a' }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a', marginBottom:3 }}>TRIGGER TIME</div>
+          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:19, color: thermalTrigger ? '#ffd700' : '#3a5a7a' }}>
             {thermalTrigger ? `${String(thermalTrigger).padStart(2,'0')}:00` : 'None'}
           </div>
-          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a' }}>
             🌅 {Math.floor(sunrise||6)}:{String(Math.round(((sunrise||6)%1)*60)).padStart(2,'0')} — 🌇 {Math.floor(sunset||20)}:{String(Math.round(((sunset||20)%1)*60)).padStart(2,'0')}
           </div>
         </div>
@@ -1228,12 +1251,12 @@ function SoaringIndex({ dayData, site }) {
 
       {/* BL Height sparkline */}
       <div style={{ marginBottom:8 }}>
-        <div style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a', marginBottom:3 }}>BOUNDARY LAYER HEIGHT (RASP BL TOP)</div>
-        <svg viewBox={`0 0 ${W} ${H}`} style={{ display:'block', width:'100%', height:H }}>
+        <div style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a', marginBottom:3 }}>BOUNDARY LAYER HEIGHT (RASP BL TOP)</div>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ display:'block', width:'100%', height:H, minHeight:160 }}>
           {/* Site altitude fill zone */}
           <rect x={pl} y={siteY} width={gw} height={H - pb - siteY + ptop} fill="#ffd70006" />
           <line x1={pl} y1={siteY} x2={pl+gw} y2={siteY} stroke="#ffd70044" strokeWidth={1} strokeDasharray="4,3"/>
-          <text x={pl-3} y={siteY+3} textAnchor="end" fill="#ffd70077" fontSize={6} fontFamily="JetBrains Mono">{siteAlt}m/{Math.round(siteAlt*3.281)}ft</text>
+          <text x={pl-3} y={siteY+3} textAnchor="end" fill="#ffd70077" fontSize={9} fontFamily="JetBrains Mono">{siteAlt}m/{Math.round(siteAlt*3.281)}ft</text>
           {/* BL curve */}
           <path d={blPath} fill="none" stroke="#00e5ff" strokeWidth={1.5}/>
           <path d={blPath + ` L ${pl+gw} ${H-pb} L ${pl} ${H-pb} Z`} fill="#00e5ff08"/>
@@ -1243,14 +1266,14 @@ function SoaringIndex({ dayData, site }) {
             const cbLineY = blY(cbASL);
             return (<>
               <line x1={pl} y1={cbLineY} x2={pl+gw} y2={cbLineY} stroke="#9ab8d866" strokeWidth={1.5} strokeDasharray="3,3"/>
-              <text x={pl-3} y={cbLineY+3} textAnchor="end" fill="#9ab8d888" fontSize={6} fontFamily="JetBrains Mono">{cloudBase}m AGL</text>
+              <text x={pl-3} y={cbLineY+3} textAnchor="end" fill="#9ab8d888" fontSize={9} fontFamily="JetBrains Mono">{cloudBase}m AGL</text>
             </>);
           })()}
           {/* Peak BL label */}
-          <text x={pl+gw-2} y={ptop+8} textAnchor="end" fill="#00e5ff88" fontSize={6} fontFamily="JetBrains Mono">peak {Math.round(blPeak)}m / {Math.round(blPeak*3.281)}ft</text>
+          <text x={pl+gw-2} y={ptop+11} textAnchor="end" fill="#00e5ff88" fontSize={9} fontFamily="JetBrains Mono">peak {Math.round(blPeak)}m / {Math.round(blPeak*3.281)}ft</text>
           {/* Hour labels */}
           {[6,10,14,18].map(h => (
-            <text key={h} x={pl+h*(gw/24)} y={H-2} textAnchor="middle" fill="#3a5a7a" fontSize={6} fontFamily="JetBrains Mono">{String(h).padStart(2,'0')}h</text>
+            <text key={h} x={pl+h*(gw/24)} y={H-4} textAnchor="middle" fill="#3a5a7a" fontSize={9} fontFamily="JetBrains Mono">{String(h).padStart(2,'0')}h</text>
           ))}
         </svg>
         {overcastKillsDay && (
@@ -1276,7 +1299,7 @@ function SoaringIndex({ dayData, site }) {
       {hourlyCloudBase && hourlyCloudBase.some(v=>v!=null) && (() => {
         const cbVals = hourlyCloudBase || [];
         const cbMax  = Math.max(...cbVals.filter(Boolean), 3000);
-        const WC=340, HC=60, plC=40, prC=8, ptC=6, pbC=16;
+        const WC=340, HC=170, plC=50, prC=10, ptC=8, pbC=22;
         const gwC=WC-plC-prC, ghC=HC-ptC-pbC;
         const cbY = v => ptC + ghC - ((v||0)/cbMax)*ghC;
         // Fill area path
@@ -1290,33 +1313,33 @@ function SoaringIndex({ dayData, site }) {
         const maxCB = dayCBVals.length ? Math.max(...dayCBVals) : null;
         const cbColor = minCB == null ? '#9ab8d8' : minCB < 300 ? '#ff3b3b' : minCB < 600 ? '#ff8c00' : minCB < 1200 ? '#ffd700' : '#00e5ff';
         // Y-axis labels
-        const yLabels = [500,1000,1500,2000].filter(v=>v<cbMax*0.95);
+        const yLabels = [500,1000,1500,2000,3000].filter(v=>v<cbMax*0.95);
         return (
           <div style={{ marginBottom:10, background:'#080c14', border:`1px solid ${cbColor}33`, borderRadius:6, padding:'8px 10px' }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:4 }}>
-              <span style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a' }}>CLOUD BASE HEIGHT (AGL)</span>
-              {minCB&&<span style={{ fontFamily:'JetBrains Mono', fontSize:13, color:cbColor }}>{minCB}–{maxCB}m · {Math.round(minCB*3.281)}–{Math.round((maxCB||0)*3.281)}ft</span>}
+              <span style={{ fontFamily:'JetBrains Mono', fontSize:15, color:'#4a6a8a' }}>CLOUD BASE HEIGHT (AGL)</span>
+              {minCB&&<span style={{ fontFamily:'JetBrains Mono', fontSize:15, color:cbColor }}>{minCB}–{maxCB}m · {Math.round(minCB*3.281)}–{Math.round((maxCB||0)*3.281)}ft</span>}
             </div>
-            <svg viewBox={`0 0 ${WC} ${HC}`} style={{ display:'block', width:'100%', height:HC }}>
+            <svg viewBox={`0 0 ${WC} ${HC}`} style={{ display:'block', width:'100%', height:HC, minHeight:170 }}>
               {/* Y-axis labels */}
               {yLabels.map(v=>(
                 <g key={v}>
                   <line x1={plC} y1={cbY(v)} x2={plC+gwC} y2={cbY(v)} stroke="#1a2d4a" strokeWidth={0.5}/>
-                  <text x={plC-3} y={cbY(v)+3} textAnchor="end" fill="#2a4a6a" fontSize={6} fontFamily="JetBrains Mono">{v}m</text>
+                  <text x={plC-3} y={cbY(v)+3} textAnchor="end" fill="#2a4a6a" fontSize={9} fontFamily="JetBrains Mono">{v}m</text>
                 </g>
               ))}
               {/* Site altitude line */}
               {siteAlt < cbMax * 0.9 && (
                 <>
                   <line x1={plC} y1={siteAltY} x2={plC+gwC} y2={siteAltY} stroke="#ffd70033" strokeWidth={1} strokeDasharray="3,3"/>
-                  <text x={plC-3} y={siteAltY-2} textAnchor="end" fill="#ffd70066" fontSize={5} fontFamily="JetBrains Mono">site</text>
+                  <text x={plC-3} y={siteAltY-2} textAnchor="end" fill="#ffd70066" fontSize={9} fontFamily="JetBrains Mono">site</text>
                 </>
               )}
               {/* 600m good-XC threshold line */}
               {600 < cbMax * 0.9 && (
                 <>
                   <line x1={plC} y1={goodY} x2={plC+gwC} y2={goodY} stroke="#00e5ff22" strokeWidth={1} strokeDasharray="2,4"/>
-                  <text x={plC+gwC+2} y={goodY+3} textAnchor="start" fill="#00e5ff44" fontSize={5} fontFamily="JetBrains Mono">600m</text>
+                  <text x={plC+gwC+2} y={goodY+3} textAnchor="start" fill="#00e5ff44" fontSize={9} fontFamily="JetBrains Mono">600m</text>
                 </>
               )}
               {/* Cloud base fill */}
@@ -1330,7 +1353,7 @@ function SoaringIndex({ dayData, site }) {
               })}
               {/* Hour labels */}
               {[6,9,12,15,18].map(h=>(
-                <text key={h} x={plC+h*(gwC/24)} y={HC-2} textAnchor="middle" fill="#3a5a7a" fontSize={6} fontFamily="JetBrains Mono">{String(h).padStart(2,'0')}h</text>
+                <text key={h} x={plC+h*(gwC/24)} y={HC-4} textAnchor="middle" fill="#3a5a7a" fontSize={9} fontFamily="JetBrains Mono">{String(h).padStart(2,'0')}h</text>
               ))}
             </svg>
             {/* Quick interpretation */}
@@ -1343,7 +1366,7 @@ function SoaringIndex({ dayData, site }) {
               ].map(({col,lbl})=>(
                 <div key={lbl} style={{ display:'flex', alignItems:'center', gap:3 }}>
                   <div style={{ width:10, height:3, background:col, borderRadius:1 }}/>
-                  <span style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>{lbl}</span>
+                  <span style={{ fontFamily:'JetBrains Mono', fontSize:14, color:'#4a6a8a' }}>{lbl}</span>
                 </div>
               ))}
             </div>
