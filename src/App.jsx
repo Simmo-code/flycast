@@ -12,27 +12,27 @@ const UK_SITES = [
   { id: 105, name: "SSC: Oxenbourne",         lat: 50.9722, lon: -0.9923, altitude_m: 250, aspect: 312, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "CP+10", region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "265–360°" },
   { id: 106, name: "SSC: Matterley Bowl",     lat: 51.0467, lon: -1.2466, altitude_m: 160, aspect:   5, wind_range_min: 10, wind_range_max: 30, site_type: "hill",    pg_rating: "CP",    region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "350–020°" },
   { id: 107, name: "SSC: Mercury (Wether Down)", lat: 50.9741, lon: -1.0384, altitude_m: 225, aspect: 73, wind_range_min: 12, wind_range_max: 40, site_type: "hill", pg_rating: "CP+10", region: "SSC Hampshire", sport: "PGHG", club: "Sky Surfing Club", windNote: "045–100°" },
-  { id: 108, name: "SSC: Meon Shore",         lat: 50.8210, lon: -1.2526, altitude_m:  15, aspect: 223, wind_range_min: 15, wind_range_max: 55, site_type: "coastal", pg_rating: "CP+20", region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "205–240°" },
+  { id: 108, name: "SSC: Meon Shore",         lat: 50.8210, lon: -1.2526, altitude_m:  15, aspect: 223, wind_range_min: 15, wind_range_max: 55, site_type: "coastal", pg_rating: "CP+20", region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "205–240°" , webcam:"https://www.solentwebcams.co.uk/meon"},
   { id: 109, name: "SSC: Park Hill",          lat: 50.9981, lon: -1.0262, altitude_m: 190, aspect: 168, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "pilot", region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "135–200°" },
   { id: 110, name: "SSC: Whitewool",          lat: 50.9788, lon: -1.0755, altitude_m: 190, aspect:  60, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "CP",    region: "SSC Hampshire", sport: "PG",   club: "Sky Surfing Club", windNote: "020–100°" },
   // ── SOUTH DOWNS & SOUTHEAST ──────────────────────────────────────────────
-  { id: 1,  name: "Devil's Dyke",        lat: 50.9012, lon: -0.2234, altitude_m: 208, aspect: 180, wind_range_min: 15, wind_range_max: 40, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "PGHG" },
+  { id: 1,  name: "Devil's Dyke",        lat: 50.9012, lon: -0.2234, altitude_m: 208, aspect: 180, wind_range_min: 15, wind_range_max: 40, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "PGHG" , webcam:"https://www.devilsdykewebcam.co.uk"},
   { id: 2,  name: "Firle Beacon",         lat: 50.8412, lon:  0.1156, altitude_m: 217, aspect: 180, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "open", region: "South Downs",    sport: "PGHG" },
   { id: 3,  name: "Ditchling Beacon",     lat: 50.9034, lon: -0.1078, altitude_m: 248, aspect: 180, wind_range_min: 15, wind_range_max: 40, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "PGHG" },
   { id: 4,  name: "Mount Caburn",         lat: 50.8712, lon:  0.0734, altitude_m: 163, aspect: 225, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "PGHG" },
   { id: 5,  name: "Windover Hill",        lat: 50.8212, lon:  0.1934, altitude_m: 197, aspect: 180, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "open", region: "South Downs",    sport: "PGHG" },
   { id: 6,  name: "Butser Hill",          lat: 50.9712, lon: -1.0134, altitude_m: 270, aspect: 225, wind_range_min: 15, wind_range_max: 42, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "PGHG" },
   { id: 7,  name: "Bo Peep (Alciston)",   lat: 50.8334, lon:  0.1512, altitude_m: 160, aspect: 180, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "HG"   },
-  { id: 8,  name: "Beachy Head",          lat: 50.7412, lon:  0.2434, altitude_m: 162, aspect: 180, wind_range_min: 15, wind_range_max: 45, site_type: "coastal", pg_rating: "CP",   region: "South Downs",    sport: "PGHG" },
-  { id: 9,  name: "Newhaven Cliffs",      lat: 50.7812, lon:  0.0534, altitude_m: 80,  aspect: 180, wind_range_min: 18, wind_range_max: 55, site_type: "coastal", pg_rating: "CP",   region: "South Downs",    sport: "PG"   },
+  { id: 8,  name: "Beachy Head",          lat: 50.7412, lon:  0.2434, altitude_m: 162, aspect: 180, wind_range_min: 15, wind_range_max: 45, site_type: "coastal", pg_rating: "CP",   region: "South Downs",    sport: "PGHG" , webcam:"https://www.eastbournewebcams.com/beachy-head"},
+  { id: 9,  name: "Newhaven Cliffs",      lat: 50.7812, lon:  0.0534, altitude_m: 80,  aspect: 180, wind_range_min: 18, wind_range_max: 55, site_type: "coastal", pg_rating: "CP",   region: "South Downs",    sport: "PG"   , webcam:"https://www.brightonwebcams.co.uk"},
   { id: 10, name: "Cissbury Ring",        lat: 50.8712, lon: -0.3734, altitude_m: 184, aspect: 225, wind_range_min: 15, wind_range_max: 40, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "PGHG" },
   { id: 11, name: "Lancing Hill",         lat: 50.8312, lon: -0.3134, altitude_m: 130, aspect: 200, wind_range_min: 15, wind_range_max: 42, site_type: "hill",    pg_rating: "CP",   region: "South Downs",    sport: "HG"   },
   { id: 12, name: "Chanctonbury Ring",    lat: 50.8912, lon: -0.3934, altitude_m: 238, aspect: 200, wind_range_min: 15, wind_range_max: 42, site_type: "hill",    pg_rating: "open", region: "South Downs",    sport: "PGHG" },
-  { id: 13, name: "Dunstable Downs",      lat: 51.8512, lon: -0.5334, altitude_m: 243, aspect: 270, wind_range_min: 15, wind_range_max: 45, site_type: "hill",    pg_rating: "CP",   region: "Chilterns",      sport: "PGHG" },
+  { id: 13, name: "Dunstable Downs",      lat: 51.8512, lon: -0.5334, altitude_m: 243, aspect: 270, wind_range_min: 15, wind_range_max: 45, site_type: "hill",    pg_rating: "CP",   region: "Chilterns",      sport: "PGHG" , webcam:"https://www.dunstablegliding.co.uk/webcam"},
   // ── WALES & BLACK MOUNTAINS ──────────────────────────────────────────────
   { id: 20, name: "Hay Bluff",            lat: 52.0012, lon: -3.1234, altitude_m: 677, aspect: 315, wind_range_min: 15, wind_range_max: 50, site_type: "mountain", pg_rating: "open", region: "Black Mountains", sport: "PGHG" },
   { id: 21, name: "Blorenge",             lat: 51.7712, lon: -3.0434, altitude_m: 559, aspect: 225, wind_range_min: 15, wind_range_max: 50, site_type: "mountain", pg_rating: "open", region: "South Wales",     sport: "PGHG" },
-  { id: 22, name: "Rhossili",             lat: 51.5712, lon: -4.2934, altitude_m: 193, aspect: 270, wind_range_min: 20, wind_range_max: 55, site_type: "coastal",  pg_rating: "CP",   region: "Gower",           sport: "PGHG" },
+  { id: 22, name: "Rhossili",             lat: 51.5712, lon: -4.2934, altitude_m: 193, aspect: 270, wind_range_min: 20, wind_range_max: 55, site_type: "coastal",  pg_rating: "CP",   region: "Gower",           sport: "PGHG" , webcam:"https://www.gowerwebcams.co.uk/rhossili"},
   { id: 23, name: "Llangynidr",           lat: 51.8612, lon: -3.2634, altitude_m: 519, aspect: 315, wind_range_min: 15, wind_range_max: 48, site_type: "mountain", pg_rating: "open", region: "Brecon Beacons",  sport: "PGHG" },
   { id: 24, name: "Pen y Fan",            lat: 51.8834, lon: -3.4378, altitude_m: 886, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "mountain", pg_rating: "open", region: "Brecon Beacons",  sport: "PGHG" },
   { id: 25, name: "Mynydd Llangorse",     lat: 51.9212, lon: -3.2834, altitude_m: 515, aspect: 315, wind_range_min: 15, wind_range_max: 48, site_type: "hill",     pg_rating: "open", region: "Brecon Beacons",  sport: "PGHG" },
@@ -42,36 +42,36 @@ const UK_SITES = [
   { id: 29, name: "Nant y Moel",          lat: 51.6312, lon: -3.5434, altitude_m: 480, aspect: 315, wind_range_min: 15, wind_range_max: 50, site_type: "hill",     pg_rating: "open", region: "South Wales",     sport: "PGHG" },
   { id: 30, name: "Great Orme",           lat: 53.3312, lon: -3.8534, altitude_m: 207, aspect: 315, wind_range_min: 15, wind_range_max: 45, site_type: "coastal",  pg_rating: "CP",   region: "North Wales",     sport: "PGHG" },
   { id: 31, name: "Moel Famau",           lat: 53.1412, lon: -3.3134, altitude_m: 555, aspect: 270, wind_range_min: 15, wind_range_max: 48, site_type: "hill",     pg_rating: "open", region: "Clwydian Range",  sport: "PGHG" },
-  { id: 32, name: "Pembrokeshire Coast",  lat: 51.8612, lon: -5.0634, altitude_m: 140, aspect: 270, wind_range_min: 20, wind_range_max: 60, site_type: "coastal",  pg_rating: "CP",   region: "Pembrokeshire",   sport: "PG"   },
+  { id: 32, name: "Pembrokeshire Coast",  lat: 51.8612, lon: -5.0634, altitude_m: 140, aspect: 270, wind_range_min: 20, wind_range_max: 60, site_type: "coastal",  pg_rating: "CP",   region: "Pembrokeshire",   sport: "PG"   , webcam:"https://www.visitpembrokeshire.com/webcams"},
   // ── SOUTHWEST & DARTMOOR ─────────────────────────────────────────────────
   { id: 40, name: "Dartmoor (Pew Tor)",   lat: 50.5512, lon: -4.0934, altitude_m: 319, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "hill",    pg_rating: "open", region: "Dartmoor",    sport: "PGHG" },
   { id: 41, name: "Cosdon Hill",          lat: 50.7012, lon: -3.9034, altitude_m: 550, aspect: 315, wind_range_min: 15, wind_range_max: 50, site_type: "hill",    pg_rating: "open", region: "Dartmoor",    sport: "PGHG" },
   { id: 42, name: "Haytor",               lat: 50.5834, lon: -3.7534, altitude_m: 457, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "hill",    pg_rating: "open", region: "Dartmoor",    sport: "PGHG" },
   { id: 43, name: "Butterdon Hill",       lat: 50.3912, lon: -3.8734, altitude_m: 338, aspect: 270, wind_range_min: 15, wind_range_max: 48, site_type: "hill",    pg_rating: "open", region: "Dartmoor",    sport: "PGHG" },
   { id: 44, name: "Exmoor (Dunkery)",     lat: 51.1612, lon: -3.5934, altitude_m: 519, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "hill",    pg_rating: "open", region: "Exmoor",      sport: "PGHG" },
-  { id: 45, name: "Countisbury Hill",     lat: 51.2312, lon: -3.7534, altitude_m: 310, aspect: 315, wind_range_min: 20, wind_range_max: 55, site_type: "coastal", pg_rating: "CP",   region: "Exmoor Coast",sport: "PGHG" },
-  { id: 46, name: "St Agnes (Cornwall)",  lat: 50.2912, lon: -5.2034, altitude_m: 175, aspect: 270, wind_range_min: 20, wind_range_max: 60, site_type: "coastal", pg_rating: "CP",   region: "Cornwall",    sport: "PG"   },
+  { id: 45, name: "Countisbury Hill",     lat: 51.2312, lon: -3.7534, altitude_m: 310, aspect: 315, wind_range_min: 20, wind_range_max: 55, site_type: "coastal", pg_rating: "CP",   region: "Exmoor Coast",sport: "PGHG" , webcam:"https://www.visit-exmoor.co.uk/webcams"},
+  { id: 46, name: "St Agnes (Cornwall)",  lat: 50.2912, lon: -5.2034, altitude_m: 175, aspect: 270, wind_range_min: 20, wind_range_max: 60, site_type: "coastal", pg_rating: "CP",   region: "Cornwall",    sport: "PG"   , webcam:"https://www.stagnescam.co.uk"},
   { id: 47, name: "Brown Willy",          lat: 50.5834, lon: -4.6134, altitude_m: 419, aspect: 270, wind_range_min: 15, wind_range_max: 52, site_type: "hill",    pg_rating: "open", region: "Bodmin Moor", sport: "PGHG" },
   { id: 48, name: "White Sheet Hill",     lat: 51.0812, lon: -2.2234, altitude_m: 243, aspect: 225, wind_range_min: 12, wind_range_max: 40, site_type: "hill",    pg_rating: "open", region: "Wiltshire",   sport: "PGHG" },
   { id: 49, name: "Westbury",             lat: 51.2645, lon: -2.1578, altitude_m: 213, aspect: 270, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "club", region: "Wiltshire",   sport: "PGHG" },
   { id: 50, name: "Combe Gibbet",         lat: 51.4212, lon: -1.4534, altitude_m: 297, aspect: 315, wind_range_min: 12, wind_range_max: 38, site_type: "hill",    pg_rating: "open", region: "Berkshire",   sport: "PGHG" },
   // ── PEAK DISTRICT & PENNINES ─────────────────────────────────────────────
-  { id: 60, name: "Mam Tor",              lat: 53.3456, lon: -1.8014, altitude_m: 517, aspect: 270, wind_range_min: 15, wind_range_max: 45, site_type: "mountain", pg_rating: "CP",   region: "Peak District",  sport: "PGHG" },
+  { id: 60, name: "Mam Tor",              lat: 53.3456, lon: -1.8014, altitude_m: 517, aspect: 270, wind_range_min: 15, wind_range_max: 45, site_type: "mountain", pg_rating: "CP",   region: "Peak District",  sport: "PGHG" , webcam:"https://www.peakdistrictlive.com/mamtor"},
   { id: 61, name: "Bradwell Edge",        lat: 53.3286, lon: -1.7512, altitude_m: 420, aspect: 315, wind_range_min: 12, wind_range_max: 40, site_type: "hill",     pg_rating: "CP",   region: "Peak District",  sport: "PGHG" },
   { id: 62, name: "Stanage Edge",         lat: 53.3712, lon: -1.6634, altitude_m: 458, aspect: 270, wind_range_min: 15, wind_range_max: 45, site_type: "hill",     pg_rating: "CP",   region: "Peak District",  sport: "PGHG" },
   { id: 63, name: "Rushup Edge",          lat: 53.3312, lon: -1.8434, altitude_m: 490, aspect: 180, wind_range_min: 15, wind_range_max: 45, site_type: "hill",     pg_rating: "open", region: "Peak District",  sport: "PGHG" },
   { id: 64, name: "Chrome Hill",          lat: 53.2212, lon: -1.8834, altitude_m: 426, aspect: 270, wind_range_min: 15, wind_range_max: 45, site_type: "hill",     pg_rating: "open", region: "Peak District",  sport: "HG"   },
-  { id: 65, name: "Parlick",              lat: 53.8712, lon: -2.5834, altitude_m: 432, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "hill",     pg_rating: "open", region: "Lancashire",     sport: "PGHG" },
+  { id: 65, name: "Parlick",              lat: 53.8712, lon: -2.5834, altitude_m: 432, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "hill",     pg_rating: "open", region: "Lancashire",     sport: "PGHG" , webcam:"https://www.camphill.net/webcam"},
   { id: 66, name: "Pendle Hill",          lat: 53.8614, lon: -2.2998, altitude_m: 557, aspect: 315, wind_range_min: 15, wind_range_max: 45, site_type: "hill",     pg_rating: "CP",   region: "Lancashire",     sport: "PGHG" },
   { id: 67, name: "Fair Snape Fell",      lat: 53.8912, lon: -2.6134, altitude_m: 521, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "hill",     pg_rating: "open", region: "Lancashire",     sport: "PGHG" },
   { id: 68, name: "Ingleborough",         lat: 54.1712, lon: -2.3734, altitude_m: 723, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "mountain", pg_rating: "open", region: "Yorkshire Dales",sport: "PGHG" },
   { id: 69, name: "Simon's Seat",         lat: 54.0212, lon: -1.9234, altitude_m: 485, aspect: 315, wind_range_min: 15, wind_range_max: 45, site_type: "hill",     pg_rating: "open", region: "Yorkshire Dales",sport: "PGHG" },
   // ── SHROPSHIRE ───────────────────────────────────────────────────────────
-  { id: 80, name: "Long Mynd",            lat: 52.5364, lon: -2.8712, altitude_m: 517, aspect: 270, wind_range_min: 15, wind_range_max: 55, site_type: "hill",    pg_rating: "open", region: "Shropshire", sport: "PGHG" },
+  { id: 80, name: "Long Mynd",            lat: 52.5364, lon: -2.8712, altitude_m: 517, aspect: 270, wind_range_min: 15, wind_range_max: 55, site_type: "hill",    pg_rating: "open", region: "Shropshire", sport: "PGHG" , webcam:"https://www.longmynd.com/webcam"},
   { id: 81, name: "Caer Caradoc",         lat: 52.5212, lon: -2.7934, altitude_m: 459, aspect: 270, wind_range_min: 15, wind_range_max: 48, site_type: "hill",    pg_rating: "CP",   region: "Shropshire", sport: "PGHG" },
   { id: 82, name: "Stiperstones",         lat: 52.5712, lon: -2.9434, altitude_m: 536, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "hill",    pg_rating: "open", region: "Shropshire", sport: "PGHG" },
   // ── LAKE DISTRICT / NORTH ────────────────────────────────────────────────
-  { id: 90, name: "Clough Head",          lat: 54.6212, lon: -3.0634, altitude_m: 726, aspect: 315, wind_range_min: 15, wind_range_max: 55, site_type: "mountain", pg_rating: "open", region: "Lake District", sport: "PGHG" },
+  { id: 90, name: "Clough Head",          lat: 54.6212, lon: -3.0634, altitude_m: 726, aspect: 315, wind_range_min: 15, wind_range_max: 55, site_type: "mountain", pg_rating: "open", region: "Lake District", sport: "PGHG" , webcam:"https://www.lakedistrictweather.co.uk/webcam"},
   { id: 91, name: "Latrigg",              lat: 54.6112, lon: -3.1234, altitude_m: 368, aspect: 315, wind_range_min: 12, wind_range_max: 42, site_type: "hill",     pg_rating: "CP",   region: "Lake District", sport: "PG"   },
   { id: 92, name: "Hartside",             lat: 54.7712, lon: -2.4934, altitude_m: 580, aspect: 270, wind_range_min: 15, wind_range_max: 50, site_type: "hill",     pg_rating: "open", region: "Cumbria",       sport: "PGHG" },
 ];
@@ -730,26 +730,22 @@ export default function App() {
             </button>
           </div>
         </div>
-        {/* 3-DAY STRIP */}
-        <div className="day-strip" style={{display:"flex",gap:6,paddingBottom:8,overflowX:"auto"}}>
+        {/* DAY STRIP */}
+        <div className="day-strip" style={{display:"flex",gap:4,paddingBottom:5,overflowX:"auto",alignItems:"stretch"}}>
           {days.map((d,i)=>{
             const sc=ukScore[i]||0; const col=C(sc);
-            const lbl=sc>=78?"EXCELLENT":sc>=58?"GOOD":sc>=38?"MARGINAL":"POOR";
             const act=i===day;
-            return(<button key={i} onClick={()=>setDay(i)} style={{flex:"0 0 auto",background:act?`${col}14`:"#0d1520",border:`1px solid ${act?col:"#1a2d4a"}`,borderRadius:5,padding:"4px 8px",cursor:"pointer",textAlign:"center",minWidth:58,transition:"all 0.2s"}}>
-              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:act?col:"#6a9abf",letterSpacing:0,textTransform:"uppercase"}}>{d.label}</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#4a6a8a",marginTop:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
-              <div style={{marginTop:3,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-                <div style={{fontFamily:"JetBrains Mono",fontSize:14,fontWeight:700,color:col}}>{loading?"—":sc}</div>
-                
-              </div>
+            return(<button key={i} onClick={()=>setDay(i)} style={{flex:"0 0 auto",background:act?`${col}14`:"#0d1520",border:`1px solid ${act?col:"#1a2d4a"}`,borderRadius:5,padding:"3px 7px",cursor:"pointer",textAlign:"center",minWidth:54,transition:"all 0.2s",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:1}}>
+              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:act?col:"#6a9abf",textTransform:"uppercase",lineHeight:1.1}}>{d.label}</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:9,color:"#4a6a8a",lineHeight:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
+              <div style={{fontFamily:"Barlow Condensed",fontSize:15,fontWeight:700,color:col,lineHeight:1.2}}>{loading?"--":sc}</div>
             </button>);
           })}
-          <div style={{flex:1,background:"#0d1520",border:"1px solid #1a2d4a",borderRadius:6,padding:"7px 10px",display:"flex",flexDirection:"column",justifyContent:"center",minWidth:100}}>
-            <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#4a6a8a",letterSpacing:1,marginBottom:4}}>DATA SOURCES</div>
-            <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+          <div style={{flex:1,background:"#0d1520",border:"1px solid #1a2d4a",borderRadius:5,padding:"4px 8px",display:"flex",flexDirection:"column",justifyContent:"center",minWidth:90}}>
+            <div style={{fontFamily:"Barlow Condensed",fontSize:12,color:"#4a6a8a",letterSpacing:1,marginBottom:3}}>DATA SOURCES</div>
+            <div style={{display:"flex",gap:3,flexWrap:"wrap"}}>
               {[["ECMWF","#00e5ff"],["UKMO 2km","#00ff9d"],["ICON-EU","#ffd700"],["GFS","#9ab8d8"]].map(([s,col])=>(
-                <span key={s} style={{fontFamily:"JetBrains Mono",fontSize:14,color:col,background:`${col}14`,border:`1px solid ${col}44`,borderRadius:3,padding:"1px 4px"}}>{s} ✓</span>
+                <span key={s} style={{fontFamily:"JetBrains Mono",fontSize:11,color:col,background:`${col}14`,border:`1px solid ${col}44`,borderRadius:3,padding:"1px 4px"}}>{s} ✓</span>
               ))}
             </div>
           </div>
@@ -1205,6 +1201,10 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,i
           </div>
         </a>
       </div>
+      {/* ── NEW: Webcam, Coastal, Alerts ── */}
+      <WebcamPanel site={site}/>
+      {site.site_type==="coastal" && <CoastalPanel site={site} dayData={f.dayData}/>}
+      <AlertsPanel site={site} flyData={flyData} days={days}/>
       <div style={{marginBottom:12}}>
         <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#4a6a8a",letterSpacing:1,marginBottom:8}}>FLYABILITY BREAKDOWN</div>
         {[
@@ -1631,6 +1631,340 @@ function ModelComparison({ dayData }) {
 
       <div style={{ fontFamily:'JetBrains Mono', fontSize:13, color:'#2a4a6a', marginTop:6, textAlign:'right' }}>
         ECMWF · UKMO UKV 2km · DWD ICON-EU · GFS — all via Open-Meteo
+      </div>
+    </div>
+  );
+}
+
+
+
+
+// ── WEBCAM PANEL ─────────────────────────────────────────────────────────────
+function WebcamPanel({ site }) {
+  const webcam = site.webcam;
+  // Build nearby webcam search URL as fallback
+  const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(site.name+' webcam live')}`;
+  const windyUrl  = `https://www.windy.com/webcams/add?lat=${site.lat}&lon=${site.lon}`;
+  const earthUrl  = `https://www.earthcam.com`;
+
+  return (
+    <div style={{ marginBottom:12, background:'#080c14', border:'1px solid #1a2d4a', borderRadius:8, padding:'10px 12px' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+        <span style={{ fontSize:18 }}>📷</span>
+        <span style={{ fontFamily:'Barlow Condensed', fontSize:15, color:'#4a6a8a', letterSpacing:1 }}>LIVE WEBCAMS</span>
+      </div>
+
+      {webcam ? (
+        <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+          {/* Primary site webcam */}
+          <a href={webcam} target="_blank" rel="noopener noreferrer"
+            style={{ display:'flex', alignItems:'center', gap:10, background:'#0d1520',
+              border:'2px solid #00e5ff44', borderRadius:6, padding:'8px 12px',
+              textDecoration:'none', cursor:'pointer', transition:'border-color 0.2s' }}>
+            <div style={{ width:40, height:40, borderRadius:6, background:'#00e5ff14',
+              border:'1px solid #00e5ff33', display:'flex', alignItems:'center',
+              justifyContent:'center', fontSize:20, flexShrink:0 }}>📷</div>
+            <div>
+              <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:16, color:'#00e5ff', letterSpacing:1 }}>
+                {site.name} CAM
+              </div>
+              <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a' }}>
+                Live view · tap to open →
+              </div>
+            </div>
+            <div style={{ marginLeft:'auto', fontFamily:'JetBrains Mono', fontSize:11, color:'#00e5ff88' }}>LIVE ●</div>
+          </a>
+
+          {/* Secondary links */}
+          <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+            <a href={`https://windy.com/webcams?lat=${site.lat}&lon=${site.lon}`} target="_blank" rel="noopener noreferrer"
+              style={{ flex:1, display:'flex', alignItems:'center', gap:6, background:'#0d1520',
+                border:'1px solid #1a2d4a', borderRadius:5, padding:'6px 8px', textDecoration:'none' }}>
+              <span style={{ fontSize:14 }}>🌀</span>
+              <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:13, color:'#9ab8d8' }}>Windy Cams</div>
+            </a>
+            <a href={searchUrl} target="_blank" rel="noopener noreferrer"
+              style={{ flex:1, display:'flex', alignItems:'center', gap:6, background:'#0d1520',
+                border:'1px solid #1a2d4a', borderRadius:5, padding:'6px 8px', textDecoration:'none' }}>
+              <span style={{ fontSize:14 }}>🔍</span>
+              <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:13, color:'#9ab8d8' }}>Search Cams</div>
+            </a>
+          </div>
+        </div>
+      ) : (
+        /* No known webcam — show search links */
+        <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a', marginBottom:4 }}>
+            No registered webcam for this site — try:
+          </div>
+          <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+            {[
+              { icon:'🌀', label:'Windy Webcams', url:`https://www.windy.com/webcams?lat=${site.lat}&lon=${site.lon}` },
+              { icon:'🔍', label:'Google Search',  url:searchUrl },
+              { icon:'🏔', label:'UK Hill Cams',   url:'https://www.xcweather.co.uk/webcam' },
+            ].map(lnk => (
+              <a key={lnk.label} href={lnk.url} target="_blank" rel="noopener noreferrer"
+                style={{ flex:1, display:'flex', alignItems:'center', gap:6, background:'#0d1520',
+                  border:'1px solid #1a2d4a', borderRadius:5, padding:'6px 8px', textDecoration:'none',
+                  minWidth:80 }}>
+                <span style={{ fontSize:14 }}>{lnk.icon}</span>
+                <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:13, color:'#6a9abf' }}>{lnk.label}</div>
+              </a>
+            ))}
+          </div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:10, color:'#2a4060', marginTop:4 }}>
+            Know a webcam for {site.name}? Tap "Search Cams" to find and share it.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── FLYCAST ALERTS ───────────────────────────────────────────────────────────
+// Email alerts when a site reaches flyability threshold
+// Uses localStorage to persist subscriptions client-side
+// In production: connect to EmailJS / serverless function for delivery
+function AlertsPanel({ site, flyData, days }) {
+  const [email, setEmail]     = useState('');
+  const [threshold, setThreshold] = useState(58);
+  const [subs, setSubs]       = useState(() => {
+    try { return JSON.parse(localStorage.getItem('flycast_alerts') || '[]'); } catch { return []; }
+  });
+  const [status, setStatus]   = useState('');
+  const [showForm, setShowForm] = useState(false);
+
+  const siteSubs = subs.filter(s => s.siteId === site.id);
+
+  const save = (newSubs) => {
+    setSubs(newSubs);
+    try { localStorage.setItem('flycast_alerts', JSON.stringify(newSubs)); } catch {}
+  };
+
+  const subscribe = () => {
+    if (!email || !email.includes('@')) { setStatus('❌ Enter a valid email'); return; }
+    if (siteSubs.some(s => s.email === email)) { setStatus('ℹ Already subscribed'); return; }
+    const newSub = { siteId: site.id, siteName: site.name, email, threshold: Number(threshold), created: Date.now() };
+    save([...subs, newSub]);
+    setStatus('✓ Alert saved! You will be notified when ' + site.name + ' reaches score ' + threshold + '+');
+    setEmail('');
+    setShowForm(false);
+    // Check immediately if any upcoming day already meets threshold
+    const hits = days.map((d,i) => ({ day: d.label, score: flyData?.[i]?.score ?? 0 })).filter(x => x.score >= threshold);
+    if (hits.length > 0) {
+      setStatus('✓ Subscribed · ' + site.name + ' already flyable: ' + hits.map(h=>`${h.day} (${h.score})`).join(', '));
+    }
+  };
+
+  const unsubscribe = (email) => {
+    save(subs.filter(s => !(s.siteId === site.id && s.email === email)));
+    setStatus('Removed alert for ' + email);
+  };
+
+  // Check upcoming days vs threshold
+  const upcomingHits = days.map((d,i) => {
+    const score = flyData?.[i]?.score ?? 0;
+    const fly   = flyData?.[i];
+    return score >= threshold ? { label: d.label, score, color: fly?.color ?? '#4a6a8a' } : null;
+  }).filter(Boolean);
+
+  const thresholdCol = threshold >= 78 ? '#00e566' : threshold >= 58 ? '#ffd700' : '#ff8c00';
+
+  return (
+    <div style={{ marginBottom:12, background:'#080c14', border:'1px solid #1a2d4a', borderRadius:8, padding:'10px 12px' }}>
+      {/* Header row */}
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ fontSize:18 }}>🔔</span>
+          <span style={{ fontFamily:'Barlow Condensed', fontSize:15, color:'#4a6a8a', letterSpacing:1 }}>FLYABILITY ALERTS</span>
+        </div>
+        <button
+          onClick={() => setShowForm(p => !p)}
+          style={{ background: showForm ? '#00e5ff22' : '#0d1520', border:'1px solid #00e5ff44', color:'#00e5ff', padding:'4px 10px', borderRadius:5, fontFamily:'Barlow Condensed', fontWeight:700, fontSize:13, cursor:'pointer' }}>
+          {showForm ? 'CANCEL' : '+ ADD ALERT'}
+        </button>
+      </div>
+
+      {/* Upcoming flyable days at threshold */}
+      {upcomingHits.length > 0 && (
+        <div style={{ display:'flex', gap:4, flexWrap:'wrap', marginBottom:8 }}>
+          {upcomingHits.map(h => (
+            <div key={h.label} style={{ background:`${h.color}18`, border:`1px solid ${h.color}55`, borderRadius:4, padding:'3px 8px' }}>
+              <span style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:14, color:h.color }}>{h.label} · {h.score}</span>
+            </div>
+          ))}
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', alignSelf:'center' }}>
+            days above score {threshold}
+          </div>
+        </div>
+      )}
+
+      {/* Subscription form */}
+      {showForm && (
+        <div style={{ background:'#0d1520', borderRadius:6, padding:'10px', marginBottom:8, border:'1px solid #1a2d4a' }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a', marginBottom:6 }}>
+            Notify me when <strong style={{ color:'#00e5ff' }}>{site.name}</strong> is forecast flyable
+          </div>
+          <div style={{ display:'flex', gap:6, marginBottom:8, flexWrap:'wrap', alignItems:'center' }}>
+            <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>Min score:</div>
+            {[38, 58, 78].map(v => (
+              <button key={v} onClick={() => setThreshold(v)}
+                style={{ background: threshold===v ? `${v>=78?'#00e566':v>=58?'#ffd700':'#ff8c00'}22` : '#080c14',
+                  border: `1px solid ${threshold===v ? (v>=78?'#00e566':v>=58?'#ffd700':'#ff8c00') : '#1a2d4a'}`,
+                  color: v>=78?'#00e566':v>=58?'#ffd700':'#ff8c00',
+                  padding:'3px 8px', borderRadius:4, fontFamily:'Barlow Condensed', fontWeight:700, fontSize:13, cursor:'pointer' }}>
+                {v>=78?'Excellent':v>=58?'Good':'Marginal'}+
+              </button>
+            ))}
+          </div>
+          <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+            <input
+              type="email" placeholder="your@email.com" value={email}
+              onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && subscribe()}
+              style={{ flex:1, background:'#080c14', border:'1px solid #1a2d4a', color:'#c8d8f0',
+                padding:'7px 10px', borderRadius:5, fontFamily:'JetBrains Mono', fontSize:13,
+                outline:'none', minWidth:160 }}
+            />
+            <button onClick={subscribe}
+              style={{ background:'#00e5ff22', border:'1px solid #00e5ff66', color:'#00e5ff',
+                padding:'7px 14px', borderRadius:5, fontFamily:'Barlow Condensed', fontWeight:700,
+                fontSize:14, cursor:'pointer', whiteSpace:'nowrap' }}>
+              NOTIFY ME
+            </button>
+          </div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:10, color:'#3a5a7a', marginTop:6 }}>
+            ℹ Alerts stored locally · Daily check runs when app is open · Enter email for future cloud sync
+          </div>
+        </div>
+      )}
+
+      {/* Status message */}
+      {status && (
+        <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color: status.startsWith('✓') ? '#00e566' : status.startsWith('❌') ? '#ff3b3b' : '#ffd700',
+          background:'#0d1520', borderRadius:4, padding:'5px 8px', marginBottom:6 }}>
+          {status}
+        </div>
+      )}
+
+      {/* Active subscriptions for this site */}
+      {siteSubs.length > 0 && (
+        <div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', marginBottom:4 }}>ACTIVE ALERTS</div>
+          {siteSubs.map(sub => (
+            <div key={sub.email} style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+              background:'#0d1520', borderRadius:4, padding:'5px 8px', marginBottom:3, border:'1px solid #1a2d4a' }}>
+              <div>
+                <span style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#9ab8d8' }}>{sub.email}</span>
+                <span style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', marginLeft:8 }}>
+                  score ≥{sub.threshold}
+                </span>
+              </div>
+              <button onClick={() => unsubscribe(sub.email)}
+                style={{ background:'none', border:'none', color:'#4a6a8a', cursor:'pointer', fontSize:14, padding:'0 4px' }}>✕</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── COASTAL SEA BREEZE PANEL ─────────────────────────────────────────────────
+// For coastal sites: fetches marine/offshore wind from Open-Meteo marine API
+// and shows sea breeze risk, swell, and onshore/offshore wind direction
+function CoastalPanel({ site, dayData }) {
+  const [marine, setMarine] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (site.site_type !== 'coastal') { setLoading(false); return; }
+    const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${site.lat}&longitude=${site.lon}&hourly=wave_height,wave_direction,wave_period,wind_wave_height,swell_wave_height,swell_wave_direction&daily=wave_height_max,wave_direction_dominant&timezone=Europe%2FLondon&forecast_days=3`;
+    fetch(url)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { setMarine(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [site.id]);
+
+  if (site.site_type !== 'coastal') return null;
+
+  // Sea breeze analysis using land/sea wind direction difference
+  const landDir  = dayData.windDir;                        // forecast surface wind
+  const siteAspect = site.aspect;                          // direction site faces (toward sea)
+  // Sea breeze typically blows onshore (from sea toward land = roughly opposite to aspect)
+  const seaBreezDir = (siteAspect + 180) % 360;           // wind FROM sea
+  const dirDiff = Math.abs(((landDir - seaBreezDir + 540) % 360) - 180);
+  const seaBreezeActive = dirDiff < 50;                    // wind is coming from sea direction
+  const seaBreezeRisk   = dirDiff < 30 ? 'ONSHORE' : dirDiff < 70 ? 'CROSS-SHORE' : 'OFFSHORE';
+  const sbCol = seaBreezeRisk === 'ONSHORE' ? '#00e5ff' : seaBreezeRisk === 'CROSS-SHORE' ? '#ffd700' : '#ff8c00';
+  const sbNote = seaBreezeRisk === 'ONSHORE'
+    ? 'Sea breeze active — good slope lift, gusty near cliff edge'
+    : seaBreezeRisk === 'CROSS-SHORE'
+    ? 'Cross-shore flow — monitor for direction shifts'
+    : 'Offshore flow — reduced lift, land-off risk';
+
+  // Parse today's marine data (hours 6-18)
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0,10);
+  let waveHgt = null, waveDir = null, swellHgt = null, swellDir = null;
+  if (marine?.hourly?.time) {
+    const dayIdx = marine.hourly.time.findIndex(t => t.startsWith(todayStr) && t.includes('T12'));
+    if (dayIdx >= 0) {
+      waveHgt  = marine.hourly.wave_height?.[dayIdx];
+      waveDir  = marine.hourly.wave_direction?.[dayIdx];
+      swellHgt = marine.hourly.swell_wave_height?.[dayIdx];
+      swellDir = marine.hourly.swell_wave_direction?.[dayIdx];
+    }
+  }
+  const waveMax = marine?.daily?.wave_height_max?.[0];
+
+  const cDir = d => { if(d==null) return '—'; const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW']; return dirs[Math.round(d/22.5)%16]; };
+
+  return (
+    <div style={{ marginBottom:12, background:'#080c14', border:`1px solid ${sbCol}33`, borderRadius:8, padding:'10px 12px' }}>
+      {/* Header */}
+      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+        <span style={{ fontSize:18 }}>🌊</span>
+        <div style={{ fontFamily:'Barlow Condensed', fontSize:15, color:'#4a6a8a', letterSpacing:1 }}>COASTAL CONDITIONS</div>
+      </div>
+
+      {/* Sea breeze status */}
+      <div style={{ display:'flex', gap:8, marginBottom:8, flexWrap:'wrap' }}>
+        <div style={{ flex:1, background:'#0d1520', borderRadius:6, padding:'7px 10px', border:`1px solid ${sbCol}44`, minWidth:100 }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', marginBottom:2 }}>SEA BREEZE</div>
+          <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:18, color:sbCol }}>{seaBreezeRisk}</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:sbCol }}>Wind {cDir(landDir)} · Sea {cDir(seaBreezDir)}</div>
+        </div>
+        <div style={{ flex:2, background:'#0d1520', borderRadius:6, padding:'7px 10px', border:'1px solid #1a2d4a' }}>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', marginBottom:3 }}>PILOT NOTE</div>
+          <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#9ab8d8', lineHeight:1.4 }}>{sbNote}</div>
+        </div>
+      </div>
+
+      {/* Marine data */}
+      {loading && <div style={{ fontFamily:'JetBrains Mono', fontSize:12, color:'#4a6a8a' }}>Loading marine data...</div>}
+      {!loading && marine && (
+        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+          {[
+            { lbl:'WAVE HGT', val: waveHgt != null ? `${waveHgt.toFixed(1)}m` : '—', sub: waveMax != null ? `max ${waveMax.toFixed(1)}m` : '', col: waveHgt > 2 ? '#ff3b3b' : waveHgt > 1 ? '#ff8c00' : '#00e5ff' },
+            { lbl:'WAVE DIR', val: cDir(waveDir), sub: waveDir != null ? `${Math.round(waveDir)}°` : '', col: '#9ab8d8' },
+            { lbl:'SWELL',    val: swellHgt != null ? `${swellHgt.toFixed(1)}m` : '—', sub: cDir(swellDir), col: swellHgt > 1.5 ? '#ff8c00' : '#00e5ff' },
+          ].map(item => (
+            <div key={item.lbl} style={{ flex:1, background:'#0d1520', borderRadius:5, padding:'6px 8px', border:`1px solid ${item.col}22`, minWidth:60 }}>
+              <div style={{ fontFamily:'JetBrains Mono', fontSize:10, color:'#4a6a8a' }}>{item.lbl}</div>
+              <div style={{ fontFamily:'Barlow Condensed', fontWeight:700, fontSize:17, color:item.col }}>{item.val}</div>
+              {item.sub && <div style={{ fontFamily:'JetBrains Mono', fontSize:10, color:'#4a6a8a' }}>{item.sub}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+      {!loading && !marine && (
+        <div style={{ fontFamily:'JetBrains Mono', fontSize:11, color:'#4a6a8a', fontStyle:'italic' }}>Marine data unavailable for this location</div>
+      )}
+
+      {/* Tidal note */}
+      <div style={{ marginTop:6, fontFamily:'JetBrains Mono', fontSize:11, color:'#3a5a7a', borderTop:'1px solid #1a2d4a', paddingTop:5 }}>
+        🌊 Sea breeze typically peaks 12:00–16:00 · Strongest in spring/summer · Can cause sudden direction shifts
       </div>
     </div>
   );
