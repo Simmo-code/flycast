@@ -151,7 +151,7 @@ function processWeatherData(raw, rawUKMO, rawICON, rawGFS) {
     const d   = raw.daily;
     const sl  = arr => (arr||[]).slice(i*24, i*24+24);
     const slP = arr => sl(arr).slice(6,18);
-    const avg = arr => arr.length ? arr.reduce((a,b)=>a+(b||0),0)/arr.length : 0;
+    const avg = arr => { const v=(arr||[]).filter(x=>x!=null); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : 0; };
     const tempMax = d.temperature_2m_max[i]??15;
     const hourlyTemp2m = sl(raw.hourly.temperature_2m ?? []);
     const hourlyDew2m  = sl(raw.hourly.dewpoint_2m ?? []);
@@ -171,8 +171,14 @@ function processWeatherData(raw, rawUKMO, rawICON, rawGFS) {
     const avgCAPE  = avg(slP(raw.hourly.cape));
     const avgCloud = avg(slP(raw.hourly.cloud_cover)); // 0-100%
 
-    // W* convective velocity estimate
-    const wStarMs = Math.min(4.5, Math.sqrt(Math.max(0, avgCAPE/300)) * Math.max(0.3, avgBL/1200));
+    // W* convective velocity — RASP-style estimate
+    // Formula: W* ≈ (g/Tv * BL * buoyancyFlux)^(1/3), empirically ~CAPE^0.4 * BL scaling
+    const wStarMs = (() => {
+      if (avgBL < 100) return 0; // no real BL = no thermals
+      const capeBoost = avgCAPE > 0 ? Math.pow(avgCAPE, 0.38) * 0.18 : 0;
+      const blBoost   = Math.max(0, (avgBL - 200) / 1200); // BL above 200m contributes
+      return Math.min(4.5, Math.max(0, capeBoost + blBoost));
+    })();
     // Thermal trigger hour
     const thermalTrigger = (() => { for(let h=6;h<18;h++) if((hourlyBL[h]||0)>300) return h; return null; })();
     // Lifted Index
@@ -347,30 +353,26 @@ function calcFlyability(site, day) {
 }
 
 function calcXC(site, day, score) {
-  if(score<38) return {label:"No XC",km:0,tier:0,color:"#ff3b3b",detail:"Site unflyable",emoji:"✗"};
+  if(score<38) return {label:"No XC",km:0,tier:-1,color:"#ff3b3b",detail:"Site unflyable",emoji:"✗"};
   const {cape,blHeight,windSpeed,precipProb,wStarMs,cloudBase,thermalTrigger,overcastKillsDay} = day;
-  // W* thermal velocity (m/s) — use pre-computed if available, else derive
   const wStar = wStarMs || (cape>0?Math.sqrt(2*cape/1000)*3.0:0);
   const ts = Math.min(5, wStar);
   const mo = new Date().getMonth();
-  const dl = 8+Math.sin((mo-2)*Math.PI/6)*4; // daylight hours
+  const dl = 8+Math.sin((mo-2)*Math.PI/6)*4;
   const blAGL = Math.max(0, blHeight - site.altitude_m);
-  // Soaring window hours (limited by BL height and daylight)
   const sw = Math.max(0, Math.min(dl-4, blAGL/350));
-  // Effective glide speed component from wind
   const windBoost = Math.min(windSpeed*0.25*sw, 30);
-  // Base km: thermal climb rate × glide ratio × window
   let km = Math.round(((sw*ts*3.5*(blAGL*0.75/1000)*7)+windBoost)*(precipProb>30?0.5:precipProb>15?0.75:1)*(overcastKillsDay?0.3:1));
   km = Math.max(0, Math.min(250, km));
-  const det = `W*${ts.toFixed(1)}m/s · BL${Math.round(blAGL)}m AGL · ${sw.toFixed(1)}hr window`;
-  // Tiered labels matching real XC milestone distances
+  const det = `W*${ts.toFixed(1)}m/s · BL${Math.round(blAGL)}m AGL · ${sw.toFixed(1)}hr soaring window`;
   if(km>=200) return {label:"200km+ Epic XC! 🏆",km,tier:6,color:"#ff00ff",detail:det,emoji:"🏆"};
   if(km>=150) return {label:"150km+ Exceptional",km,tier:5,color:"#00ffcc",detail:det,emoji:"🌟"};
-  if(km>=100) return {label:"100km+ Classic day",km,tier:4,color:"#00e5ff",detail:det,emoji:"✈"};
-  if(km>=50)  return {label:"50km+ XC day",km,tier:3,color:"#00e5ff",detail:det,emoji:"↗"};
-  if(km>=20)  return {label:"20km+ Local XC",km,tier:2,color:"#ffd700",detail:det,emoji:"↗"};
-  if(km>=5)   return {label:"Soaring day",km,tier:1,color:"#ff8c00",detail:"Thermal soaring possible",emoji:"~"};
-  return {label:"Ridge/local only",km:0,tier:0,color:"#ff8c00",detail:"Weak thermals",emoji:"~"};
+  if(km>=100) return {label:"100km+ Classic",km,tier:4,color:"#00e5ff",detail:det,emoji:"✈"};
+  if(km>=50)  return {label:"50km+ XC",km,tier:3,color:"#ffd700",detail:det,emoji:"↗"};
+  if(km>=20)  return {label:"20km+ Local XC",km,tier:2,color:"#ff8c00",detail:det,emoji:"↗"};
+  if(km>=5)   return {label:"Soaring day",km,tier:1,color:"#ff6633",detail:det,emoji:"~"};
+  // Ridge/local: still flyable — guaranteed minimum so bar always shows
+  return {label:"Ridge/local",km:3,tier:0,color:"#ff4400",detail:"Ridge soaring · weak thermals",emoji:"〜"};
 }
 
 // ─── FALLBACK UK AIRSPACE (accurate polygons, used if OpenAIP unreachable) ─────
@@ -654,20 +656,59 @@ export default function App() {
       @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap');
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
       html,body{height:100%;background:#080c14;color:#c8d8f0;font-family:'Barlow Condensed',sans-serif}
-      @media(max-width:700px){
-        .side-panel{position:absolute!important;top:0;right:0;bottom:0;width:100vw!important;z-index:100}
-        .main-wrap{position:relative}
-      }
-      ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#0d1520}::-webkit-scrollbar-thumb{background:#2a4060;border-radius:4px;border:1px solid #1a2d4a}::-webkit-scrollbar-thumb:hover{background:#3a6090}
+      /* ── Scrollbars ── */
+      ::-webkit-scrollbar{width:5px;height:5px}
+      ::-webkit-scrollbar-track{background:#0d1520}
+      ::-webkit-scrollbar-thumb{background:#2a4060;border-radius:4px}
+      ::-webkit-scrollbar-thumb:hover{background:#3a6090}
+      /* ── Side panel ── */
       .side-panel{overflow-y:auto!important;overflow-x:hidden}
+      /* ── Airspace tooltip ── */
       .airspace-tooltip{background:#0a1220;border:1px solid #1a2d4a;color:#c8d8f0;font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 8px;border-radius:4px}
       .airspace-tooltip .leaflet-tooltip-tip{background:#0a1220}
-      select{background:#0d1520;border:1px solid #1a2d4a;color:#9ab8d8;padding:4px 8px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+      /* ── Selects ── */
+      select{background:#0d1520;border:1px solid #1a2d4a;color:#9ab8d8;padding:5px 8px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+      /* ── Animations ── */
       @keyframes spin{to{transform:rotate(360deg)}}
       @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
       .fi{animation:fi 0.25s ease-out forwards}
+      @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+      /* ── Drag handle ── */
       .drag-handle:hover{background:linear-gradient(180deg,transparent,#00e5ffaa,transparent)!important;border-color:#00e5ff88!important}
       .drag-handle{user-select:none}
+      /* ── MOBILE (≤700px) ── */
+      @media(max-width:700px){
+        /* Side panel becomes bottom sheet */
+        .side-panel{
+          position:fixed!important;
+          left:0!important;right:0!important;bottom:0!important;top:auto!important;
+          width:100vw!important;height:78vh!important;max-height:78vh!important;
+          border-radius:18px 18px 0 0!important;
+          border-top:2px solid #00e5ff55!important;
+          border-left:none!important;
+          z-index:600!important;
+          animation:slideUp 0.28s cubic-bezier(.2,.8,.4,1) forwards;
+          box-shadow:0 -8px 40px #000a;
+        }
+        /* Panel wrapper must not clip the bottom sheet */
+        .panel-wrapper{position:static!important;width:auto!important;height:auto!important}
+        /* Hide desktop drag handle */
+        .drag-handle{display:none!important}
+        /* Hide collapse tab button */
+        .collapse-tab{display:none!important}
+        /* Header: hide subtitle on small screens */
+        .header-sub{display:none!important}
+        /* Bigger tap targets throughout */
+        button{min-height:44px}
+        select{min-height:44px;font-size:16px!important}
+        /* Map key: scale down slightly */
+        .map-legend{transform:scale(0.82);transform-origin:top left}
+        /* Day tab strip: always scrollable */
+        .day-strip{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+      }
+      @media(max-width:380px){
+        .side-panel{height:88vh!important;max-height:88vh!important}
+      }
     `}</style>
     <div style={{display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}}>
 
@@ -678,7 +719,7 @@ export default function App() {
             <span style={{fontSize:24}}>🪂</span>
             <div>
               <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:20,letterSpacing:2,color:"#00e5ff",textTransform:"uppercase"}}>UK FLYCAST</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#4a6a8a",letterSpacing:1}}>PG & HG · {UK_SITES.length} SITES · 7 DAYS · SSC ✓</div>
+              <div className="header-sub" style={{fontFamily:"JetBrains Mono",fontSize:13,color:"#4a6a8a",letterSpacing:1}}>PG & HG · {UK_SITES.length} SITES · 7 DAYS · SSC ✓</div>
             </div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
@@ -690,7 +731,7 @@ export default function App() {
           </div>
         </div>
         {/* 3-DAY STRIP */}
-        <div style={{display:"flex",gap:6,paddingBottom:8,overflowX:"auto"}}>
+        <div className="day-strip" style={{display:"flex",gap:6,paddingBottom:8,overflowX:"auto"}}>
           {days.map((d,i)=>{
             const sc=ukScore[i]||0; const col=C(sc);
             const lbl=sc>=78?"EXCELLENT":sc>=58?"GOOD":sc>=38?"MARGINAL":"POOR";
@@ -735,7 +776,7 @@ export default function App() {
           {tab==="map" && (
           <div style={{position:"absolute",top:10,left:10,zIndex:1000,display:"flex",gap:8,alignItems:"flex-start"}}>
             {/* Score key panel */}
-            <div style={{background:"#080c14ee",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px",minWidth:148}}>
+            <div className="map-legend" style={{background:"#080c14ee",backdropFilter:"blur(8px)",border:"1px solid #1a2d4a",borderRadius:8,padding:"8px 12px",minWidth:148}}>
               <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:"#6a9abf",letterSpacing:1,marginBottom:5}}>MAP KEY</div>
               <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#00e566",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Excellent 78+</span></div>
               <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}><div style={{width:11,height:11,borderRadius:"50%",background:"#ffd700",flexShrink:0}}/><span style={{fontFamily:"JetBrains Mono",fontSize:11,color:"#9ab8d8"}}>Good 58-77</span></div>
@@ -872,7 +913,7 @@ export default function App() {
 
         {/* SITE PANEL — resizable, collapsible, always on top of map */}
         {selSite&&(
-          <div style={{
+          <div className="panel-wrapper" style={{
             display:"flex", flexDirection:"row", flexShrink:0,
             position:tab==="map"?"absolute":"relative",
             right:0, top:0, bottom:0,
@@ -918,6 +959,7 @@ export default function App() {
             {/* Collapse/expand tab */}
             <button
               onClick={()=>setPanelCollapsed(p=>!p)}
+              className="collapse-tab"
               title={panelCollapsed?"Show panel":"Hide panel"}
               style={{
                 position:"absolute",
@@ -1047,7 +1089,11 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,i
   const [showH,setShowH]=useState(false);
   const f=flyData?.[activeDay]; const col=f?f.color:"#4a6a8a";
   return(<div className="fi side-panel" style={{width:"100%",background:"#0a1220",borderLeft:"1px solid #1a2d4a",overflowY:"auto",overflowX:"hidden",flexShrink:0,position:"relative",zIndex:50,height:"100%",display:"flex",flexDirection:"column"}}>
-    <div style={{padding:"10px 14px",borderBottom:"1px solid #1a2d4a",background:"#080c14",position:"sticky",top:0,zIndex:10}}>
+    {/* Mobile pull-down handle */}
+    <div style={{display:"flex",justifyContent:"center",padding:"10px 0 4px",flexShrink:0,cursor:"pointer"}} onClick={onClose} title="Tap to close">
+      <div style={{width:40,height:5,borderRadius:3,background:"#3a5070"}}/>
+    </div>
+    <div style={{padding:"8px 14px",borderBottom:"1px solid #1a2d4a",background:"#080c14",position:"sticky",top:0,zIndex:10}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:25,color:"#e0eeff"}}>{site.name}</div><SportBadge sport={site.sport}/><ClubBadge club={site.club}/></div>
@@ -1065,7 +1111,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,i
     </div>
     <div style={{display:"flex",borderBottom:"1px solid #1a2d4a"}}>
       {days.map((d,i)=>{const fd=flyData?.[i];const c=fd?fd.color:"#4a6a8a";return(
-        <button key={i} onClick={()=>onDayChange(i)} style={{flex:1,padding:"6px 4px",background:"none",border:"none",borderBottom:`2px solid ${i===activeDay?c:"transparent"}`,cursor:"pointer",textAlign:"center"}}>
+        <button key={i} onClick={()=>onDayChange(i)} style={{flex:1,padding:"8px 4px",background:"none",border:"none",borderBottom:`2px solid ${i===activeDay?c:"transparent"}`,cursor:"pointer",textAlign:"center",minHeight:52}}>
           <div style={{fontFamily:"Barlow Condensed",fontSize:16,fontWeight:700,color:i===activeDay?c:"#4a6a8a"}}>{d.label.slice(0,3).toUpperCase()}</div>
           <div style={{fontFamily:"JetBrains Mono",fontSize:18,color:c,marginTop:2}}>{fd?fd.score:"—"}</div>
         </button>
@@ -1100,33 +1146,43 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,i
         );
       })()}
       {/* ── XC TIER INDICATOR ── */}
-      {f.xc&&(()=>{
+      {(()=>{
+        if(!f?.xc) return null;
+        const xcKm = f.xc.km ?? 0;
         const tiers=[
-          {km:0,label:"Ridge",color:"#4a6a8a"},
-          {km:5,label:"Soar",color:"#ff8c00"},
-          {km:20,label:"20km",color:"#ffd700"},
-          {km:50,label:"50km",color:"#ffd700"},
-          {km:100,label:"100km",color:"#00e5ff"},
-          {km:150,label:"150km",color:"#00ffcc"},
-          {km:200,label:"200km",color:"#ff00ff"},
+          {km:3,  label:"Ridge", color:"#ff4400"},
+          {km:5,  label:"Soar",  color:"#ff6633"},
+          {km:20, label:"20km",  color:"#ff8c00"},
+          {km:50, label:"50km",  color:"#ffd700"},
+          {km:100,label:"100km", color:"#00e5ff"},
+          {km:150,label:"150km", color:"#00ffcc"},
+          {km:200,label:"200km", color:"#ff00ff"},
         ];
-        const activeTier = tiers.reduce((p,t)=>f.xc.km>=t.km?t:p,tiers[0]);
+        const activeTier = [...tiers].reverse().find(t=>xcKm>=t.km) || {color:"#4a6a8a"};
         return(
-          <div style={{marginBottom:12,background:"#080c14",border:"1px solid #1a2d4a",borderRadius:6,padding:"8px 10px"}}>
-            <div style={{fontFamily:"Barlow Condensed",fontSize:14,color:"#4a6a8a",letterSpacing:1,marginBottom:5}}>XC POTENTIAL</div>
-            <div style={{display:"flex",gap:2,marginBottom:5,alignItems:"center"}}>
-              {tiers.slice(1).map(t=>{
-                const active=f.xc.km>=t.km;
-                return <div key={t.km} style={{flex:1,height:8,borderRadius:2,background:active?t.color:`${t.color}22`,transition:"background 0.4s",position:"relative"}}/>;
+          <div style={{marginBottom:12,background:"#080c14",border:"1px solid #1a2d4a",borderRadius:6,padding:"10px 12px"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}>
+              <span style={{fontFamily:"Barlow Condensed",fontSize:14,color:"#4a6a8a",letterSpacing:1}}>XC POTENTIAL</span>
+              <span style={{fontFamily:"JetBrains Mono",fontSize:13,color:activeTier.color,fontWeight:700}}>{xcKm>0?`~${xcKm}km`:""}</span>
+            </div>
+            {/* Progress bar segments */}
+            <div style={{display:"flex",gap:3,marginBottom:4,alignItems:"stretch",height:10}}>
+              {tiers.map(t=>{
+                const active = xcKm >= t.km;
+                return <div key={t.km} style={{flex:1,height:10,borderRadius:3,background:active?t.color:`${t.color}22`,transition:"background 0.4s"}}/>;
               })}
             </div>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-              {tiers.slice(1).map(t=><span key={t.km} style={{flex:1,fontFamily:"JetBrains Mono",fontSize:12,color:f.xc.km>=t.km?t.color:"#2a3d5a",textAlign:"center"}}>{t.label}</span>)}
+            {/* Labels */}
+            <div style={{display:"flex",marginBottom:6}}>
+              {tiers.map(t=>(
+                <span key={t.km} style={{flex:1,fontFamily:"JetBrains Mono",fontSize:10,color:xcKm>=t.km?t.color:"#2a3d5a",textAlign:"center"}}>{t.label}</span>
+              ))}
             </div>
-            <div style={{fontFamily:"Barlow Condensed",fontSize:18,fontWeight:700,color:activeTier.color}}>
+            {/* Summary */}
+            <div style={{fontFamily:"Barlow Condensed",fontSize:20,fontWeight:700,color:activeTier.color||f.xc.color}}>
               {f.xc.emoji} {f.xc.label}
             </div>
-            {f.xc.detail&&<div style={{fontFamily:"JetBrains Mono",fontSize:13,color:"#4a6a8a",marginTop:2}}>{f.xc.detail}</div>}
+            {f.xc.detail&&<div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a",marginTop:3}}>{f.xc.detail}</div>}
           </div>
         );
       })()}
