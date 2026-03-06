@@ -421,6 +421,7 @@ export default function App() {
   const [wx,setWx]           = useState({});
   const [loading,setLoading] = useState(true);
   const [updated,setUpdated] = useState(null);
+  const [modelTimes,setModelTimes] = useState({});
   const [selSite,setSelSite] = useState(null);
   const [day,setDay]         = useState(0);
   const [tab,setTab]         = useState("map");
@@ -449,12 +450,26 @@ export default function App() {
   const load = useCallback(async()=>{
     setLoading(true);
     const r={};
+    let capturedTimes = null;
     for(let i=0;i<UK_SITES.length;i+=10){
       await Promise.all(UK_SITES.slice(i,i+10).map(async s=>{
-        try{const [ec,ukmo,icon,gfs]=await Promise.all([fetchOpenMeteo(s.lat,s.lon),fetchUKMO(s.lat,s.lon),fetchICON(s.lat,s.lon),fetchGFS(s.lat,s.lon)]);r[s.id]=processWeatherData(ec,ukmo,icon,gfs);}catch{r[s.id]=null;}
+        try{
+          const [ec,ukmo,icon,gfs]=await Promise.all([fetchOpenMeteo(s.lat,s.lon),fetchUKMO(s.lat,s.lon),fetchICON(s.lat,s.lon),fetchGFS(s.lat,s.lon)]);
+          r[s.id]=processWeatherData(ec,ukmo,icon,gfs);
+          // Capture model run times once from first successful fetch
+          if(!capturedTimes && ec?.hourly?.time?.[0]){
+            const fmtRun = t => { if(!t) return null; const d=new Date(t); return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})+' '+d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}); };
+            capturedTimes = {
+              ecmwf: fmtRun(ec?.hourly?.time?.[0]),
+              ukmo:  fmtRun(ukmo?.hourly?.time?.[0]),
+              icon:  fmtRun(icon?.hourly?.time?.[0]),
+              gfs:   fmtRun(gfs?.hourly?.time?.[0]),
+            };
+          }
+        }catch{r[s.id]=null;}
       }));
     }
-    setWx(r);setUpdated(new Date());setLoading(false);
+    setWx(r);setUpdated(new Date());if(capturedTimes)setModelTimes(capturedTimes);setLoading(false);
   },[]);
 
   const flyData = useMemo(()=>{
@@ -735,19 +750,21 @@ export default function App() {
           {days.map((d,i)=>{
             const sc=ukScore[i]||0; const col=C(sc);
             const act=i===day;
-            return(<button key={i} onClick={()=>setDay(i)} style={{flex:"0 0 auto",background:act?`${col}14`:"#0d1520",border:`1px solid ${act?col:"#1a2d4a"}`,borderRadius:5,padding:"3px 7px",cursor:"pointer",textAlign:"center",minWidth:54,transition:"all 0.2s",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:1}}>
-              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:act?col:"#6a9abf",textTransform:"uppercase",lineHeight:1.1}}>{d.label}</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:9,color:"#4a6a8a",lineHeight:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
-              <div style={{fontFamily:"Barlow Condensed",fontSize:15,fontWeight:700,color:col,lineHeight:1.2}}>{loading?"--":sc}</div>
+            return(<button key={i} onClick={()=>setDay(i)} style={{flex:"0 0 auto",background:act?`${col}14`:"#0d1520",border:`1px solid ${act?col:"#1a2d4a"}`,borderRadius:5,padding:"5px 9px",cursor:"pointer",textAlign:"center",minWidth:60,transition:"all 0.2s",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2}}>
+              <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:13,color:act?col:"#6a9abf",textTransform:"uppercase",lineHeight:1.1}}>{d.label}</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#4a6a8a",lineHeight:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
+              <div style={{fontFamily:"Barlow Condensed",fontSize:18,fontWeight:700,color:col,lineHeight:1.2}}>{loading?"--":sc}</div>
             </button>);
           })}
-          <div style={{flex:1,background:"#0d1520",border:"1px solid #1a2d4a",borderRadius:5,padding:"4px 8px",display:"flex",flexDirection:"column",justifyContent:"center",minWidth:90}}>
-            <div style={{fontFamily:"Barlow Condensed",fontSize:12,color:"#4a6a8a",letterSpacing:1,marginBottom:3}}>DATA SOURCES</div>
-            <div style={{display:"flex",gap:3,flexWrap:"wrap"}}>
-              {[["ECMWF","#00e5ff"],["UKMO 2km","#00ff9d"],["ICON-EU","#ffd700"],["GFS","#9ab8d8"]].map(([s,col])=>(
-                <span key={s} style={{fontFamily:"JetBrains Mono",fontSize:11,color:col,background:`${col}14`,border:`1px solid ${col}44`,borderRadius:3,padding:"1px 4px"}}>{s} ✓</span>
-              ))}
-            </div>
+          {/* Model update times */}
+          <div style={{flex:1,background:"#0d1520",border:"1px solid #1a2d4a",borderRadius:5,padding:"5px 10px",display:"flex",flexDirection:"column",justifyContent:"center",minWidth:130}}>
+            <div style={{fontFamily:"Barlow Condensed",fontSize:12,color:"#4a6a8a",letterSpacing:1,marginBottom:4}}>MODEL RUNS</div>
+            {[["ECMWF","#00e5ff",modelTimes.ecmwf],["UKMO","#00ff9d",modelTimes.ukmo],["ICON","#ffd700",modelTimes.icon],["GFS","#9ab8d8",modelTimes.gfs]].map(([name,col,t])=>(
+              <div key={name} style={{display:"flex",alignItems:"baseline",gap:5,marginBottom:1}}>
+                <span style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:12,color:col,minWidth:40}}>{name}</span>
+                <span style={{fontFamily:"JetBrains Mono",fontSize:10,color:t?"#6a9abf":"#2a4060"}}>{t||"—"}</span>
+              </div>
+            ))}
           </div>
         </div>
       </header>
