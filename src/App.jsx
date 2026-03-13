@@ -1099,7 +1099,6 @@ function BestCard({site,fly,rank,onClick}){
 }
 
 function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,isCollapsed}){
-  const [showH,setShowH]=useState(false);
   const f=flyData?.[activeDay]; const col=f?f.color:"#4a6a8a";
   return(<div className="fi side-panel" style={{width:"100%",background:"#0a1220",borderLeft:"1px solid #1a2d4a",overflowY:"auto",overflowX:"hidden",flexShrink:0,position:"relative",zIndex:50,height:"100%",display:"flex",flexDirection:"column"}}>
     {/* Mobile pull-down handle */}
@@ -1122,145 +1121,410 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,i
         ))}
       </div>
     </div>
-    <div style={{display:"flex",borderBottom:"1px solid #1a2d4a"}}>
-      {days.map((d,i)=>{const fd=flyData?.[i];const c=fd?fd.color:"#4a6a8a";return(
-        <button key={i} onClick={()=>onDayChange(i)} style={{flex:1,padding:"8px 4px",background:"none",border:"none",borderBottom:`2px solid ${i===activeDay?c:"transparent"}`,cursor:"pointer",textAlign:"center",minHeight:52}}>
-          <div style={{fontFamily:"Barlow Condensed",fontSize:16,fontWeight:700,color:i===activeDay?c:"#4a6a8a"}}>{d.label.slice(0,3).toUpperCase()}</div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:18,color:c,marginTop:2}}>{fd?fd.score:"—"}</div>
-        </button>
-      );})}
-    </div>
-    {f?<div style={{padding:14,flex:1}}>
-      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
-        <div style={{width:58,height:58,borderRadius:"50%",background:`${col}14`,border:`3px solid ${col}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 0 20px ${col}44`,flexShrink:0}}>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:26,fontWeight:700,color:col,lineHeight:1}}>{f.score}</div>
-          <div style={{fontFamily:"JetBrains Mono",fontSize:16,color:col}}>/ 100</div>
-        </div>
-        <div>
-          <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:26,color:col,letterSpacing:1}}>{f.label.toUpperCase()}</div>
-          <div style={{fontFamily:"Barlow Condensed",fontSize:17,color:f.xc.color,marginTop:1}}>{f.xc.emoji} {f.xc.label}</div>
-        </div>
-      </div>
-      {/* Dynamic confidence badge based on model agreement */}
-      {(() => {
-        const ag = f.dayData.modelAgreement;
-        const col = ag==null?"#ffd700":ag>=75?"#00e5ff":ag>=50?"#ffd700":"#ff8c00";
-        const lbl = ag==null?"SINGLE MODEL":ag>=75?"HIGH CONFIDENCE":ag>=50?"MODERATE CONFIDENCE":"MODELS DISAGREE";
-        const sub = ag==null?"ECMWF only · GFS unavailable":`ECMWF · UKMO · ICON · GFS · ${ag}% agreement`;
-        return (
-          <div style={{background:"#080c14",border:`1px solid ${col}33`,borderRadius:6,padding:"6px 10px",marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
-            <div style={{width:8,height:8,borderRadius:"50%",background:col,boxShadow:`0 0 6px ${col}88`,flexShrink:0}}/>
-            <div>
-              <div style={{fontFamily:"Barlow Condensed",fontSize:17,color:col,fontWeight:700}}>{lbl}</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#4a6a8a"}}>{sub}</div>
-            </div>
-            {ag!=null&&<div style={{marginLeft:"auto",fontFamily:"JetBrains Mono",fontSize:16,fontWeight:700,color:col}}>{ag}%</div>}
-          </div>
-        );
-      })()}
-      {/* ── XC TIER INDICATOR ── */}
-      {(()=>{
-        if(!f?.xc) return null;
-        const xcKm = f.xc.km ?? 0;
-        const tiers=[
-          {km:3,  label:"Ridge", color:"#ff4400"},
-          {km:5,  label:"Soar",  color:"#ff6633"},
-          {km:20, label:"20km",  color:"#ff8c00"},
-          {km:50, label:"50km",  color:"#ffd700"},
-          {km:100,label:"100km", color:"#00e5ff"},
-          {km:150,label:"150km", color:"#00ffcc"},
-          {km:200,label:"200km", color:"#ff00ff"},
-        ];
-        const activeTier = [...tiers].reverse().find(t=>xcKm>=t.km) || {color:"#4a6a8a"};
+    <div style={{display:"flex",borderBottom:"1px solid #1a2d4a",background:"#040810"}}>
+      {days.map((d,i)=>{
+        const fd=flyData?.[i]; const c=fd?fd.color:"#4a6a8a";
+        const act=i===activeDay;
         return(
-          <div style={{marginBottom:12,background:"#080c14",border:"1px solid #1a2d4a",borderRadius:6,padding:"10px 12px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}>
-              <span style={{fontFamily:"Barlow Condensed",fontSize:14,color:"#4a6a8a",letterSpacing:1}}>XC POTENTIAL</span>
-              <span style={{fontFamily:"JetBrains Mono",fontSize:13,color:activeTier.color,fontWeight:700}}>{xcKm>0?`~${xcKm}km`:""}</span>
-            </div>
-            {/* Progress bar segments */}
-            <div style={{display:"flex",gap:3,marginBottom:4,alignItems:"stretch",height:10}}>
-              {tiers.map(t=>{
-                const active = xcKm >= t.km;
-                return <div key={t.km} style={{flex:1,height:10,borderRadius:3,background:active?t.color:`${t.color}22`,transition:"background 0.4s"}}/>;
-              })}
-            </div>
-            {/* Labels */}
-            <div style={{display:"flex",marginBottom:6}}>
-              {tiers.map(t=>(
-                <span key={t.km} style={{flex:1,fontFamily:"JetBrains Mono",fontSize:10,color:xcKm>=t.km?t.color:"#2a3d5a",textAlign:"center"}}>{t.label}</span>
-              ))}
-            </div>
-            {/* Summary */}
-            <div style={{fontFamily:"Barlow Condensed",fontSize:20,fontWeight:700,color:activeTier.color||f.xc.color}}>
-              {f.xc.emoji} {f.xc.label}
-            </div>
-            {f.xc.detail&&<div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a",marginTop:3}}>{f.xc.detail}</div>}
-          </div>
+          <button key={i} onClick={()=>onDayChange(i)} style={{flex:1,padding:"6px 3px 5px",background:act?`${c}18`:"none",border:"none",borderBottom:`2px solid ${act?c:"transparent"}`,cursor:"pointer",textAlign:"center",transition:"background 0.2s"}}>
+            <div style={{fontFamily:"Barlow Condensed",fontSize:11,fontWeight:700,color:act?c:"#3a5a7a",letterSpacing:0.5}}>{d.label.slice(0,3).toUpperCase()}</div>
+            <div style={{fontFamily:"JetBrains Mono",fontSize:8,color:"#2a4060",marginBottom:1}}>{d.date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</div>
+            <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:20,color:c,lineHeight:1}}>{fd?fd.score:"—"}</div>
+          </button>
         );
-      })()}
-      {/* ── RASP BLIPspot link ── */}
-      <div style={{marginBottom:12,display:"flex",gap:6,flexWrap:"wrap"}}>
-        <a href={`http://www.blipspot.com/tools/point/?lat=${site.lat.toFixed(3)}&lon=${site.lon.toFixed(3)}`} target="_blank" rel="noopener noreferrer"
-          style={{flex:1,display:"flex",alignItems:"center",gap:6,background:"#080c14",border:"1px solid #00e5ff33",borderRadius:5,padding:"6px 10px",textDecoration:"none",cursor:"pointer"}}>
-          <span style={{fontSize:16}}>📡</span>
-          <div>
-            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:"#00e5ff",letterSpacing:1}}>RASP BLIPspot</div>
-            <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a"}}>Open sounding data →</div>
-          </div>
-        </a>
-        <a href={`https://xcweather.co.uk/#${site.lat.toFixed(2)},${site.lon.toFixed(2)},13`} target="_blank" rel="noopener noreferrer"
-          style={{flex:1,display:"flex",alignItems:"center",gap:6,background:"#080c14",border:"1px solid #ffd70033",borderRadius:5,padding:"6px 10px",textDecoration:"none",cursor:"pointer"}}>
-          <span style={{fontSize:16}}>🌤</span>
-          <div>
-            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:"#ffd700",letterSpacing:1}}>XCWeather</div>
-            <div style={{fontFamily:"JetBrains Mono",fontSize:12,color:"#4a6a8a"}}>Wind forecast →</div>
-          </div>
-        </a>
-      </div>
-      {/* ── NEW: Webcam, Coastal, Alerts ── */}
-      <WebcamPanel site={site}/>
-      {site.site_type==="coastal" && <CoastalPanel site={site} dayData={f.dayData}/>}
-      <AlertsPanel site={site} flyData={flyData} days={days}/>
-      <div style={{marginBottom:12}}>
-        <div style={{fontFamily:"Barlow Condensed",fontSize:15,color:"#4a6a8a",letterSpacing:1,marginBottom:8}}>FLYABILITY BREAKDOWN</div>
-        {[
-          {l:"Wind Direction",s:f.breakdown.dirScore,  v:<WindDirStatus fly={f} dayData={f.dayData}/>,w:"30%"},
-          {l:"Wind Speed",    s:f.breakdown.speedScore, v:f.dayData.windMin!=null&&f.dayData.windMax!=f.dayData.windMin?`${kmhToMph(Math.round(f.dayData.windMin))}–${kmhToMph(Math.round(f.dayData.windMax))} mph`:fmtSpeedBoth(f.dayData.windSpeed),w:"20%"},
-          {l:"Precipitation", s:f.breakdown.precipScore,v:`${f.dayData.precipProb}% prob`,w:"15%"},
-          {l:"Thermal Index", s:f.breakdown.thermalIdx, v:`CAPE ${Math.round(f.dayData.cape)} J/kg`,w:"15%"},
-          {l:"Cloud Base",    s:f.breakdown.cloudScore, v:`${f.dayData.cloudBase}m / ${Math.round(f.dayData.cloudBase*3.281)}ft AGL`,w:"10%"},
-          {l:"Gust Factor",   s:f.breakdown.gustScore,  v:fmtSpeedBoth(f.dayData.gustSpeed),w:"10%"},
-          {l:"Visibility",    s:f.breakdown.visScore,   v:`${(f.dayData.visibility/1000).toFixed(1)}km`,w:"5%"},
-        ].map(it=>(
-          <div key={it.l} style={{marginBottom:7}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
-              <div style={{display:"flex",gap:4,alignItems:"center"}}>
-                <span style={{fontFamily:"Barlow Condensed",fontSize:15,fontWeight:600,color:"#9ab8d8"}}>{it.l}</span>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:14,color:"#2a3d5a"}}>×{it.w}</span>
-              </div>
-              <div style={{display:"flex",gap:6,alignItems:"center"}}>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:15,color:"#6a9abf"}}>{it.v}</span>
-                <span style={{fontFamily:"JetBrains Mono",fontSize:13,fontWeight:700,color:sCol(it.s),minWidth:24,textAlign:"right"}}>{Math.round(it.s)}</span>
-              </div>
+      })}
+    </div>
+    {f?<div style={{padding:"10px 12px",flex:1}}>
+
+      {/* ── HERO ROW: score + status + key stats ── */}
+      <div style={{display:"flex",gap:10,marginBottom:10,alignItems:"stretch"}}>
+        {/* Score circle */}
+        <div style={{width:64,height:64,borderRadius:"50%",background:`${col}14`,border:`3px solid ${col}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 0 24px ${col}55`,flexShrink:0}}>
+          <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:28,color:col,lineHeight:1}}>{f.score}</div>
+          <div style={{fontFamily:"JetBrains Mono",fontSize:10,color:`${col}aa`}}>/100</div>
+        </div>
+        {/* Status + XC */}
+        <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center"}}>
+          <div style={{fontFamily:"Barlow Condensed",fontWeight:900,fontSize:28,color:col,letterSpacing:1,lineHeight:1}}>{f.label.toUpperCase()}</div>
+          <div style={{fontFamily:"Barlow Condensed",fontSize:16,color:f.xc.color,marginTop:2}}>{f.xc.emoji} {f.xc.label}</div>
+          {f.xc.detail&&<div style={{fontFamily:"JetBrains Mono",fontSize:10,color:"#4a6a8a",marginTop:1}}>{f.xc.detail}</div>}
+        </div>
+        {/* Model confidence pill */}
+        {(()=>{
+          const ag=f.dayData.modelAgreement;
+          const mc=ag==null?"#ffd700":ag>=75?"#00e5ff":ag>=50?"#ffd700":"#ff8c00";
+          return(
+            <div style={{background:`${mc}11`,border:`1px solid ${mc}44`,borderRadius:6,padding:"4px 8px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:18,fontWeight:700,color:mc}}>{ag!=null?`${ag}%`:"?"}</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:9,color:"#4a6a8a",textAlign:"center"}}>MODEL{"
+"}AGREE</div>
             </div>
-            <div style={{background:"#1a2d4a",borderRadius:2,height:3}}><div style={{width:`${Math.round(it.s)}%`,height:"100%",background:sCol(it.s),borderRadius:2,transition:"width 0.6s ease"}}/></div>
+          );
+        })()}
+      </div>
+
+      {/* ── KEY METRICS ROW ── */}
+      <div style={{display:"flex",gap:5,marginBottom:10}}>
+        {[
+          {i:"💨",l:"WIND",    v:`${kmhToMph(Math.round(f.dayData.windSpeed))} mph`,   sub:`${kmhToMph(Math.round(f.dayData.gustSpeed))}g`,   c:sCol(f.breakdown.speedScore)},
+          {i:"🧭",l:"DIR",     v:cDir(f.dayData.windDir),                               sub:`${Math.round(f.dayData.windDir)}°`,               c:f.inWindow?"#00e566":"#ff3b3b"},
+          {i:"🌧",l:"RAIN",    v:`${f.dayData.precipProb}%`,                            sub:"precip",                                           c:sCol(f.breakdown.precipScore)},
+          {i:"☁",l:"BASE",    v:`${Math.round(f.dayData.cloudBase*3.281)}ft`,          sub:"AGL",                                              c:sCol(f.breakdown.cloudScore)},
+          {i:"📐",l:"BL TOP",  v:`${Math.round(Math.max(0,f.dayData.blHeight-site.altitude_m)*3.281)}ft`, sub:"AGL",                          c:f.dayData.blHeight>site.altitude_m+800?"#00e5ff":"#ffd700"},
+        ].map(m=>(
+          <div key={m.l} style={{flex:1,background:"#080c14",borderRadius:6,padding:"6px 5px",border:`1px solid ${m.c}33`,textAlign:"center",minWidth:0}}>
+            <div style={{fontFamily:"JetBrains Mono",fontSize:9,color:"#3a5a7a",marginBottom:1}}>{m.l}</div>
+            <div style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:15,color:m.c,lineHeight:1}}>{m.v}</div>
+            <div style={{fontFamily:"JetBrains Mono",fontSize:9,color:"#3a5a7a"}}>{m.sub}</div>
           </div>
         ))}
       </div>
-      <WindCompass site={site} windDir={f.dayData.windDir} windSpeed={f.dayData.windSpeed} gustSpeed={f.dayData.gustSpeed} inWindow={f.inWindow}/>
-      <div style={{marginBottom:12}}>
-        <button onClick={()=>setShowH(!showH)} style={{background:"none",border:"1px solid #1a2d4a",borderRadius:4,color:"#6a9abf",fontFamily:"Barlow Condensed",fontSize:15,fontWeight:700,letterSpacing:1,padding:"6px 12px",cursor:"pointer",width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span>HOURLY WIND GRAPH</span><span>{showH?"▲":"▼"}</span>
-        </button>
-        {showH&&<HourlyGraph data={f.dayData} site={site} siteMin={site.wind_range_min} siteMax={site.wind_range_max}/>}
+
+      {/* ── SKYSIGHT-STYLE CROSS-SECTION CHART ── */}
+      <SkySightChart dayData={f.dayData} site={site}/>
+
+      {/* ── XC POTENTIAL BAR ── */}
+      {(()=>{
+        if(!f?.xc) return null;
+        const xcKm=f.xc.km??0;
+        const tiers=[{km:3,label:"Ridge",color:"#ff4400"},{km:5,label:"Soar",color:"#ff6633"},{km:20,label:"20km",color:"#ff8c00"},{km:50,label:"50km",color:"#ffd700"},{km:100,label:"100km",color:"#00e5ff"},{km:150,label:"150km",color:"#00ffcc"},{km:200,label:"200km",color:"#ff00ff"}];
+        const at=[...tiers].reverse().find(t=>xcKm>=t.km)||{color:"#4a6a8a"};
+        return(
+          <div style={{marginBottom:10,background:"#080c14",borderRadius:6,padding:"8px 10px",border:"1px solid #1a2d4a"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:5}}>
+              <span style={{fontFamily:"Barlow Condensed",fontSize:13,color:"#4a6a8a",letterSpacing:1}}>XC POTENTIAL</span>
+              <span style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:16,color:at.color}}>{f.xc.emoji} {f.xc.label}{xcKm>0?` · ~${xcKm}km`:""}</span>
+            </div>
+            <div style={{display:"flex",gap:2,height:8,borderRadius:4,overflow:"hidden"}}>
+              {tiers.map(t=><div key={t.km} style={{flex:1,background:xcKm>=t.km?t.color:`${t.color}20`,transition:"background 0.4s"}}/>)}
+            </div>
+            <div style={{display:"flex",marginTop:2}}>
+              {tiers.map(t=><span key={t.km} style={{flex:1,fontFamily:"JetBrains Mono",fontSize:8,color:xcKm>=t.km?t.color:"#1a3050",textAlign:"center"}}>{t.label}</span>)}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── FLYABILITY BREAKDOWN (compact) ── */}
+      <div style={{marginBottom:10,background:"#080c14",borderRadius:6,padding:"8px 10px",border:"1px solid #1a2d4a"}}>
+        <div style={{fontFamily:"Barlow Condensed",fontSize:13,color:"#4a6a8a",letterSpacing:1,marginBottom:6}}>FLYABILITY BREAKDOWN</div>
+        {[
+          {l:"Wind Dir",  s:f.breakdown.dirScore,   v:<WindDirStatus fly={f} dayData={f.dayData}/>},
+          {l:"Wind Speed",s:f.breakdown.speedScore,  v:`${kmhToMph(Math.round(f.dayData.windSpeed))} mph`},
+          {l:"Gusts",     s:f.breakdown.gustScore,   v:`${kmhToMph(Math.round(f.dayData.gustSpeed))} mph`},
+          {l:"Rain",      s:f.breakdown.precipScore, v:`${f.dayData.precipProb}%`},
+          {l:"Cloud Base",s:f.breakdown.cloudScore,  v:`${Math.round(f.dayData.cloudBase*3.281)}ft`},
+          {l:"Thermals",  s:f.breakdown.thermalIdx,  v:`CAPE ${Math.round(f.dayData.cape)}`},
+        ].map(it=>(
+          <div key={it.l} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
+            <span style={{fontFamily:"Barlow Condensed",fontSize:13,color:"#5a7a9a",minWidth:72,flexShrink:0}}>{it.l}</span>
+            <div style={{flex:1,background:"#0d1828",borderRadius:2,height:5,position:"relative"}}>
+              <div style={{position:"absolute",left:0,top:0,height:"100%",width:`${Math.round(it.s)}%`,background:sCol(it.s),borderRadius:2,transition:"width 0.5s ease"}}/>
+            </div>
+            <span style={{fontFamily:"JetBrains Mono",fontSize:11,color:sCol(it.s),minWidth:58,textAlign:"right",flexShrink:0}}>{it.v}</span>
+          </div>
+        ))}
       </div>
-      {/* ── RASP/SKYLIGHT STYLE SOARING INDEX ── */}
-      <SoaringIndex dayData={f.dayData} site={site}/>
+
+      {/* ── LINKS ROW ── */}
+      <div style={{display:"flex",gap:5,marginBottom:10,flexWrap:"wrap"}}>
+        {[
+          {icon:"📡",label:"BLIPspot",  col:"#00e5ff", url:`http://www.blipspot.com/tools/point/?lat=${site.lat.toFixed(3)}&lon=${site.lon.toFixed(3)}`},
+          {icon:"🌤",label:"XCWeather", col:"#ffd700", url:`https://xcweather.co.uk/#${site.lat.toFixed(2)},${site.lon.toFixed(2)},13`},
+        ].map(lnk=>(
+          <a key={lnk.label} href={lnk.url} target="_blank" rel="noopener noreferrer"
+            style={{flex:1,display:"flex",alignItems:"center",gap:6,background:"#080c14",border:`1px solid ${lnk.col}33`,borderRadius:5,padding:"6px 10px",textDecoration:"none"}}>
+            <span style={{fontSize:14}}>{lnk.icon}</span>
+            <span style={{fontFamily:"Barlow Condensed",fontWeight:700,fontSize:14,color:lnk.col}}>{lnk.label}</span>
+          </a>
+        ))}
+      </div>
+
+      {/* ── WEBCAM / COASTAL / ALERTS ── */}
+      <WebcamPanel site={site}/>
+      {site.site_type==="coastal" && <CoastalPanel site={site} dayData={f.dayData}/>}
+      <AlertsPanel site={site} flyData={flyData} days={days}/>
+
       {/* ── MULTI-MODEL COMPARISON ── */}
       <ModelComparison dayData={f.dayData}/>
+
     </div>:<div style={{padding:32,textAlign:"center",color:"#4a6a8a",fontFamily:"Barlow Condensed",fontSize:15}}>Loading weather data...</div>}
   </div>);
+}
+
+
+// ── SKYSIGHT-STYLE ATMOSPHERIC CROSS-SECTION ─────────────────────────────────
+// Inspired by SkySight's route forecast cross-section view.
+// Shows a full day timeline with:
+//   • Thermal/BL height coloured band (green gradient = good lift)
+//   • Cloud base as a ceiling line with cloud icons
+//   • Wind speed as a magnitude-coloured strip at the bottom
+//   • Rain probability as a blue overlay
+//   • Wind direction arrows per hour
+//   • Sunrise/sunset shading
+function SkySightChart({ dayData, site }) {
+  const {
+    hourlyBL, hourlyWindSpeed, hourlyGusts, hourlyWindDir,
+    hourlyCloudBase, sunrise, sunset, wStarMs, thermalTrigger,
+    cloudBase, blHeight, precipProb, liftedIdx, cape, cin,
+    windShear, overcastKillsDay, cloudCover, wStar
+  } = dayData;
+
+  const siteAlt = site.altitude_m;
+  const W = 560, H = 200;
+  const pl = 42, pr = 8, ptop = 14, pb = 32;
+  const gw = W - pl - pr, gh = H - ptop - pb;
+
+  // Hours 05..23 (19 slots)
+  const hours = Array.from({length:19},(_,i)=>i+5);
+  const hToX = h => pl + ((h-5)/18)*gw;
+
+  // BL top values (metres ASL) per hour
+  const blVals = (hourlyBL||[]).slice(5,24);
+  const maxBL = Math.max(...(hourlyBL||[]).filter(Boolean), blHeight||500, 600);
+  const yScale = v => ptop + gh - Math.min(1, Math.max(0,(v||0)/maxBL)) * gh;
+
+  // Cloud base values (metres AGL → ASL)
+  const cbVals = (hourlyCloudBase||[]).slice(5,24).map(v => v!=null ? v + siteAlt : null);
+
+  // Wind speed values
+  const wspd = (hourlyWindSpeed||[]).slice(5,24);
+  const wgst = (hourlyGusts||[]).slice(5,24);
+  const wdir = (hourlyWindDir||[]).slice(5,24);
+  const maxWspd = Math.max(...(wspd.filter(Boolean)), 30, site.wind_range_max);
+
+  // Site altitude line Y
+  const siteY = yScale(siteAlt);
+
+  // BL path
+  const blPath = blVals.map((v,i)=>`${i===0?'M':'L'}${hToX(hours[i])} ${yScale(v||siteAlt)}`).join(' ');
+  const blFillPath = blPath + ` L${hToX(23)} ${siteY} L${hToX(5)} ${siteY} Z`;
+
+  // Cloud base path
+  const cbPathParts = [];
+  cbVals.forEach((v,i)=>{ if(v!=null) cbPathParts.push(`${cbPathParts.length===0?'M':'L'}${hToX(hours[i])} ${yScale(v)}`); });
+  const cbPath = cbPathParts.join(' ');
+
+  // Wind direction in window?
+  const parseWin = (note) => {
+    if(!note) return null;
+    const m = note.match(/(\d{3})–(\d{3})/);
+    if(!m) return null;
+    return {lo:parseInt(m[1]), hi:parseInt(m[2])};
+  };
+  const win = parseWin(site.windNote);
+  const inWin = (d) => {
+    if(d==null) return false;
+    if(win) {
+      const lo=win.lo, hi=win.hi;
+      if(lo<=hi) return d>=lo && d<=hi;
+      return d>=lo || d<=hi;
+    }
+    const diff = Math.abs(((d - site.aspect + 180 + 360) % 360) - 180);
+    return diff <= 60;
+  };
+
+  // Sunrise/sunset X positions
+  const srX = hToX(Math.max(5, sunrise||6));
+  const ssX = hToX(Math.min(23, sunset||20));
+
+  // Thermal quality colour per hour: based on BL above site
+  const thermalFill = (blAsl) => {
+    const agl = (blAsl||0) - siteAlt;
+    if(agl < 100) return '#1a2d4a';
+    if(agl < 300) return '#1a4a3a';
+    if(agl < 600) return '#1a5a2a';
+    if(agl < 1000) return '#1a7a2a';
+    if(agl < 1500) return '#00aa44';
+    return '#00e566';
+  };
+
+  // Wind barb helper: small arrow showing direction
+  const WindArrow = ({x, spd, dir, i}) => {
+    if(spd==null || dir==null) return null;
+    const winCol = inWin(dir) ? '#00e566' : '#ff4444';
+    const rad = (dir - 90) * Math.PI / 180;
+    const len = 8;
+    const cx2 = x, cy2 = H - pb + 14;
+    const tx = cx2 + Math.cos(rad)*len, ty = cy2 + Math.sin(rad)*len;
+    const bx = cx2 - Math.cos(rad)*5,  by = cy2 - Math.sin(rad)*5;
+    return (
+      <g key={i}>
+        <line x1={bx} y1={by} x2={tx} y2={ty} stroke={winCol} strokeWidth={1.2} strokeLinecap="round"/>
+        <polygon
+          points={`${tx},${ty} ${tx+Math.cos(rad-2.4)*4},${ty+Math.sin(rad-2.4)*4} ${tx+Math.cos(rad+2.4)*4},${ty+Math.sin(rad+2.4)*4}`}
+          fill={winCol}
+        />
+      </g>
+    );
+  };
+
+  // Key metrics derived
+  const blAboveSite = Math.max(0, (blHeight||0) - siteAlt);
+  const raspStars = wStarMs < 0.5 ? 0 : wStarMs < 1.2 ? 1 : wStarMs < 2.0 ? 2 : wStarMs < 2.8 ? 3 : wStarMs < 3.5 ? 4 : 5;
+  const thermalLabel = wStarMs < 0.5?'None':wStarMs<1.0?'Weak':wStarMs<2.0?'Moderate':wStarMs<3.0?'Good':'Strong';
+  const thermalCol = wStarMs<0.5?'#3a5a7a':wStarMs<1.0?'#4a7a9a':wStarMs<2.0?'#ffd700':wStarMs<3.0?'#00e5ff':'#00ff9d';
+  const liCol = (liftedIdx??1)<-4?'#ff8c00':(liftedIdx??1)<-2?'#00e5ff':(liftedIdx??1)<0?'#ffd700':'#4a6a8a';
+  const liLabel = (liftedIdx??1)<-4?'Very unstable':(liftedIdx??1)<-2?'Unstable':(liftedIdx??1)<0?'Slightly unstable':'Stable';
+
+  return (
+    <div style={{background:'#060c18',border:'1px solid #1a2d4a',borderRadius:8,marginBottom:10,overflow:'hidden'}}>
+
+      {/* Chart header */}
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 10px 4px',borderBottom:'1px solid #0d1a2a'}}>
+        <span style={{fontFamily:'Barlow Condensed',fontWeight:700,fontSize:13,color:'#4a7a9a',letterSpacing:1}}>ATMOSPHERIC CROSS-SECTION</span>
+        <span style={{fontFamily:'JetBrains Mono',fontSize:10,color:'#2a4a6a'}}>
+          🌅 {Math.floor(sunrise||6)}:{String(Math.round(((sunrise||6)%1)*60)).padStart(2,'0')} — 🌇 {Math.floor(sunset||20)}:{String(Math.round(((sunset||20)%1)*60)).padStart(2,'0')}
+        </span>
+      </div>
+
+      {/* Main SVG chart */}
+      <svg viewBox={`0 0 ${W} ${H}`} style={{display:'block',width:'100%',height:160}} preserveAspectRatio="none">
+
+        {/* Night shading before sunrise */}
+        <rect x={pl} y={ptop} width={Math.max(0,srX-pl)} height={gh} fill="#00000044"/>
+        {/* Night shading after sunset */}
+        <rect x={ssX} y={ptop} width={Math.max(0,pl+gw-ssX)} height={gh} fill="#00000044"/>
+
+        {/* Horizontal grid lines */}
+        {[0.25,0.5,0.75,1].map(f=>{
+          const y = ptop + gh*(1-f);
+          const v = Math.round(maxBL*f);
+          return <g key={f}>
+            <line x1={pl} y1={y} x2={pl+gw} y2={y} stroke="#0d1a2a" strokeWidth={1}/>
+            <text x={pl-3} y={y+3} textAnchor="end" fill="#2a4a6a" fontSize={8} fontFamily="JetBrains Mono">{Math.round(v*3.281)}ft</text>
+          </g>;
+        })}
+
+        {/* BL height coloured fill - atmospheric gradient */}
+        {blVals.map((v,i)=>{
+          if(i===blVals.length-1) return null;
+          const x1=hToX(hours[i]), x2=hToX(hours[i+1]);
+          const y1=yScale(v||siteAlt), y2=yScale(blVals[i+1]||siteAlt);
+          const col=thermalFill(v);
+          return <polygon key={i}
+            points={`${x1},${y1} ${x2},${y2} ${x2},${siteY} ${x1},${siteY}`}
+            fill={col} opacity={0.85}
+          />;
+        })}
+
+        {/* BL height line */}
+        <path d={blPath} fill="none" stroke="#00e566" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
+
+        {/* Cloud base fill (from cloud base down to BL top) */}
+        {cbVals.map((v,i)=>{
+          if(v==null || i===cbVals.length-1) return null;
+          const v2=cbVals[i+1]; if(v2==null) return null;
+          const bl1=blVals[i]||siteAlt, bl2=blVals[i+1]||siteAlt;
+          const x1=hToX(hours[i]), x2=hToX(hours[i+1]);
+          return <polygon key={i}
+            points={`${x1},${yScale(v)} ${x2},${yScale(v2)} ${x2},${yScale(bl2)} ${x1},${yScale(bl1)}`}
+            fill="#7ab8e820" stroke="none"
+          />;
+        })}
+
+        {/* Cloud base line */}
+        {cbPath && <path d={cbPath} fill="none" stroke="#7ab8e8" strokeWidth={1.5} strokeDasharray="4,2" strokeLinecap="round"/>}
+
+        {/* Site altitude fill */}
+        <rect x={pl} y={siteY} width={gw} height={ptop+gh-siteY} fill="#8B450011"/>
+        <line x1={pl} y1={siteY} x2={pl+gw} y2={siteY} stroke="#ffd70055" strokeWidth={1} strokeDasharray="3,3"/>
+        <text x={pl+2} y={siteY-3} fill="#ffd70066" fontSize={7} fontFamily="JetBrains Mono">{siteAlt}m site</text>
+
+        {/* Thermal trigger time marker */}
+        {thermalTrigger && hToX(thermalTrigger) > pl && (
+          <g>
+            <line x1={hToX(thermalTrigger)} y1={ptop} x2={hToX(thermalTrigger)} y2={siteY} stroke="#ffd70077" strokeWidth={1} strokeDasharray="2,3"/>
+            <text x={hToX(thermalTrigger)} y={ptop+9} textAnchor="middle" fill="#ffd70099" fontSize={7} fontFamily="JetBrains Mono">trigger</text>
+          </g>
+        )}
+
+        {/* Wind speed strip at bottom */}
+        {wspd.map((v,i)=>{
+          if(v==null) return null;
+          const x=hToX(hours[i]);
+          const w=gw/18;
+          const norm=Math.min(1,(v||0)/maxWspd);
+          const inW=inWin(wdir[i]);
+          const wc=inW?`rgba(0,229,102,${0.3+norm*0.5})`:`rgba(255,60,60,${0.2+norm*0.4})`;
+          return <rect key={i} x={x-w/2} y={H-pb} width={w} height={pb-18} fill={wc} rx={1}/>;
+        })}
+
+        {/* Wind direction arrows */}
+        {[5,7,9,11,13,15,17,19,21].map(h=>{
+          const i=h-5;
+          return <WindArrow key={h} x={hToX(h)} spd={wspd[i]} dir={wdir[i]} i={i}/>;
+        })}
+
+        {/* Precipitation probability strip (top thin band) */}
+        {/* Hour time labels */}
+        {[6,8,10,12,14,16,18,20].map(h=>(
+          <text key={h} x={hToX(h)} y={H-4} textAnchor="middle" fill="#2a4a6a" fontSize={8} fontFamily="JetBrains Mono">{String(h).padStart(2,'0')}:00</text>
+        ))}
+
+        {/* Sunrise / sunset labels */}
+        {srX>pl && srX<pl+gw && <text x={srX} y={ptop+6} textAnchor="middle" fill="#ffd70066" fontSize={7} fontFamily="JetBrains Mono">☀</text>}
+        {ssX>pl && ssX<pl+gw && <text x={ssX} y={ptop+6} textAnchor="middle" fill="#ffd70044" fontSize={7} fontFamily="JetBrains Mono">🌙</text>}
+
+        {/* Chart border */}
+        <rect x={pl} y={ptop} width={gw} height={gh} fill="none" stroke="#1a2d4a" strokeWidth={1}/>
+      </svg>
+
+      {/* Legend */}
+      <div style={{display:'flex',gap:12,padding:'4px 10px 6px',borderTop:'1px solid #0d1a2a',flexWrap:'wrap'}}>
+        {[
+          {c:'#00e566',d:false,l:'BL height'},
+          {c:'#7ab8e8',d:true, l:'Cloud base'},
+          {c:'#ffd700',d:true, l:'Site alt'},
+          {c:'#00e566',d:false,l:'Wind in window'},
+          {c:'#ff4444',d:false,l:'Wind out'},
+        ].map(({c,d,l})=>(
+          <div key={l} style={{display:'flex',alignItems:'center',gap:3}}>
+            <div style={{width:14,height:2,background:c,borderRadius:1,borderTop:d?`1px dashed ${c}`:'none'}}/>
+            <span style={{fontFamily:'JetBrains Mono',fontSize:8,color:'#3a5a7a'}}>{l}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Soaring metrics row */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:0,borderTop:'1px solid #0d1a2a'}}>
+        {[
+          {l:'W* THERMAL',v:`${wStarMs.toFixed(1)} m/s`,sub:thermalLabel,c:thermalCol},
+          {l:'BL AGL',    v:`${Math.round(blAboveSite*3.281)}ft`,sub:`${Math.round(blAboveSite)}m`,c:blAboveSite>800?'#00e5ff':blAboveSite>400?'#ffd700':'#4a6a8a'},
+          {l:'TRIGGER',   v:thermalTrigger?`${String(thermalTrigger).padStart(2,'0')}:00`:'None',sub:'first thermal',c:thermalTrigger?'#ffd700':'#3a5a7a'},
+          {l:'LIFT IDX',  v:liftedIdx!=null?liftedIdx.toFixed(1):'—',sub:liLabel,c:liCol},
+        ].map(({l,v,sub,c},idx)=>(
+          <div key={l} style={{padding:'6px 8px',borderRight:idx<3?'1px solid #0d1a2a':'none',background:'#040810'}}>
+            <div style={{fontFamily:'JetBrains Mono',fontSize:8,color:'#2a4a6a',marginBottom:1}}>{l}</div>
+            <div style={{fontFamily:'Barlow Condensed',fontWeight:700,fontSize:16,color:c,lineHeight:1}}>{v}</div>
+            <div style={{fontFamily:'JetBrains Mono',fontSize:8,color:'#3a5a7a'}}>{sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* CAPE / CIN / Cloud cover row */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:0,borderTop:'1px solid #0d1a2a'}}>
+        {[
+          {l:'CAPE',v:`${Math.round(cape||0)} J/kg`,  c:(cape||0)>500?'#00e5ff':(cape||0)>100?'#ffd700':'#4a6a8a', sub:(cape||0)>500?'Strong thermals':(cape||0)>100?'Moderate':'Weak'},
+          {l:'CIN', v:`${Math.round(Math.abs(cin||0))} J/kg`, c:Math.abs(cin||0)<50?'#00e566':'#ff8c00', sub:Math.abs(cin||0)<50?'Low cap':'Capping'},
+          {l:'CLOUD',v:`${Math.round(cloudCover||0)}%`, c:(cloudCover||0)>80?'#ff3b3b':(cloudCover||0)>50?'#ff8c00':'#00e566', sub:(cloudCover||0)>80?'Overcast':(cloudCover||0)>50?'Cloudy':'Clear'},
+        ].map(({l,v,c,sub},idx)=>(
+          <div key={l} style={{padding:'5px 8px',borderRight:idx<2?'1px solid #0d1a2a':'none',background:'#040810'}}>
+            <div style={{fontFamily:'JetBrains Mono',fontSize:8,color:'#2a4a6a',marginBottom:1}}>{l}</div>
+            <div style={{fontFamily:'Barlow Condensed',fontWeight:700,fontSize:14,color:c,lineHeight:1}}>{v}</div>
+            <div style={{fontFamily:'JetBrains Mono',fontSize:8,color:'#3a5a7a'}}>{sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {overcastKillsDay && (
+        <div style={{background:'#1a0808',borderTop:'1px solid #ff3b3b33',padding:'5px 10px',display:'flex',gap:6,alignItems:'center'}}>
+          <span style={{fontSize:12}}>☁️</span>
+          <span style={{fontFamily:'Barlow Condensed',fontWeight:700,fontSize:13,color:'#ff3b3b'}}>OVERCAST — thermal development likely suppressed ({Math.round(cloudCover)}% cloud cover)</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ── SOARING INDEX (RASP/Skylight style) ─────────────────────────────────────
