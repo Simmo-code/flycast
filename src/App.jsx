@@ -1156,8 +1156,7 @@ function SitePanel({site,flyData,activeDay,days,onClose,onDayChange,onCollapse,i
           return(
             <div style={{background:`${mc}11`,border:`1px solid ${mc}44`,borderRadius:6,padding:"4px 8px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0}}>
               <div style={{fontFamily:"JetBrains Mono",fontSize:18,fontWeight:700,color:mc}}>{ag!=null?`${ag}%`:"?"}</div>
-              <div style={{fontFamily:"JetBrains Mono",fontSize:9,color:"#4a6a8a",textAlign:"center"}}>MODEL{"
-"}AGREE</div>
+              <div style={{fontFamily:"JetBrains Mono",fontSize:9,color:"#4a6a8a",textAlign:"center",lineHeight:1.2}}>MODEL<br/>AGREE</div>
             </div>
           );
         })()}
