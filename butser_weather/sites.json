@@ -1,0 +1,123 @@
+{
+  "home": {"name": "Portchester", "lat": 50.846, "lon": -1.125},
+  "sites": [
+    {
+      "id": "butser-west",
+      "name": "Butser West",
+      "lat": 50.9770,
+      "lon": -0.9820,
+      "elevation_m": 271,
+      "wind_sectors": [[225, 295]],
+      "club": "Sky Surfing Club",
+      "access": "Check the current club site guide and status before travel.",
+      "guide_url": "https://skysurfingclub.co.uk/site_guide/",
+      "pilot_level": "Follow current club rules",
+      "verified": false
+    },
+    {
+      "id": "park-hill",
+      "name": "Park Hill, East Meon",
+      "lat": 50.995,
+      "lon": -1.030,
+      "elevation_m": 220,
+      "wind_sectors": [],
+      "club": "Sky Surfing Club",
+      "access": "Members only; Pilot rated; compulsory hill briefing and Park Hill Telegram booking. Maximum six pilots. Normally closed for shooting from about 1 September to 31 January.",
+      "guide_url": "https://skysurfingclub.co.uk/site_guide/",
+      "pilot_level": "Pilot rated and confident slope landing",
+      "verified": false,
+      "manual_review_reason": "The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered."
+    },
+    {
+      "id": "liddington",
+      "name": "Liddington",
+      "lat": 51.519,
+      "lon": -1.700,
+      "elevation_m": 250,
+      "wind_sectors": [[215, 250], [285, 330]],
+      "club": "Thames Valley HGC",
+      "access": "TVHGC membership, suitable rating and insurance required. Check livestock and current site status.",
+      "guide_url": "https://www.tvhgc.co.uk/liddington/",
+      "pilot_level": "Club Pilot and above",
+      "verified": true
+    },
+    {
+      "id": "milk-hill",
+      "name": "Milk Hill",
+      "lat": 51.374,
+      "lon": -1.851,
+      "elevation_m": 285,
+      "wind_sectors": [[180, 270]],
+      "club": "Thames Valley HGC",
+      "access": "TVHGC membership and current site rules apply; check seasonal restrictions.",
+      "guide_url": "https://www.tvhgc.co.uk/sites/",
+      "pilot_level": "Club Pilot and above",
+      "verified": true
+    },
+    {
+      "id": "golden-ball",
+      "name": "Golden Ball",
+      "lat": 51.356,
+      "lon": -1.775,
+      "elevation_m": 260,
+      "wind_sectors": [[135, 210]],
+      "club": "Thames Valley HGC",
+      "access": "Sensitive XC-only site with strict launch and landing rules. Check current club status.",
+      "guide_url": "https://www.tvhgc.co.uk/sites/",
+      "pilot_level": "Pilot plus 100 hours",
+      "verified": true
+    },
+    {
+      "id": "tan-hill",
+      "name": "Tan Hill",
+      "lat": 51.340,
+      "lon": -1.879,
+      "elevation_m": 292,
+      "wind_sectors": [[110, 180]],
+      "club": "Thames Valley HGC",
+      "access": "No unaccompanied flying; SSSI and current club rules apply.",
+      "guide_url": "https://www.tvhgc.co.uk/tan-hill/",
+      "pilot_level": "Club Pilot and above",
+      "verified": true
+    },
+    {
+      "id": "uffington-white-horse",
+      "name": "Uffington White Horse",
+      "lat": 51.578,
+      "lon": -1.566,
+      "elevation_m": 250,
+      "wind_sectors": [[315, 360], [0, 25]],
+      "club": "Thames Valley HGC",
+      "access": "Experienced-pilot National Trust site; membership and current rules apply.",
+      "guide_url": "https://www.tvhgc.co.uk/sites/",
+      "pilot_level": "Pilot rated",
+      "verified": true
+    },
+    {
+      "id": "devils-dyke",
+      "name": "Devil's Dyke",
+      "lat": 50.885,
+      "lon": -0.213,
+      "elevation_m": 217,
+      "wind_sectors": [[292, 360], [0, 12]],
+      "club": "Southern Hang Gliding Club",
+      "access": "SHGC membership or valid visitor pass, BHPA requirements and site briefing rules apply.",
+      "guide_url": "https://shgc.org.uk/",
+      "pilot_level": "Follow SHGC site guide",
+      "verified": true
+    },
+    {
+      "id": "bo-peep",
+      "name": "Bo Peep",
+      "lat": 50.812,
+      "lon": 0.151,
+      "elevation_m": 190,
+      "wind_sectors": [[15, 70]],
+      "club": "Southern Hang Gliding Club",
+      "access": "SHGC membership or valid visitor pass and current site rules apply.",
+      "guide_url": "https://shgc.org.uk/",
+      "pilot_level": "Follow SHGC site guide",
+      "verified": true
+    }
+  ]
+}
