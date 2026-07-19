@@ -1,4 +1,4 @@
-# South of England flying-site recommendation — 2026-07-19T09:22:44.226336+01:00
+# South of England flying-site recommendation — 2026-07-19T09:37:24.727612+01:00
 
 > Planning aid only. Check current club status, official site guide, NOTAMs, local observations and your own limits before travelling or launching.
 
@@ -18,6 +18,7 @@ Score: **88.0/100**
 | 7 | Tan Hill | **NO GO** | 58.0 | north-north-east (13°), 13.1 km/h | 33.1 km/h | 0.0 mm |
 | 8 | Butser West | **NO GO** | 52.0 | north-north-east (15°), 15.2 km/h | 37.4 km/h | 0.0 mm |
 | 9 | Park Hill, East Meon | **NO GO** | 52.0 | north-north-east (16°), 15.0 km/h | 35.6 km/h | 0.0 mm |
+| 10 | Harting Down | **NO GO** | 51.6 | north-north-east (12°), 14.0 km/h | 34.9 km/h | 0.0 mm |
 
 ## Uffington White Horse — GO
 - Wind: **north-north-east (16°)** at **14.2 km/h**, gusting **34.9 km/h**
@@ -81,3 +82,10 @@ Score: **88.0/100**
 - Site elevation: **220 m / 722 ft**
 - Access: Members only; Pilot rated; compulsory hill briefing and Park Hill Telegram booking. Maximum six pilots. Normally closed for shooting from about 1 September to 31 January.
 - Reason: The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.; Forecast gusts reach 36 km/h
+
+## Harting Down — NO GO
+- Wind: **north-north-east (12°)** at **14.0 km/h**, gusting **34.9 km/h**
+- Rain: **0.0 mm**; low cloud: **29%**; solar heating: **643 W/m²**
+- Site elevation: **225 m / 738 ft**
+- Access: Do not travel or fly on the strength of this forecast alone. Confirm current landowner permission, club arrangements, site status and local briefing before use.
+- Reason: Harting has been added for forecast comparison, but a current authoritative paragliding site guide and dependable permitted wind sector have not yet been verified. It cannot receive an automatic GO.

@@ -1,5 +1,5 @@
 {
-  "generated_local": "2026-07-19T09:22:44.226336+01:00",
+  "generated_local": "2026-07-19T09:37:24.727612+01:00",
   "home": {
     "name": "Portchester",
     "lat": 50.846,
@@ -468,6 +468,46 @@
       ],
       "distance_from_portchester": {
         "km_straight_line": 17.9
+      }
+    },
+    {
+      "id": "harting",
+      "name": "Harting Down",
+      "verdict": "NO GO",
+      "score": 51.6,
+      "verified_for_automatic_go": false,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 12,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 14.0,
+        "max_gust_kmh": 34.9,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 29,
+        "mean_shortwave_wm2": 643,
+        "max_cape_jkg": 100,
+        "max_boundary_layer_m": 2255,
+        "estimated_lcl_agl": {
+          "m": 1838,
+          "ft": 6030
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 225,
+          "ft": 738
+        },
+        "wind_sectors": [],
+        "club": "Site ownership and current flying permission must be confirmed",
+        "access": "Do not travel or fly on the strength of this forecast alone. Confirm current landowner permission, club arrangements, site status and local briefing before use.",
+        "pilot_level": "Manual site briefing required",
+        "guide_url": ""
+      },
+      "reasons": [
+        "Harting has been added for forecast comparison, but a current authoritative paragliding site guide and dependable permitted wind sector have not yet been verified. It cannot receive an automatic GO."
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 21.2
       }
     }
   ],

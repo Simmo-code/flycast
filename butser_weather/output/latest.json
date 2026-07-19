@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-07-19T08:22:44.120173+00:00",
-  "generated_local": "2026-07-19T09:22:31.090401+01:00",
+  "generated_utc": "2026-07-19T08:37:24.614156+00:00",
+  "generated_local": "2026-07-19T09:37:12.950034+01:00",
   "site": {
     "name": "Butser Hill",
     "lat": 50.977,
@@ -19,7 +19,7 @@
         "data": {
           "latitude": 50.968155,
           "longitude": -0.9870758,
-          "generationtime_ms": 46.72253131866455,
+          "generationtime_ms": 49.99887943267822,
           "utc_offset_seconds": 3600,
           "timezone": "Europe/London",
           "timezone_abbreviation": "GMT+1",
@@ -2212,7 +2212,7 @@
         "data": {
           "latitude": 51.0,
           "longitude": -1.0,
-          "generationtime_ms": 1.147150993347168,
+          "generationtime_ms": 1.3068914413452148,
           "utc_offset_seconds": 3600,
           "timezone": "Europe/London",
           "timezone_abbreviation": "GMT+1",
@@ -4405,7 +4405,7 @@
         "data": {
           "latitude": 50.98,
           "longitude": -0.98,
-          "generationtime_ms": 22.736549377441406,
+          "generationtime_ms": 13.25678825378418,
           "utc_offset_seconds": 3600,
           "timezone": "Europe/London",
           "timezone_abbreviation": "GMT+1",
@@ -6598,7 +6598,7 @@
         "data": {
           "latitude": 51.01854,
           "longitude": -0.9375,
-          "generationtime_ms": 6.389617919921875,
+          "generationtime_ms": 73.61006736755371,
           "utc_offset_seconds": 3600,
           "timezone": "Europe/London",
           "timezone_abbreviation": "GMT+1",
@@ -8791,7 +8791,7 @@
       "data": {
         "latitude": 51.0,
         "longitude": -1.0,
-        "generationtime_ms": 0.3409385681152344,
+        "generationtime_ms": 0.4303455352783203,
         "utc_offset_seconds": 3600,
         "timezone": "Europe/London",
         "timezone_abbreviation": "GMT+1",
@@ -8809,16 +8809,16 @@
           "wind_gusts_10m": "km/h"
         },
         "current": {
-          "time": "2026-07-19T09:15",
+          "time": "2026-07-19T09:30",
           "interval": 900,
-          "temperature_2m": 15.0,
-          "relative_humidity_2m": 57,
-          "dew_point_2m": 6.6,
+          "temperature_2m": 15.4,
+          "relative_humidity_2m": 55,
+          "dew_point_2m": 6.4,
           "precipitation": 0.0,
           "cloud_cover": 0,
-          "wind_speed_10m": 13.7,
-          "wind_direction_10m": 17,
-          "wind_gusts_10m": 28.8
+          "wind_speed_10m": 14.0,
+          "wind_direction_10m": 16,
+          "wind_gusts_10m": 29.2
         },
         "hourly_units": {
           "time": "iso8601",
@@ -9278,8 +9278,8 @@
     },
     "rain_radar": {
       "status": "ok",
-      "frame_unix": 1784449200,
-      "tile_url": "https://tilecache.rainviewer.com/v2/radar/989fa2439f12/256/8/127/85/2/1_1.png",
+      "frame_unix": 1784449800,
+      "tile_url": "https://tilecache.rainviewer.com/v2/radar/0a3f7cf32bc4/256/8/127/85/2/1_1.png",
       "rain_pixels_near_site_pct": 0.0,
       "interpretation": "no meaningful radar echo at site",
       "attribution": "RainViewer"
