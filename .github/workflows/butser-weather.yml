@@ -42,6 +42,7 @@ jobs:
       - name: Collect forecasts and observations
         shell: bash
         run: |
+          # Push and manual runs are immediate tests; scheduled runs retain the 07:00 local guard.
           if [ "${{ github.event_name }}" = "schedule" ]; then
             python butser_weather/collector.py
           else
