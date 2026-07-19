@@ -2,6 +2,12 @@ name: Butser weather collector
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "butser_weather/collector.py"
+      - "butser_weather/requirements.txt"
+      - ".github/workflows/butser-weather.yml"
   schedule:
     # Run at both possible UTC equivalents of 07:00 Europe/London.
     # collector.py exits harmlessly unless local time is 07:xx.
@@ -34,7 +40,13 @@ jobs:
         run: pip install -r butser_weather/requirements.txt
 
       - name: Collect forecasts and observations
-        run: python butser_weather/collector.py
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python butser_weather/collector.py
+          else
+            python butser_weather/collector.py --force
+          fi
 
       - name: Commit updated evidence
         run: |
