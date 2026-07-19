@@ -20,7 +20,8 @@ TZ = ZoneInfo("Europe/London")
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / "output"
 CONFIG = ROOT / "sites.json"
-UA = "flycast-site-recommender/1.0 (+https://github.com/Simmo-code/flycast)"
+UA = "flycast-site-recommender/1.1 (+https://github.com/Simmo-code/flycast)"
+OUTLOOK_HOURS = (11, 14, 18)
 
 HOURLY = [
     "temperature_2m", "dew_point_2m", "precipitation", "cloud_cover",
@@ -66,47 +67,74 @@ def haversine_km(a_lat: float, a_lon: float, b_lat: float, b_lon: float) -> floa
     return 2 * r * math.asin(math.sqrt(x))
 
 
-def mean(values: list[float | None]) -> float | None:
-    good = [float(v) for v in values if v is not None]
-    return sum(good) / len(good) if good else None
+def ft(m: float | int) -> int:
+    return round(float(m) * 3.28084)
 
 
-def collect_site(site: dict[str, Any], today: str) -> dict[str, Any]:
-    data = fetch_json("https://api.open-meteo.com/v1/forecast", {
-        "latitude": site["lat"], "longitude": site["lon"],
-        "hourly": ",".join(HOURLY), "forecast_days": 1,
-        "timezone": "Europe/London", "wind_speed_unit": "kmh"
-    })
-    hourly = data["hourly"]
-    indices = [i for i, t in enumerate(hourly["time"])
-               if t.startswith(today) and 10 <= int(t[11:13]) <= 17]
-    if not indices:
-        raise RuntimeError("No daytime forecast rows returned")
+def thermal_strength(radiation: float, blh_m: float, cape: float, usable_depth_m: float) -> str:
+    """Plain-English thermal estimate from surface heating and mixing depth.
 
-    def vals(name: str) -> list[float | None]:
+    This is intentionally conservative and is not a direct forecast of climb rate.
+    """
+    score = 0
+    if radiation >= 650:
+        score += 3
+    elif radiation >= 450:
+        score += 2
+    elif radiation >= 250:
+        score += 1
+
+    if usable_depth_m >= 1200:
+        score += 3
+    elif usable_depth_m >= 700:
+        score += 2
+    elif usable_depth_m >= 300:
+        score += 1
+
+    if cape >= 300:
+        score += 2
+    elif cape >= 100:
+        score += 1
+
+    if score >= 7:
+        return "strong"
+    if score >= 4:
+        return "moderate"
+    if score >= 2:
+        return "weak"
+    return "very weak"
+
+
+def make_snapshot(site: dict[str, Any], hourly: dict[str, list[Any]], index: int, hour: int) -> dict[str, Any]:
+    def value(name: str, default: float = 0.0) -> float:
         arr = hourly.get(name, [])
-        return [arr[i] if i < len(arr) else None for i in indices]
+        raw = arr[index] if index < len(arr) else None
+        return float(raw) if raw is not None else default
 
-    wind = mean(vals("wind_speed_10m")) or 0.0
-    gust = max([v for v in vals("wind_gusts_10m") if v is not None] or [0.0])
-    dirs = [v for v in vals("wind_direction_10m") if v is not None]
-    # Circular mean for direction.
-    u = mean([math.sin(math.radians(v)) for v in dirs]) or 0.0
-    v = mean([math.cos(math.radians(v)) for v in dirs]) or 1.0
-    direction = math.degrees(math.atan2(u, v)) % 360
-    rain = sum(v for v in vals("precipitation") if v is not None)
-    low_cloud = mean(vals("cloud_cover_low")) or 0.0
-    radiation = mean(vals("shortwave_radiation")) or 0.0
-    cape = max([v for v in vals("cape") if v is not None] or [0.0])
-    blh = max([v for v in vals("boundary_layer_height") if v is not None] or [0.0])
-    temp = max([v for v in vals("temperature_2m") if v is not None] or [0.0])
-    dew = mean(vals("dew_point_2m"))
+    wind = value("wind_speed_10m")
+    gust = value("wind_gusts_10m")
+    direction = value("wind_direction_10m") % 360
+    rain = value("precipitation")
+    low_cloud = value("cloud_cover_low")
+    radiation = value("shortwave_radiation")
+    cape = value("cape")
+    blh_m = max(0.0, value("boundary_layer_height"))
+    temp = value("temperature_2m")
+    dew = value("dew_point_2m", temp)
+
+    site_elevation_m = float(site["elevation_m"])
+    lcl_agl_m = max(0, round(125 * (temp - dew)))
+    lcl_asl_m = round(site_elevation_m + lcl_agl_m)
+    blh_asl_m = round(site_elevation_m + blh_m)
+    usable_depth_m = max(0, round(min(blh_m, float(lcl_agl_m))))
+    reaches_launch = usable_depth_m >= 150
+    strength = thermal_strength(radiation, blh_m, cape, usable_depth_m)
 
     verified = bool(site.get("verified")) and bool(site.get("wind_sectors"))
     angle_error = angular_distance_to_sector(direction, site["wind_sectors"]) if verified else 180.0
     direction_score = max(0.0, 30.0 - angle_error * 0.75) if verified else 0.0
     wind_score = 20.0 if 8 <= wind <= 22 else max(0.0, 20.0 - abs(wind - 15) * 1.8)
-    thermal_score = min(20.0, radiation / 35.0 + min(cape, 400) / 80.0)
+    thermal_score = min(20.0, radiation / 45.0 + usable_depth_m / 180.0 + min(cape, 400) / 120.0)
     weather_score = max(0.0, 10.0 - rain * 5.0 - max(0.0, low_cloud - 50) / 10.0)
     confidence_score = 8.0 if verified else 2.0
     total = round(direction_score + wind_score + thermal_score + weather_score + confidence_score, 1)
@@ -119,14 +147,16 @@ def collect_site(site: dict[str, Any], today: str) -> dict[str, Any]:
     elif angle_error > 20:
         reasons.append(f"Wind is {round(angle_error)}° outside the configured site sector")
         hard_no = True
-    if gust > 35:
+    if gust >= 35:
         reasons.append(f"Forecast gusts reach {round(gust)} km/h")
         hard_no = True
     if rain >= 1.0:
-        reasons.append(f"About {rain:.1f} mm rain is forecast during 10:00–17:00")
+        reasons.append(f"About {rain:.1f} mm rain is forecast")
         hard_no = True
     if low_cloud > 80:
-        reasons.append(f"Low cloud averages {round(low_cloud)}%")
+        reasons.append(f"Low cloud is {round(low_cloud)}%")
+    if not reaches_launch:
+        reasons.append("Forecast mixing depth is unlikely to produce useful thermals above launch")
     if not reasons:
         reasons.append("Direction, wind and dry-weather checks are favourable")
 
@@ -139,55 +169,119 @@ def collect_site(site: dict[str, Any], today: str) -> dict[str, Any]:
     else:
         verdict = "NO GO"
 
-    lcl_agl_m = None
-    if dew is not None:
-        lcl_agl_m = max(0, round(125 * (temp - dew)))
+    return {
+        "hour_local": hour,
+        "verdict": verdict,
+        "score": total,
+        "wind_direction_deg": round(direction),
+        "wind_direction": compass(direction),
+        "wind_kmh": round(wind, 1),
+        "gust_kmh": round(gust, 1),
+        "rain_mm": round(rain, 1),
+        "low_cloud_pct": round(low_cloud),
+        "solar_wm2": round(radiation),
+        "cape_jkg": round(cape),
+        "boundary_layer": {"agl_m": round(blh_m), "agl_ft": ft(blh_m), "asl_m": blh_asl_m, "asl_ft": ft(blh_asl_m)},
+        "cloud_base": {"agl_m": lcl_agl_m, "agl_ft": ft(lcl_agl_m), "asl_m": lcl_asl_m, "asl_ft": ft(lcl_asl_m)},
+        "usable_thermal_depth": {"m": usable_depth_m, "ft": ft(usable_depth_m)},
+        "thermal_strength": strength,
+        "thermals_reach_launch": reaches_launch,
+        "reasons": reasons,
+    }
+
+
+def collect_site(site: dict[str, Any], today: str) -> dict[str, Any]:
+    data = fetch_json("https://api.open-meteo.com/v1/forecast", {
+        "latitude": site["lat"], "longitude": site["lon"],
+        "hourly": ",".join(HOURLY), "forecast_days": 1,
+        "timezone": "Europe/London", "wind_speed_unit": "kmh"
+    })
+    hourly = data["hourly"]
+    time_to_index = {t: i for i, t in enumerate(hourly["time"])}
+
+    outlooks: dict[str, dict[str, Any]] = {}
+    for hour in OUTLOOK_HOURS:
+        key = f"{today}T{hour:02d}:00"
+        if key not in time_to_index:
+            raise RuntimeError(f"No {hour:02d}:00 forecast row returned")
+        outlooks[f"{hour:02d}:00"] = make_snapshot(site, hourly, time_to_index[key], hour)
+
+    best_period = max(outlooks.items(), key=lambda pair: pair[1]["score"])
+    best_time, best = best_period
+    verified = bool(site.get("verified")) and bool(site.get("wind_sectors"))
 
     return {
-        "id": site["id"], "name": site["name"], "verdict": verdict,
-        "score": total, "verified_for_automatic_go": verified,
-        "forecast": {
-            "period": "10:00-17:00 local",
-            "wind_direction_deg": round(direction), "wind_direction": compass(direction),
-            "mean_wind_kmh": round(wind, 1), "max_gust_kmh": round(gust, 1),
-            "rain_mm": round(rain, 1), "mean_low_cloud_pct": round(low_cloud),
-            "mean_shortwave_wm2": round(radiation), "max_cape_jkg": round(cape),
-            "max_boundary_layer_m": round(blh),
-            "estimated_lcl_agl": {"m": lcl_agl_m, "ft": round(lcl_agl_m * 3.28084)} if lcl_agl_m is not None else None
-        },
+        "id": site["id"],
+        "name": site["name"],
+        "verdict": best["verdict"],
+        "score": best["score"],
+        "best_period": best_time,
+        "verified_for_automatic_go": verified,
+        "outlooks": outlooks,
         "site": {
-            "elevation": {"m": site["elevation_m"], "ft": round(site["elevation_m"] * 3.28084)},
-            "wind_sectors": site.get("wind_sectors", []), "club": site["club"],
-            "access": site["access"], "pilot_level": site["pilot_level"],
-            "guide_url": site["guide_url"]
+            "elevation": {"m": site["elevation_m"], "ft": ft(site["elevation_m"])},
+            "wind_sectors": site.get("wind_sectors", []),
+            "club": site["club"],
+            "access": site["access"],
+            "pilot_level": site["pilot_level"],
+            "guide_url": site["guide_url"],
         },
-        "reasons": reasons
     }
+
+
+def compact(snapshot: dict[str, Any]) -> str:
+    cb = snapshot["cloud_base"]
+    return (f"**{snapshot['verdict']}**; {snapshot['thermal_strength']}; "
+            f"CB {cb['agl_m']} m/{cb['agl_ft']} ft AGL; "
+            f"{snapshot['wind_direction']} {snapshot['wind_direction_deg']}° "
+            f"{snapshot['wind_kmh']} km/h G{snapshot['gust_kmh']}")
 
 
 def render(report: dict[str, Any]) -> str:
     lines = [
         f"# South of England flying-site recommendation — {report['generated_local']}", "",
-        "> Planning aid only. Check current club status, official site guide, NOTAMs, local observations and your own limits before travelling or launching.", ""
+        "> Planning aid only. Cloud base and thermal strength are estimates, not measured values. Check current club status, official site guide, NOTAMs, local observations and your own limits before travelling or launching.", ""
     ]
     best = report.get("best_automatic_choice")
     if best:
-        lines += [f"## Best automatic choice: **{best['name']} — {best['verdict']}**", f"Score: **{best['score']}/100**", ""]
+        lines += [
+            f"## Best automatic choice: **{best['name']} — {best['verdict']} at {best['best_period']}**",
+            f"Score: **{best['score']}/100**", ""
+        ]
     else:
         lines += ["## Best automatic choice: **No verified GO/MARGINAL site found**", ""]
-    lines += ["## Ranked sites", "", "| Rank | Site | Verdict | Score | Wind | Gust | Rain |", "|---:|---|---|---:|---|---:|---:|"]
+
+    lines += [
+        "## Whole-day outlook", "",
+        "| Rank | Site | 11:00 | 14:00 | 18:00 | Best |",
+        "|---:|---|---|---|---|---|"
+    ]
     for rank, item in enumerate(report["ranked_sites"], 1):
-        f = item["forecast"]
-        lines.append(f"| {rank} | {item['name']} | **{item['verdict']}** | {item['score']} | {f['wind_direction']} ({f['wind_direction_deg']}°), {f['mean_wind_kmh']} km/h | {f['max_gust_kmh']} km/h | {f['rain_mm']} mm |")
+        o = item["outlooks"]
+        lines.append(f"| {rank} | {item['name']} | {compact(o['11:00'])} | {compact(o['14:00'])} | {compact(o['18:00'])} | {item['best_period']} — **{item['verdict']}** ({item['score']}) |")
+
     lines += [""]
     for item in report["ranked_sites"]:
-        f = item["forecast"]
-        lines += [f"## {item['name']} — {item['verdict']}",
-                  f"- Wind: **{f['wind_direction']} ({f['wind_direction_deg']}°)** at **{f['mean_wind_kmh']} km/h**, gusting **{f['max_gust_kmh']} km/h**",
-                  f"- Rain: **{f['rain_mm']} mm**; low cloud: **{f['mean_low_cloud_pct']}%**; solar heating: **{f['mean_shortwave_wm2']} W/m²**",
-                  f"- Site elevation: **{item['site']['elevation']['m']} m / {item['site']['elevation']['ft']} ft**",
-                  f"- Access: {item['site']['access']}",
-                  f"- Reason: {'; '.join(item['reasons'])}", ""]
+        lines += [f"## {item['name']} — best period {item['best_period']} ({item['verdict']})", ""]
+        for label in ("11:00", "14:00", "18:00"):
+            s = item["outlooks"][label]
+            cb = s["cloud_base"]
+            bl = s["boundary_layer"]
+            depth = s["usable_thermal_depth"]
+            reaches = "yes" if s["thermals_reach_launch"] else "no"
+            lines += [
+                f"### {label} — {s['verdict']} — {s['thermal_strength']} thermals",
+                f"- Wind: **{s['wind_direction']} ({s['wind_direction_deg']}°)** at **{s['wind_kmh']} km/h**, gusting **{s['gust_kmh']} km/h**",
+                f"- Estimated cloud base: **{cb['agl_m']} m / {cb['agl_ft']} ft AGL**; **{cb['asl_m']} m / {cb['asl_ft']} ft ASL**",
+                f"- Boundary-layer top: **{bl['agl_m']} m / {bl['agl_ft']} ft AGL**; **{bl['asl_m']} m / {bl['asl_ft']} ft ASL**",
+                f"- Usable thermal depth above launch: **{depth['m']} m / {depth['ft']} ft**; thermals likely to reach launch: **{reaches}**",
+                f"- Solar heating: **{s['solar_wm2']} W/m²**; CAPE: **{s['cape_jkg']} J/kg**; low cloud: **{s['low_cloud_pct']}%**; rain: **{s['rain_mm']} mm**",
+                f"- Reason: {'; '.join(s['reasons'])}", ""
+            ]
+        lines += [
+            f"- Site elevation: **{item['site']['elevation']['m']} m / {item['site']['elevation']['ft']} ft**",
+            f"- Access: {item['site']['access']}", ""
+        ]
     return "\n".join(lines)
 
 
@@ -205,12 +299,17 @@ def main() -> None:
             results.append(item)
         except Exception as exc:
             errors.append({"site": site["name"], "error": f"{type(exc).__name__}: {exc}"})
-    results.sort(key=lambda x: (x["verdict"] != "GO", x["verdict"] == "NO GO", -x["score"]))
+
+    verdict_order = {"GO": 0, "MARGINAL": 1, "NO GO": 2}
+    results.sort(key=lambda x: (verdict_order.get(x["verdict"], 3), -x["score"]))
     eligible = [x for x in results if x["verified_for_automatic_go"] and x["verdict"] in {"GO", "MARGINAL"}]
     report = {
-        "generated_local": now.isoformat(), "home": config["home"],
+        "generated_local": now.isoformat(),
+        "home": config["home"],
+        "outlook_hours_local": list(OUTLOOK_HOURS),
         "best_automatic_choice": eligible[0] if eligible else None,
-        "ranked_sites": results, "errors": errors,
+        "ranked_sites": results,
+        "errors": errors,
         "safety_notice": "Forecast ranking is not permission or a launch decision. Official site status and on-site assessment override it."
     }
     OUTPUT.mkdir(parents=True, exist_ok=True)
