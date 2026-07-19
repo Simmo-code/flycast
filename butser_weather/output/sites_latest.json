@@ -1,0 +1,476 @@
+{
+  "generated_local": "2026-07-19T09:22:44.226336+01:00",
+  "home": {
+    "name": "Portchester",
+    "lat": 50.846,
+    "lon": -1.125
+  },
+  "best_automatic_choice": {
+    "id": "uffington-white-horse",
+    "name": "Uffington White Horse",
+    "verdict": "GO",
+    "score": 88.0,
+    "verified_for_automatic_go": true,
+    "forecast": {
+      "period": "10:00-17:00 local",
+      "wind_direction_deg": 16,
+      "wind_direction": "north-north-east",
+      "mean_wind_kmh": 14.2,
+      "max_gust_kmh": 34.9,
+      "rain_mm": 0.0,
+      "mean_low_cloud_pct": 20,
+      "mean_shortwave_wm2": 673,
+      "max_cape_jkg": 120,
+      "max_boundary_layer_m": 2085,
+      "estimated_lcl_agl": {
+        "m": 1942,
+        "ft": 6371
+      }
+    },
+    "site": {
+      "elevation": {
+        "m": 250,
+        "ft": 820
+      },
+      "wind_sectors": [
+        [
+          315,
+          360
+        ],
+        [
+          0,
+          25
+        ]
+      ],
+      "club": "Thames Valley HGC",
+      "access": "Experienced-pilot National Trust site; membership and current rules apply.",
+      "pilot_level": "Pilot rated",
+      "guide_url": "https://www.tvhgc.co.uk/sites/"
+    },
+    "reasons": [
+      "Direction, wind and dry-weather checks are favourable"
+    ],
+    "distance_from_portchester": {
+      "km_straight_line": 87.0
+    }
+  },
+  "ranked_sites": [
+    {
+      "id": "uffington-white-horse",
+      "name": "Uffington White Horse",
+      "verdict": "GO",
+      "score": 88.0,
+      "verified_for_automatic_go": true,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 16,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 14.2,
+        "max_gust_kmh": 34.9,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 20,
+        "mean_shortwave_wm2": 673,
+        "max_cape_jkg": 120,
+        "max_boundary_layer_m": 2085,
+        "estimated_lcl_agl": {
+          "m": 1942,
+          "ft": 6371
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 250,
+          "ft": 820
+        },
+        "wind_sectors": [
+          [
+            315,
+            360
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "club": "Thames Valley HGC",
+        "access": "Experienced-pilot National Trust site; membership and current rules apply.",
+        "pilot_level": "Pilot rated",
+        "guide_url": "https://www.tvhgc.co.uk/sites/"
+      },
+      "reasons": [
+        "Direction, wind and dry-weather checks are favourable"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 87.0
+      }
+    },
+    {
+      "id": "devils-dyke",
+      "name": "Devil's Dyke",
+      "verdict": "NO GO",
+      "score": 88.0,
+      "verified_for_automatic_go": true,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 12,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 15.6,
+        "max_gust_kmh": 36.7,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 24,
+        "mean_shortwave_wm2": 641,
+        "max_cape_jkg": 140,
+        "max_boundary_layer_m": 2105,
+        "estimated_lcl_agl": {
+          "m": 2047,
+          "ft": 6716
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 217,
+          "ft": 712
+        },
+        "wind_sectors": [
+          [
+            292,
+            360
+          ],
+          [
+            0,
+            12
+          ]
+        ],
+        "club": "Southern Hang Gliding Club",
+        "access": "SHGC membership or valid visitor pass, BHPA requirements and site briefing rules apply.",
+        "pilot_level": "Follow SHGC site guide",
+        "guide_url": "https://shgc.org.uk/"
+      },
+      "reasons": [
+        "Forecast gusts reach 37 km/h"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 64.2
+      }
+    },
+    {
+      "id": "bo-peep",
+      "name": "Bo Peep",
+      "verdict": "NO GO",
+      "score": 86.8,
+      "verified_for_automatic_go": true,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 18,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 16.3,
+        "max_gust_kmh": 35.6,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 32,
+        "mean_shortwave_wm2": 598,
+        "max_cape_jkg": 140,
+        "max_boundary_layer_m": 2365,
+        "estimated_lcl_agl": {
+          "m": 1989,
+          "ft": 6526
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 190,
+          "ft": 623
+        },
+        "wind_sectors": [
+          [
+            15,
+            70
+          ]
+        ],
+        "club": "Southern Hang Gliding Club",
+        "access": "SHGC membership or valid visitor pass and current site rules apply.",
+        "pilot_level": "Follow SHGC site guide",
+        "guide_url": "https://shgc.org.uk/"
+      },
+      "reasons": [
+        "Forecast gusts reach 36 km/h"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 89.7
+      }
+    },
+    {
+      "id": "liddington",
+      "name": "Liddington",
+      "verdict": "NO GO",
+      "score": 58.0,
+      "verified_for_automatic_go": true,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 18,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 15.2,
+        "max_gust_kmh": 35.3,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 23,
+        "mean_shortwave_wm2": 666,
+        "max_cape_jkg": 130,
+        "max_boundary_layer_m": 2065,
+        "estimated_lcl_agl": {
+          "m": 1991,
+          "ft": 6532
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 250,
+          "ft": 820
+        },
+        "wind_sectors": [
+          [
+            215,
+            250
+          ],
+          [
+            285,
+            330
+          ]
+        ],
+        "club": "Thames Valley HGC",
+        "access": "TVHGC membership, suitable rating and insurance required. Check livestock and current site status.",
+        "pilot_level": "Club Pilot and above",
+        "guide_url": "https://www.tvhgc.co.uk/liddington/"
+      },
+      "reasons": [
+        "Wind is 48\u00b0 outside the configured site sector",
+        "Forecast gusts reach 35 km/h"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 84.9
+      }
+    },
+    {
+      "id": "milk-hill",
+      "name": "Milk Hill",
+      "verdict": "NO GO",
+      "score": 58.0,
+      "verified_for_automatic_go": true,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 15,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 14.8,
+        "max_gust_kmh": 34.6,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 21,
+        "mean_shortwave_wm2": 666,
+        "max_cape_jkg": 110,
+        "max_boundary_layer_m": 2185,
+        "estimated_lcl_agl": {
+          "m": 1894,
+          "ft": 6214
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 285,
+          "ft": 935
+        },
+        "wind_sectors": [
+          [
+            180,
+            270
+          ]
+        ],
+        "club": "Thames Valley HGC",
+        "access": "TVHGC membership and current site rules apply; check seasonal restrictions.",
+        "pilot_level": "Club Pilot and above",
+        "guide_url": "https://www.tvhgc.co.uk/sites/"
+      },
+      "reasons": [
+        "Wind is 105\u00b0 outside the configured site sector"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 77.6
+      }
+    },
+    {
+      "id": "golden-ball",
+      "name": "Golden Ball",
+      "verdict": "NO GO",
+      "score": 58.0,
+      "verified_for_automatic_go": true,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 17,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 13.5,
+        "max_gust_kmh": 33.5,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 20,
+        "mean_shortwave_wm2": 686,
+        "max_cape_jkg": 120,
+        "max_boundary_layer_m": 2185,
+        "estimated_lcl_agl": {
+          "m": 1947,
+          "ft": 6388
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 260,
+          "ft": 853
+        },
+        "wind_sectors": [
+          [
+            135,
+            210
+          ]
+        ],
+        "club": "Thames Valley HGC",
+        "access": "Sensitive XC-only site with strict launch and landing rules. Check current club status.",
+        "pilot_level": "Pilot plus 100 hours",
+        "guide_url": "https://www.tvhgc.co.uk/sites/"
+      },
+      "reasons": [
+        "Wind is 118\u00b0 outside the configured site sector"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 72.6
+      }
+    },
+    {
+      "id": "tan-hill",
+      "name": "Tan Hill",
+      "verdict": "NO GO",
+      "score": 58.0,
+      "verified_for_automatic_go": true,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 13,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 13.1,
+        "max_gust_kmh": 33.1,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 19,
+        "mean_shortwave_wm2": 661,
+        "max_cape_jkg": 140,
+        "max_boundary_layer_m": 2365,
+        "estimated_lcl_agl": {
+          "m": 2038,
+          "ft": 6686
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 292,
+          "ft": 958
+        },
+        "wind_sectors": [
+          [
+            110,
+            180
+          ]
+        ],
+        "club": "Thames Valley HGC",
+        "access": "No unaccompanied flying; SSSI and current club rules apply.",
+        "pilot_level": "Club Pilot and above",
+        "guide_url": "https://www.tvhgc.co.uk/tan-hill/"
+      },
+      "reasons": [
+        "Wind is 97\u00b0 outside the configured site sector"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 76.1
+      }
+    },
+    {
+      "id": "butser-west",
+      "name": "Butser West",
+      "verdict": "NO GO",
+      "score": 52.0,
+      "verified_for_automatic_go": false,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 15,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 15.2,
+        "max_gust_kmh": 37.4,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 19,
+        "mean_shortwave_wm2": 670,
+        "max_cape_jkg": 100,
+        "max_boundary_layer_m": 2100,
+        "estimated_lcl_agl": {
+          "m": 1850,
+          "ft": 6070
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 271,
+          "ft": 889
+        },
+        "wind_sectors": [
+          [
+            225,
+            295
+          ]
+        ],
+        "club": "Sky Surfing Club",
+        "access": "Check the current club site guide and status before travel.",
+        "pilot_level": "Follow current club rules",
+        "guide_url": "https://skysurfingclub.co.uk/site_guide/"
+      },
+      "reasons": [
+        "Wind sector is not verified",
+        "Forecast gusts reach 37 km/h"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 17.7
+      }
+    },
+    {
+      "id": "park-hill",
+      "name": "Park Hill, East Meon",
+      "verdict": "NO GO",
+      "score": 52.0,
+      "verified_for_automatic_go": false,
+      "forecast": {
+        "period": "10:00-17:00 local",
+        "wind_direction_deg": 16,
+        "wind_direction": "north-north-east",
+        "mean_wind_kmh": 15.0,
+        "max_gust_kmh": 35.6,
+        "rain_mm": 0.0,
+        "mean_low_cloud_pct": 20,
+        "mean_shortwave_wm2": 661,
+        "max_cape_jkg": 110,
+        "max_boundary_layer_m": 2100,
+        "estimated_lcl_agl": {
+          "m": 1884,
+          "ft": 6181
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 220,
+          "ft": 722
+        },
+        "wind_sectors": [],
+        "club": "Sky Surfing Club",
+        "access": "Members only; Pilot rated; compulsory hill briefing and Park Hill Telegram booking. Maximum six pilots. Normally closed for shooting from about 1 September to 31 January.",
+        "pilot_level": "Pilot rated and confident slope landing",
+        "guide_url": "https://skysurfingclub.co.uk/site_guide/"
+      },
+      "reasons": [
+        "The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.",
+        "Forecast gusts reach 36 km/h"
+      ],
+      "distance_from_portchester": {
+        "km_straight_line": 17.9
+      }
+    }
+  ],
+  "errors": [],
+  "safety_notice": "Forecast ranking is not permission or a launch decision. Official site status and on-site assessment override it."
+}
