@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - "butser_weather/collector.py"
+      - "butser_weather/recommender.py"
+      - "butser_weather/sites.json"
       - "butser_weather/requirements.txt"
       - ".github/workflows/butser-weather.yml"
   schedule:
@@ -39,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r butser_weather/requirements.txt
 
-      - name: Collect forecasts and observations
+      - name: Collect Butser forecasts and observations
         shell: bash
         run: |
           # Push and manual runs are immediate tests; scheduled runs retain the 07:00 local guard.
@@ -48,6 +50,9 @@ jobs:
           else
             python butser_weather/collector.py --force
           fi
+
+      - name: Rank South of England flying sites
+        run: python butser_weather/recommender.py
 
       - name: Commit updated evidence
         shell: bash
@@ -59,14 +64,14 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "data: update Butser weather evidence"
+          git commit -m "data: update flying weather evidence"
           git push
 
       - name: Upload run artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: butser-weather-${{ github.run_id }}
+          name: flying-weather-${{ github.run_id }}
           path: butser_weather/output
           if-no-files-found: warn
           retention-days: 30
