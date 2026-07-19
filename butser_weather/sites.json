@@ -15,6 +15,20 @@
       "verified": false
     },
     {
+      "id": "harting",
+      "name": "Harting Down",
+      "lat": 50.961,
+      "lon": -0.883,
+      "elevation_m": 225,
+      "wind_sectors": [],
+      "club": "Site ownership and current flying permission must be confirmed",
+      "access": "Do not travel or fly on the strength of this forecast alone. Confirm current landowner permission, club arrangements, site status and local briefing before use.",
+      "guide_url": "",
+      "pilot_level": "Manual site briefing required",
+      "verified": false,
+      "manual_review_reason": "Harting has been added for forecast comparison, but a current authoritative paragliding site guide and dependable permitted wind sector have not yet been verified. It cannot receive an automatic GO."
+    },
+    {
       "id": "park-hill",
       "name": "Park Hill, East Meon",
       "lat": 50.995,
