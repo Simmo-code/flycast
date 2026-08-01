@@ -1,5 +1,5 @@
 {
-  "generated_local": "2026-08-01T09:21:47.386476+01:00",
+  "generated_local": "2026-08-01T10:13:14.300146+01:00",
   "home": {
     "name": "Portchester",
     "lat": 50.846,
@@ -1994,132 +1994,6 @@
       }
     },
     {
-      "id": "hambledon-hill",
-      "name": "Hambledon Hill",
-      "verdict": "NO GO",
-      "score": 52.0,
-      "best_period": "14:00",
-      "verified_for_automatic_go": false,
-      "outlooks": {
-        "11:00": {
-          "hour_local": 11,
-          "verdict": "NO GO",
-          "score": 51.0,
-          "wind_direction_deg": 310,
-          "wind_direction": "north-west",
-          "wind_kmh": 8.3,
-          "gust_kmh": 21.6,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 38,
-          "solar_wm2": 497,
-          "cape_jkg": 70,
-          "boundary_layer": {
-            "agl_m": 1320,
-            "agl_ft": 4331,
-            "asl_m": 1510,
-            "asl_ft": 4954
-          },
-          "cloud_base": {
-            "agl_m": 1500,
-            "agl_ft": 4921,
-            "asl_m": 1690,
-            "asl_ft": 5545
-          },
-          "usable_thermal_depth": {
-            "m": 1320,
-            "ft": 4331
-          },
-          "thermal_strength": "moderate",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered."
-          ]
-        },
-        "14:00": {
-          "hour_local": 14,
-          "verdict": "NO GO",
-          "score": 52.0,
-          "wind_direction_deg": 310,
-          "wind_direction": "north-west",
-          "wind_kmh": 11.2,
-          "gust_kmh": 27.0,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 20,
-          "solar_wm2": 601,
-          "cape_jkg": 100,
-          "boundary_layer": {
-            "agl_m": 1770,
-            "agl_ft": 5807,
-            "asl_m": 1960,
-            "asl_ft": 6430
-          },
-          "cloud_base": {
-            "agl_m": 1925,
-            "agl_ft": 6316,
-            "asl_m": 2115,
-            "asl_ft": 6939
-          },
-          "usable_thermal_depth": {
-            "m": 1770,
-            "ft": 5807
-          },
-          "thermal_strength": "moderate",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered."
-          ]
-        },
-        "18:00": {
-          "hour_local": 18,
-          "verdict": "NO GO",
-          "score": 47.0,
-          "wind_direction_deg": 304,
-          "wind_direction": "north-west",
-          "wind_kmh": 13.3,
-          "gust_kmh": 27.4,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 20,
-          "solar_wm2": 371,
-          "cape_jkg": 40,
-          "boundary_layer": {
-            "agl_m": 1160,
-            "agl_ft": 3806,
-            "asl_m": 1350,
-            "asl_ft": 4429
-          },
-          "cloud_base": {
-            "agl_m": 2013,
-            "agl_ft": 6604,
-            "asl_m": 2203,
-            "asl_ft": 7228
-          },
-          "usable_thermal_depth": {
-            "m": 1160,
-            "ft": 3806
-          },
-          "thermal_strength": "weak",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered."
-          ]
-        }
-      },
-      "site": {
-        "elevation": {
-          "m": 190,
-          "ft": 623
-        },
-        "wind_sectors": [],
-        "club": "Wessex HGPG Club",
-        "access": "Wessex-managed site on sensitive historic and conservation land. Check the current site-status page and official PDF guide before travel.",
-        "pilot_level": "Follow current Wessex site guide",
-        "guide_url": "https://www.wessexhgpg.org.uk/Sites/Siteguide/Hambledon_Hill.pdf"
-      },
-      "distance_from_portchester": {
-        "km_straight_line": 77.4
-      }
-    },
-    {
       "id": "butser-west",
       "name": "Butser West",
       "verdict": "NO GO",
@@ -2251,6 +2125,11 @@
       }
     }
   ],
-  "errors": [],
+  "errors": [
+    {
+      "site": "Hambledon Hill",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
+    }
+  ],
   "safety_notice": "Forecast ranking is not permission or a launch decision. Official site status and on-site assessment override it."
 }

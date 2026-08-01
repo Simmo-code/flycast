@@ -1,4 +1,4 @@
-# South of England flying-site recommendation — 2026-08-01T09:21:47.386476+01:00
+# South of England flying-site recommendation — 2026-08-01T10:13:14.300146+01:00
 
 > Planning aid only. Cloud base and thermal strength are estimates, not measured values. Check current club status, official site guide, NOTAMs, local observations and your own limits before travelling or launching.
 
@@ -23,8 +23,7 @@ Score: **88.0/100**
 | 12 | Tan Hill | **NO GO**; moderate; CB 1625 m/5331 ft AGL; west-north-west 288° 12.2 km/h G29.2 | **NO GO**; moderate; CB 2188 m/7178 ft AGL; west 276° 14.8 km/h G32.8 | **NO GO**; moderate; CB 2250 m/7382 ft AGL; west 276° 13.7 km/h G28.1 | 11:00 — **NO GO** (58.0) |
 | 13 | Park Hill, East Meon | **NO GO**; moderate; CB 1812 m/5945 ft AGL; north-west 314° 7.6 km/h G22.3 | **NO GO**; strong; CB 2375 m/7792 ft AGL; west-north-west 292° 8.6 km/h G25.6 | **NO GO**; moderate; CB 2213 m/7260 ft AGL; west-north-west 296° 11.2 km/h G23.0 | 14:00 — **NO GO** (52.0) |
 | 14 | Bell Hill | **NO GO**; moderate; CB 1575 m/5167 ft AGL; north-west 316° 9.0 km/h G24.5 | **NO GO**; moderate; CB 1912 m/6273 ft AGL; north-west 318° 11.9 km/h G29.2 | **NO GO**; weak; CB 1962 m/6437 ft AGL; north-west 310° 13.7 km/h G28.1 | 14:00 — **NO GO** (52.0) |
-| 15 | Hambledon Hill | **NO GO**; moderate; CB 1500 m/4921 ft AGL; north-west 310° 8.3 km/h G21.6 | **NO GO**; moderate; CB 1925 m/6316 ft AGL; north-west 310° 11.2 km/h G27.0 | **NO GO**; weak; CB 2013 m/6604 ft AGL; north-west 304° 13.3 km/h G27.4 | 14:00 — **NO GO** (52.0) |
-| 16 | Butser West | **NO GO**; moderate; CB 1750 m/5741 ft AGL; north-west 318° 7.6 km/h G22.7 | **NO GO**; strong; CB 2362 m/7749 ft AGL; west-north-west 290° 7.6 km/h G24.5 | **NO GO**; moderate; CB 2188 m/7178 ft AGL; west-north-west 298° 10.1 km/h G21.2 | 18:00 — **NO GO** (49.8) |
+| 15 | Butser West | **NO GO**; moderate; CB 1750 m/5741 ft AGL; north-west 318° 7.6 km/h G22.7 | **NO GO**; strong; CB 2362 m/7749 ft AGL; west-north-west 290° 7.6 km/h G24.5 | **NO GO**; moderate; CB 2188 m/7178 ft AGL; west-north-west 298° 10.1 km/h G21.2 | 18:00 — **NO GO** (49.8) |
 
 ## Liddington — best period 11:00 (GO)
 
@@ -431,35 +430,6 @@ Score: **88.0/100**
 
 - Site elevation: **250 m / 820 ft**
 - Access: Wessex-managed site. Check the current Wessex site-status page, full PDF site guide, membership or visitor arrangements and all site-specific restrictions before travel.
-
-## Hambledon Hill — best period 14:00 (NO GO)
-
-### 11:00 — NO GO — moderate thermals
-- Wind: **north-west (310°)** at **8.3 km/h**, gusting **21.6 km/h**
-- Estimated cloud base: **1500 m / 4921 ft AGL**; **1690 m / 5545 ft ASL**
-- Boundary-layer top: **1320 m / 4331 ft AGL**; **1510 m / 4954 ft ASL**
-- Usable thermal depth above launch: **1320 m / 4331 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **497 W/m²**; CAPE: **70 J/kg**; low cloud: **38%**; rain: **0.0 mm**
-- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.
-
-### 14:00 — NO GO — moderate thermals
-- Wind: **north-west (310°)** at **11.2 km/h**, gusting **27.0 km/h**
-- Estimated cloud base: **1925 m / 6316 ft AGL**; **2115 m / 6939 ft ASL**
-- Boundary-layer top: **1770 m / 5807 ft AGL**; **1960 m / 6430 ft ASL**
-- Usable thermal depth above launch: **1770 m / 5807 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **601 W/m²**; CAPE: **100 J/kg**; low cloud: **20%**; rain: **0.0 mm**
-- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.
-
-### 18:00 — NO GO — weak thermals
-- Wind: **north-west (304°)** at **13.3 km/h**, gusting **27.4 km/h**
-- Estimated cloud base: **2013 m / 6604 ft AGL**; **2203 m / 7228 ft ASL**
-- Boundary-layer top: **1160 m / 3806 ft AGL**; **1350 m / 4429 ft ASL**
-- Usable thermal depth above launch: **1160 m / 3806 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **371 W/m²**; CAPE: **40 J/kg**; low cloud: **20%**; rain: **0.0 mm**
-- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.
-
-- Site elevation: **190 m / 623 ft**
-- Access: Wessex-managed site on sensitive historic and conservation land. Check the current site-status page and official PDF guide before travel.
 
 ## Butser West — best period 18:00 (NO GO)
 
