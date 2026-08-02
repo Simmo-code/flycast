@@ -1,4 +1,4 @@
-# South of England flying-site recommendation — 2026-08-02T09:24:48.724803+01:00
+# South of England flying-site recommendation — 2026-08-02T10:17:18.466287+01:00
 
 > Planning aid only. Cloud base and thermal strength are estimates, not measured values. Check current club status, official site guide, NOTAMs, local observations and your own limits before travelling or launching.
 
