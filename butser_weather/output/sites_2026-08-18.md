@@ -1,4 +1,4 @@
-# South of England flying-site recommendation — 2026-08-18T07:42:56.342142+01:00
+# South of England flying-site recommendation — 2026-08-18T08:47:42.827809+01:00
 
 > Planning aid only. Cloud base and thermal strength are estimates, not measured values. Check current club status, official site guide, NOTAMs, local observations and your own limits before travelling or launching.
 
@@ -14,11 +14,11 @@ Score: **68.1/100**
 | 3 | Selsley Common | **NO GO**; moderate; CB 1362 m/4469 ft AGL; west-north-west 288° 20.9 km/h G41.0 | **NO GO**; moderate; CB 1612 m/5289 ft AGL; west 276° 18.7 km/h G38.5 | **GO**; weak; CB 1400 m/4593 ft AGL; west-north-west 290° 15.8 km/h G32.0 | 11:00 — **NO GO** (82.5) |
 | 4 | Liddington | **NO GO**; moderate; CB 1275 m/4183 ft AGL; west 274° 19.4 km/h G36.4 | **NO GO**; moderate; CB 1612 m/5289 ft AGL; west 278° 20.2 km/h G39.2 | **NO GO**; weak; CB 1175 m/3855 ft AGL; west 270° 22.0 km/h G40.0 | 14:00 — **NO GO** (82.1) |
 | 5 | Milk Hill | **NO GO**; weak; CB 825 m/2707 ft AGL; west 276° 21.6 km/h G38.9 | **NO GO**; moderate; CB 1475 m/4839 ft AGL; west 278° 23.0 km/h G43.2 | **NO GO**; weak; CB 1100 m/3609 ft AGL; west 274° 24.8 km/h G45.0 | 11:00 — **NO GO** (68.9) |
-| 6 | Leckhampton | **NO GO**; weak; CB 1362 m/4469 ft AGL; west-north-west 282° 19.4 km/h G38.5 | **NO GO**; moderate; CB 1612 m/5289 ft AGL; west-north-west 286° 18.4 km/h G37.4 | **NO GO**; weak; CB 1312 m/4304 ft AGL; west-north-west 298° 18.0 km/h G36.0 | 14:00 — **NO GO** (65.5) |
-| 7 | Uffington White Horse | **NO GO**; weak; CB 1175 m/3855 ft AGL; west 274° 19.4 km/h G36.7 | **NO GO**; moderate; CB 1700 m/5577 ft AGL; west 278° 21.6 km/h G41.0 | **NO GO**; weak; CB 1275 m/4183 ft AGL; west 268° 21.2 km/h G38.2 | 14:00 — **NO GO** (60.2) |
-| 8 | Harting Down | **NO GO**; weak; CB 612 m/2008 ft AGL; west 278° 14.0 km/h G26.3 | **NO GO**; moderate; CB 1562 m/5125 ft AGL; west 274° 19.8 km/h G38.5 | **NO GO**; moderate; CB 1550 m/5085 ft AGL; west-north-west 284° 18.4 km/h G35.3 | 18:00 — **NO GO** (57.5) |
-| 9 | Whitewool | **NO GO**; weak; CB 600 m/1969 ft AGL; west 270° 18.4 km/h G33.8 | **NO GO**; moderate; CB 1612 m/5289 ft AGL; west 274° 20.5 km/h G40.0 | **NO GO**; moderate; CB 1550 m/5085 ft AGL; west-north-west 284° 19.4 km/h G36.7 | 14:00 — **NO GO** (55.9) |
-| 10 | Bell Hill | **NO GO**; very weak; CB 550 m/1804 ft AGL; west-north-west 298° 19.1 km/h G37.1 | **NO GO**; moderate; CB 1412 m/4633 ft AGL; west-north-west 296° 20.2 km/h G40.0 | **NO GO**; weak; CB 1238 m/4062 ft AGL; north-west 308° 18.4 km/h G36.0 | 14:00 — **NO GO** (52.0) |
+| 6 | Uffington White Horse | **NO GO**; weak; CB 1175 m/3855 ft AGL; west 274° 19.4 km/h G36.7 | **NO GO**; moderate; CB 1700 m/5577 ft AGL; west 278° 21.6 km/h G41.0 | **NO GO**; weak; CB 1275 m/4183 ft AGL; west 268° 21.2 km/h G38.2 | 14:00 — **NO GO** (60.2) |
+| 7 | Harting Down | **NO GO**; weak; CB 612 m/2008 ft AGL; west 278° 14.0 km/h G26.3 | **NO GO**; moderate; CB 1562 m/5125 ft AGL; west 274° 19.8 km/h G38.5 | **NO GO**; moderate; CB 1550 m/5085 ft AGL; west-north-west 284° 18.4 km/h G35.3 | 18:00 — **NO GO** (57.5) |
+| 8 | Whitewool | **NO GO**; weak; CB 600 m/1969 ft AGL; west 270° 18.4 km/h G33.8 | **NO GO**; moderate; CB 1612 m/5289 ft AGL; west 274° 20.5 km/h G40.0 | **NO GO**; moderate; CB 1550 m/5085 ft AGL; west-north-west 284° 19.4 km/h G36.7 | 14:00 — **NO GO** (55.9) |
+| 9 | Bell Hill | **NO GO**; very weak; CB 550 m/1804 ft AGL; west-north-west 298° 19.1 km/h G37.1 | **NO GO**; moderate; CB 1412 m/4633 ft AGL; west-north-west 296° 20.2 km/h G40.0 | **NO GO**; weak; CB 1238 m/4062 ft AGL; north-west 308° 18.4 km/h G36.0 | 14:00 — **NO GO** (52.0) |
+| 10 | Hambledon Hill | **NO GO**; weak; CB 787 m/2582 ft AGL; west-north-west 294° 19.4 km/h G37.8 | **NO GO**; moderate; CB 1412 m/4633 ft AGL; west-north-west 298° 20.9 km/h G41.4 | **NO GO**; weak; CB 1275 m/4183 ft AGL; north-west 308° 18.7 km/h G37.1 | 14:00 — **NO GO** (52.0) |
 | 11 | Butser West | **NO GO**; weak; CB 525 m/1722 ft AGL; west 272° 15.8 km/h G29.5 | **NO GO**; moderate; CB 1512 m/4961 ft AGL; west 274° 22.0 km/h G42.5 | **NO GO**; moderate; CB 1500 m/4921 ft AGL; west-north-west 282° 20.2 km/h G38.9 | 14:00 — **NO GO** (49.8) |
 | 12 | Park Hill, East Meon | **NO GO**; weak; CB 600 m/1969 ft AGL; west 270° 18.4 km/h G33.8 | **NO GO**; moderate; CB 1612 m/5289 ft AGL; west 274° 22.0 km/h G41.4 | **NO GO**; moderate; CB 1562 m/5125 ft AGL; west-north-west 282° 20.2 km/h G38.2 | 14:00 — **NO GO** (49.8) |
 | 13 | Golden Ball | **NO GO**; moderate; CB 825 m/2707 ft AGL; west 272° 19.4 km/h G36.4 | **NO GO**; moderate; CB 1537 m/5043 ft AGL; west 278° 22.7 km/h G43.2 | **NO GO**; weak; CB 1100 m/3609 ft AGL; west 272° 22.7 km/h G42.5 | 11:00 — **NO GO** (47.6) |
@@ -170,35 +170,6 @@ Score: **68.1/100**
 - Site elevation: **285 m / 935 ft**
 - Access: TVHGC membership and current site rules apply; check seasonal restrictions.
 
-## Leckhampton — best period 14:00 (NO GO)
-
-### 11:00 — NO GO — weak thermals
-- Wind: **west-north-west (282°)** at **19.4 km/h**, gusting **38.5 km/h**
-- Estimated cloud base: **1362 m / 4469 ft AGL**; **1612 m / 5289 ft ASL**
-- Boundary-layer top: **1165 m / 3822 ft AGL**; **1415 m / 4642 ft ASL**
-- Usable thermal depth above launch: **1165 m / 3822 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **397 W/m²**; CAPE: **50 J/kg**; low cloud: **18%**; rain: **0.0 mm**
-- Reason: Wind is 33° outside the configured site sector; Forecast gusts reach 38 km/h
-
-### 14:00 — NO GO — moderate thermals
-- Wind: **west-north-west (286°)** at **18.4 km/h**, gusting **37.4 km/h**
-- Estimated cloud base: **1612 m / 5289 ft AGL**; **1862 m / 6109 ft ASL**
-- Boundary-layer top: **1475 m / 4839 ft AGL**; **1725 m / 5659 ft ASL**
-- Usable thermal depth above launch: **1475 m / 4839 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **473 W/m²**; CAPE: **70 J/kg**; low cloud: **38%**; rain: **0.0 mm**
-- Reason: Wind is 29° outside the configured site sector; Forecast gusts reach 37 km/h
-
-### 18:00 — NO GO — weak thermals
-- Wind: **west-north-west (298°)** at **18.0 km/h**, gusting **36.0 km/h**
-- Estimated cloud base: **1312 m / 4304 ft AGL**; **1562 m / 5125 ft ASL**
-- Boundary-layer top: **1490 m / 4888 ft AGL**; **1740 m / 5709 ft ASL**
-- Usable thermal depth above launch: **1312 m / 4304 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **103 W/m²**; CAPE: **20 J/kg**; low cloud: **7%**; rain: **0.0 mm**
-- Reason: Forecast gusts reach 36 km/h
-
-- Site elevation: **250 m / 820 ft**
-- Access: Pilot rated only. There is no authorised bottom landing field; use requires careful assessment of the restricted launch, slope-landing and top-landing options.
-
 ## Uffington White Horse — best period 14:00 (NO GO)
 
 ### 11:00 — NO GO — weak thermals
@@ -314,6 +285,35 @@ Score: **68.1/100**
 
 - Site elevation: **250 m / 820 ft**
 - Access: Wessex-managed site. Check the current Wessex site-status page, full PDF site guide, membership or visitor arrangements and all site-specific restrictions before travel.
+
+## Hambledon Hill — best period 14:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **west-north-west (294°)** at **19.4 km/h**, gusting **37.8 km/h**
+- Estimated cloud base: **787 m / 2582 ft AGL**; **977 m / 3205 ft ASL**
+- Boundary-layer top: **1085 m / 3560 ft AGL**; **1275 m / 4183 ft ASL**
+- Usable thermal depth above launch: **787 m / 2582 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **180 W/m²**; CAPE: **40 J/kg**; low cloud: **52%**; rain: **0.0 mm**
+- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.; Forecast gusts reach 38 km/h
+
+### 14:00 — NO GO — moderate thermals
+- Wind: **west-north-west (298°)** at **20.9 km/h**, gusting **41.4 km/h**
+- Estimated cloud base: **1412 m / 4633 ft AGL**; **1602 m / 5256 ft ASL**
+- Boundary-layer top: **1350 m / 4429 ft AGL**; **1540 m / 5052 ft ASL**
+- Usable thermal depth above launch: **1350 m / 4429 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **610 W/m²**; CAPE: **60 J/kg**; low cloud: **5%**; rain: **0.0 mm**
+- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.; Forecast gusts reach 41 km/h
+
+### 18:00 — NO GO — weak thermals
+- Wind: **north-west (308°)** at **18.7 km/h**, gusting **37.1 km/h**
+- Estimated cloud base: **1275 m / 4183 ft AGL**; **1465 m / 4806 ft ASL**
+- Boundary-layer top: **1045 m / 3428 ft AGL**; **1235 m / 4052 ft ASL**
+- Usable thermal depth above launch: **1045 m / 3428 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **366 W/m²**; CAPE: **20 J/kg**; low cloud: **7%**; rain: **0.0 mm**
+- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.; Forecast gusts reach 37 km/h
+
+- Site elevation: **190 m / 623 ft**
+- Access: Wessex-managed site on sensitive historic and conservation land. Check the current site-status page and official PDF guide before travel.
 
 ## Butser West — best period 14:00 (NO GO)
 
