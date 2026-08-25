@@ -1,5 +1,5 @@
 {
-  "generated_local": "2026-08-25T07:48:56.975603+01:00",
+  "generated_local": "2026-08-25T08:51:41.227922+01:00",
   "home": {
     "name": "Portchester",
     "lat": 50.846,
@@ -24,11 +24,11 @@
         "score": 87.0,
         "wind_direction_deg": 84,
         "wind_direction": "east",
-        "wind_kmh": 19.1,
-        "gust_kmh": 39.6,
+        "wind_kmh": 20.2,
+        "gust_kmh": 41.0,
         "rain_mm": 0.0,
-        "low_cloud_pct": 6,
-        "solar_wm2": 579,
+        "low_cloud_pct": 5,
+        "solar_wm2": 578,
         "cape_jkg": 50,
         "boundary_layer": {
           "agl_m": 1030,
@@ -37,10 +37,10 @@
           "asl_ft": 4003
         },
         "cloud_base": {
-          "agl_m": 1362,
-          "agl_ft": 4469,
-          "asl_m": 1552,
-          "asl_ft": 5092
+          "agl_m": 1325,
+          "agl_ft": 4347,
+          "asl_m": 1515,
+          "asl_ft": 4970
         },
         "usable_thermal_depth": {
           "m": 1030,
@@ -49,21 +49,21 @@
         "thermal_strength": "moderate",
         "thermals_reach_launch": true,
         "reasons": [
-          "Forecast gusts reach 40 km/h"
+          "Forecast gusts reach 41 km/h"
         ]
       },
       "14:00": {
         "hour_local": 14,
         "verdict": "GO",
         "score": 88.0,
-        "wind_direction_deg": 98,
+        "wind_direction_deg": 100,
         "wind_direction": "east",
         "wind_kmh": 16.6,
         "gust_kmh": 34.9,
         "rain_mm": 0.0,
-        "low_cloud_pct": 13,
-        "solar_wm2": 651,
-        "cape_jkg": 90,
+        "low_cloud_pct": 5,
+        "solar_wm2": 627,
+        "cape_jkg": 80,
         "boundary_layer": {
           "agl_m": 1660,
           "agl_ft": 5446,
@@ -71,10 +71,10 @@
           "asl_ft": 6070
         },
         "cloud_base": {
-          "agl_m": 1813,
-          "agl_ft": 5948,
-          "asl_m": 2003,
-          "asl_ft": 6572
+          "agl_m": 1862,
+          "agl_ft": 6109,
+          "asl_m": 2052,
+          "asl_ft": 6732
         },
         "usable_thermal_depth": {
           "m": 1660,
@@ -89,14 +89,14 @@
       "18:00": {
         "hour_local": 18,
         "verdict": "NO GO",
-        "score": 49.8,
-        "wind_direction_deg": 138,
+        "score": 45.4,
+        "wind_direction_deg": 146,
         "wind_direction": "south-east",
-        "wind_kmh": 15.8,
-        "gust_kmh": 31.0,
+        "wind_kmh": 17.3,
+        "gust_kmh": 32.8,
         "rain_mm": 0.0,
         "low_cloud_pct": 0,
-        "solar_wm2": 320,
+        "solar_wm2": 190,
         "cape_jkg": 0,
         "boundary_layer": {
           "agl_m": 570,
@@ -105,19 +105,19 @@
           "asl_ft": 2493
         },
         "cloud_base": {
-          "agl_m": 1612,
-          "agl_ft": 5289,
-          "asl_m": 1802,
-          "asl_ft": 5912
+          "agl_m": 1475,
+          "agl_ft": 4839,
+          "asl_m": 1665,
+          "asl_ft": 5463
         },
         "usable_thermal_depth": {
           "m": 570,
           "ft": 1870
         },
-        "thermal_strength": "weak",
+        "thermal_strength": "very weak",
         "thermals_reach_launch": true,
         "reasons": [
-          "Wind is 38\u00b0 outside the configured site sector"
+          "Wind is 46\u00b0 outside the configured site sector"
         ]
       }
     },
@@ -156,11 +156,11 @@
           "score": 87.0,
           "wind_direction_deg": 84,
           "wind_direction": "east",
-          "wind_kmh": 19.1,
-          "gust_kmh": 39.6,
+          "wind_kmh": 20.2,
+          "gust_kmh": 41.0,
           "rain_mm": 0.0,
-          "low_cloud_pct": 6,
-          "solar_wm2": 579,
+          "low_cloud_pct": 5,
+          "solar_wm2": 578,
           "cape_jkg": 50,
           "boundary_layer": {
             "agl_m": 1030,
@@ -169,10 +169,10 @@
             "asl_ft": 4003
           },
           "cloud_base": {
-            "agl_m": 1362,
-            "agl_ft": 4469,
-            "asl_m": 1552,
-            "asl_ft": 5092
+            "agl_m": 1325,
+            "agl_ft": 4347,
+            "asl_m": 1515,
+            "asl_ft": 4970
           },
           "usable_thermal_depth": {
             "m": 1030,
@@ -181,21 +181,21 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Forecast gusts reach 40 km/h"
+            "Forecast gusts reach 41 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "GO",
           "score": 88.0,
-          "wind_direction_deg": 98,
+          "wind_direction_deg": 100,
           "wind_direction": "east",
           "wind_kmh": 16.6,
           "gust_kmh": 34.9,
           "rain_mm": 0.0,
-          "low_cloud_pct": 13,
-          "solar_wm2": 651,
-          "cape_jkg": 90,
+          "low_cloud_pct": 5,
+          "solar_wm2": 627,
+          "cape_jkg": 80,
           "boundary_layer": {
             "agl_m": 1660,
             "agl_ft": 5446,
@@ -203,10 +203,10 @@
             "asl_ft": 6070
           },
           "cloud_base": {
-            "agl_m": 1813,
-            "agl_ft": 5948,
-            "asl_m": 2003,
-            "asl_ft": 6572
+            "agl_m": 1862,
+            "agl_ft": 6109,
+            "asl_m": 2052,
+            "asl_ft": 6732
           },
           "usable_thermal_depth": {
             "m": 1660,
@@ -221,14 +221,14 @@
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 49.8,
-          "wind_direction_deg": 138,
+          "score": 45.4,
+          "wind_direction_deg": 146,
           "wind_direction": "south-east",
-          "wind_kmh": 15.8,
-          "gust_kmh": 31.0,
+          "wind_kmh": 17.3,
+          "gust_kmh": 32.8,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 320,
+          "solar_wm2": 190,
           "cape_jkg": 0,
           "boundary_layer": {
             "agl_m": 570,
@@ -237,19 +237,19 @@
             "asl_ft": 2493
           },
           "cloud_base": {
-            "agl_m": 1612,
-            "agl_ft": 5289,
-            "asl_m": 1802,
-            "asl_ft": 5912
+            "agl_m": 1475,
+            "agl_ft": 4839,
+            "asl_m": 1665,
+            "asl_ft": 5463
           },
           "usable_thermal_depth": {
             "m": 570,
             "ft": 1870
           },
-          "thermal_strength": "weak",
+          "thermal_strength": "very weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 38\u00b0 outside the configured site sector"
+            "Wind is 46\u00b0 outside the configured site sector"
           ]
         }
       },
@@ -277,21 +277,21 @@
       "id": "harting",
       "name": "Harting Down",
       "verdict": "NO GO",
-      "score": 79.4,
+      "score": 78.0,
       "best_period": "11:00",
       "verified_for_automatic_go": true,
       "outlooks": {
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 79.4,
-          "wind_direction_deg": 80,
+          "score": 78.0,
+          "wind_direction_deg": 82,
           "wind_direction": "east",
-          "wind_kmh": 17.6,
-          "gust_kmh": 37.4,
+          "wind_kmh": 18.4,
+          "gust_kmh": 38.2,
           "rain_mm": 0.0,
-          "low_cloud_pct": 8,
-          "solar_wm2": 561,
+          "low_cloud_pct": 9,
+          "solar_wm2": 565,
           "cape_jkg": 50,
           "boundary_layer": {
             "agl_m": 1090,
@@ -312,21 +312,21 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Forecast gusts reach 37 km/h"
+            "Forecast gusts reach 38 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "NO GO",
-          "score": 67.0,
-          "wind_direction_deg": 98,
+          "score": 65.5,
+          "wind_direction_deg": 100,
           "wind_direction": "east",
           "wind_kmh": 15.8,
-          "gust_kmh": 34.6,
+          "gust_kmh": 33.8,
           "rain_mm": 0.0,
-          "low_cloud_pct": 9,
-          "solar_wm2": 640,
-          "cape_jkg": 90,
+          "low_cloud_pct": 4,
+          "solar_wm2": 570,
+          "cape_jkg": 60,
           "boundary_layer": {
             "agl_m": 1525,
             "agl_ft": 5003,
@@ -334,10 +334,10 @@
             "asl_ft": 5741
           },
           "cloud_base": {
-            "agl_m": 1862,
-            "agl_ft": 6109,
-            "asl_m": 2087,
-            "asl_ft": 6847
+            "agl_m": 1912,
+            "agl_ft": 6273,
+            "asl_m": 2137,
+            "asl_ft": 7011
           },
           "usable_thermal_depth": {
             "m": 1525,
@@ -346,20 +346,20 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 28\u00b0 outside the configured site sector"
+            "Wind is 30\u00b0 outside the configured site sector"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 47.5,
-          "wind_direction_deg": 136,
+          "score": 46.3,
+          "wind_direction_deg": 146,
           "wind_direction": "south-east",
           "wind_kmh": 15.5,
-          "gust_kmh": 31.0,
+          "gust_kmh": 30.2,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 270,
+          "solar_wm2": 213,
           "cape_jkg": 0,
           "boundary_layer": {
             "agl_m": 635,
@@ -368,19 +368,19 @@
             "asl_ft": 2822
           },
           "cloud_base": {
-            "agl_m": 1650,
-            "agl_ft": 5413,
-            "asl_m": 1875,
-            "asl_ft": 6152
+            "agl_m": 1562,
+            "agl_ft": 5125,
+            "asl_m": 1787,
+            "asl_ft": 5863
           },
           "usable_thermal_depth": {
             "m": 635,
             "ft": 2083
           },
-          "thermal_strength": "weak",
+          "thermal_strength": "very weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 66\u00b0 outside the configured site sector"
+            "Wind is 76\u00b0 outside the configured site sector"
           ]
         }
       },
@@ -419,15 +419,15 @@
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 70.5,
-          "wind_direction_deg": 88,
+          "score": 73.6,
+          "wind_direction_deg": 92,
           "wind_direction": "east",
-          "wind_kmh": 21.6,
-          "gust_kmh": 42.5,
+          "wind_kmh": 21.2,
+          "gust_kmh": 41.8,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 583,
-          "cape_jkg": 50,
+          "solar_wm2": 582,
+          "cape_jkg": 60,
           "boundary_layer": {
             "agl_m": 1015,
             "agl_ft": 3330,
@@ -435,10 +435,10 @@
             "asl_ft": 4288
           },
           "cloud_base": {
-            "agl_m": 1350,
-            "agl_ft": 4429,
-            "asl_m": 1642,
-            "asl_ft": 5387
+            "agl_m": 1362,
+            "agl_ft": 4469,
+            "asl_m": 1654,
+            "asl_ft": 5427
           },
           "usable_thermal_depth": {
             "m": 1015,
@@ -447,7 +447,6 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 22\u00b0 outside the configured site sector",
             "Forecast gusts reach 42 km/h"
           ]
         },
@@ -457,12 +456,12 @@
           "score": 76.0,
           "wind_direction_deg": 94,
           "wind_direction": "east",
-          "wind_kmh": 17.6,
-          "gust_kmh": 36.4,
+          "wind_kmh": 18.4,
+          "gust_kmh": 38.2,
           "rain_mm": 0.0,
-          "low_cloud_pct": 48,
-          "solar_wm2": 468,
-          "cape_jkg": 90,
+          "low_cloud_pct": 25,
+          "solar_wm2": 620,
+          "cape_jkg": 110,
           "boundary_layer": {
             "agl_m": 1925,
             "agl_ft": 6316,
@@ -470,33 +469,33 @@
             "asl_ft": 7274
           },
           "cloud_base": {
-            "agl_m": 1725,
-            "agl_ft": 5659,
-            "asl_m": 2017,
-            "asl_ft": 6617
+            "agl_m": 1813,
+            "agl_ft": 5948,
+            "asl_m": 2105,
+            "asl_ft": 6906
           },
           "usable_thermal_depth": {
-            "m": 1725,
-            "ft": 5659
+            "m": 1813,
+            "ft": 5948
           },
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Forecast gusts reach 36 km/h"
+            "Forecast gusts reach 38 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 60.6,
-          "wind_direction_deg": 84,
+          "score": 66.8,
+          "wind_direction_deg": 94,
           "wind_direction": "east",
-          "wind_kmh": 19.4,
-          "gust_kmh": 37.8,
+          "wind_kmh": 19.1,
+          "gust_kmh": 37.4,
           "rain_mm": 0.0,
-          "low_cloud_pct": 0,
-          "solar_wm2": 198,
-          "cape_jkg": 20,
+          "low_cloud_pct": 2,
+          "solar_wm2": 143,
+          "cape_jkg": 10,
           "boundary_layer": {
             "agl_m": 1365,
             "agl_ft": 4478,
@@ -516,8 +515,7 @@
           "thermal_strength": "weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 26\u00b0 outside the configured site sector",
-            "Forecast gusts reach 38 km/h"
+            "Forecast gusts reach 37 km/h"
           ]
         }
       },
@@ -545,18 +543,18 @@
       "id": "bo-peep",
       "name": "Bo Peep",
       "verdict": "NO GO",
-      "score": 71.1,
+      "score": 69.1,
       "best_period": "11:00",
       "verified_for_automatic_go": true,
       "outlooks": {
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 71.1,
+          "score": 69.1,
           "wind_direction_deg": 72,
           "wind_direction": "east-north-east",
-          "wind_kmh": 22.7,
-          "gust_kmh": 42.8,
+          "wind_kmh": 23.8,
+          "gust_kmh": 44.6,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
           "solar_wm2": 602,
@@ -568,10 +566,10 @@
             "asl_ft": 3363
           },
           "cloud_base": {
-            "agl_m": 1612,
-            "agl_ft": 5289,
-            "asl_m": 1802,
-            "asl_ft": 5912
+            "agl_m": 1562,
+            "agl_ft": 5125,
+            "asl_m": 1752,
+            "asl_ft": 5748
           },
           "usable_thermal_depth": {
             "m": 835,
@@ -580,21 +578,21 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Forecast gusts reach 43 km/h"
+            "Forecast gusts reach 45 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "NO GO",
-          "score": 53.1,
-          "wind_direction_deg": 92,
+          "score": 56.1,
+          "wind_direction_deg": 88,
           "wind_direction": "east",
           "wind_kmh": 25.2,
           "gust_kmh": 47.2,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 728,
-          "cape_jkg": 50,
+          "solar_wm2": 723,
+          "cape_jkg": 40,
           "boundary_layer": {
             "agl_m": 825,
             "agl_ft": 2707,
@@ -614,21 +612,20 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 22\u00b0 outside the configured site sector",
             "Forecast gusts reach 47 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 62.5,
-          "wind_direction_deg": 92,
+          "score": 61.1,
+          "wind_direction_deg": 94,
           "wind_direction": "east",
-          "wind_kmh": 18.4,
-          "gust_kmh": 33.8,
+          "wind_kmh": 17.6,
+          "gust_kmh": 32.8,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 294,
+          "solar_wm2": 297,
           "cape_jkg": 10,
           "boundary_layer": {
             "agl_m": 790,
@@ -637,10 +634,10 @@
             "asl_ft": 3215
           },
           "cloud_base": {
-            "agl_m": 1412,
-            "agl_ft": 4633,
-            "asl_m": 1602,
-            "asl_ft": 5256
+            "agl_m": 1375,
+            "agl_ft": 4511,
+            "asl_m": 1565,
+            "asl_ft": 5135
           },
           "usable_thermal_depth": {
             "m": 790,
@@ -649,7 +646,7 @@
           "thermal_strength": "weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 22\u00b0 outside the configured site sector"
+            "Wind is 24\u00b0 outside the configured site sector"
           ]
         }
       },
@@ -685,13 +682,13 @@
           "hour_local": 11,
           "verdict": "NO GO",
           "score": 56.7,
-          "wind_direction_deg": 84,
+          "wind_direction_deg": 86,
           "wind_direction": "east",
-          "wind_kmh": 22.0,
-          "gust_kmh": 42.5,
+          "wind_kmh": 21.6,
+          "gust_kmh": 42.1,
           "rain_mm": 0.0,
           "low_cloud_pct": 1,
-          "solar_wm2": 568,
+          "solar_wm2": 569,
           "cape_jkg": 60,
           "boundary_layer": {
             "agl_m": 1005,
@@ -700,10 +697,10 @@
             "asl_ft": 4117
           },
           "cloud_base": {
-            "agl_m": 1312,
-            "agl_ft": 4304,
-            "asl_m": 1562,
-            "asl_ft": 5125
+            "agl_m": 1313,
+            "agl_ft": 4308,
+            "asl_m": 1563,
+            "asl_ft": 5128
           },
           "usable_thermal_depth": {
             "m": 1005,
@@ -712,7 +709,7 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 114\u00b0 outside the configured site sector",
+            "Wind is 116\u00b0 outside the configured site sector",
             "Forecast gusts reach 42 km/h"
           ]
         },
@@ -722,11 +719,11 @@
           "score": 58.0,
           "wind_direction_deg": 96,
           "wind_direction": "east",
-          "wind_kmh": 18.4,
-          "gust_kmh": 37.8,
+          "wind_kmh": 17.6,
+          "gust_kmh": 37.4,
           "rain_mm": 0.0,
-          "low_cloud_pct": 45,
-          "solar_wm2": 599,
+          "low_cloud_pct": 23,
+          "solar_wm2": 609,
           "cape_jkg": 110,
           "boundary_layer": {
             "agl_m": 1705,
@@ -748,21 +745,21 @@
           "thermals_reach_launch": true,
           "reasons": [
             "Wind is 119\u00b0 outside the configured site sector",
-            "Forecast gusts reach 38 km/h"
+            "Forecast gusts reach 37 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 50.5,
-          "wind_direction_deg": 92,
+          "score": 51.7,
+          "wind_direction_deg": 98,
           "wind_direction": "east",
-          "wind_kmh": 16.9,
-          "gust_kmh": 32.8,
+          "wind_kmh": 18.4,
+          "gust_kmh": 35.3,
           "rain_mm": 0.0,
-          "low_cloud_pct": 2,
-          "solar_wm2": 212,
-          "cape_jkg": 20,
+          "low_cloud_pct": 5,
+          "solar_wm2": 261,
+          "cape_jkg": 30,
           "boundary_layer": {
             "agl_m": 1375,
             "agl_ft": 4511,
@@ -779,10 +776,11 @@
             "m": 1375,
             "ft": 4511
           },
-          "thermal_strength": "weak",
+          "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 122\u00b0 outside the configured site sector"
+            "Wind is 117\u00b0 outside the configured site sector",
+            "Forecast gusts reach 35 km/h"
           ]
         }
       },
@@ -821,14 +819,14 @@
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 56.7,
-          "wind_direction_deg": 86,
+          "score": 56.6,
+          "wind_direction_deg": 92,
           "wind_direction": "east",
           "wind_kmh": 22.0,
           "gust_kmh": 42.5,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 577,
+          "solar_wm2": 574,
           "cape_jkg": 60,
           "boundary_layer": {
             "agl_m": 965,
@@ -849,7 +847,7 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 94\u00b0 outside the configured site sector",
+            "Wind is 88\u00b0 outside the configured site sector",
             "Forecast gusts reach 42 km/h"
           ]
         },
@@ -857,14 +855,14 @@
           "hour_local": 14,
           "verdict": "NO GO",
           "score": 58.0,
-          "wind_direction_deg": 94,
+          "wind_direction_deg": 92,
           "wind_direction": "east",
           "wind_kmh": 18.4,
-          "gust_kmh": 37.4,
+          "gust_kmh": 38.2,
           "rain_mm": 0.0,
-          "low_cloud_pct": 48,
-          "solar_wm2": 475,
-          "cape_jkg": 90,
+          "low_cloud_pct": 27,
+          "solar_wm2": 555,
+          "cape_jkg": 100,
           "boundary_layer": {
             "agl_m": 1890,
             "agl_ft": 6201,
@@ -872,34 +870,34 @@
             "asl_ft": 7136
           },
           "cloud_base": {
-            "agl_m": 1662,
-            "agl_ft": 5453,
-            "asl_m": 1947,
-            "asl_ft": 6388
+            "agl_m": 1762,
+            "agl_ft": 5781,
+            "asl_m": 2047,
+            "asl_ft": 6716
           },
           "usable_thermal_depth": {
-            "m": 1662,
-            "ft": 5453
+            "m": 1762,
+            "ft": 5781
           },
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 86\u00b0 outside the configured site sector",
-            "Forecast gusts reach 37 km/h"
+            "Wind is 88\u00b0 outside the configured site sector",
+            "Forecast gusts reach 38 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 50.2,
-          "wind_direction_deg": 82,
+          "score": 50.9,
+          "wind_direction_deg": 92,
           "wind_direction": "east",
-          "wind_kmh": 19.4,
-          "gust_kmh": 37.4,
+          "wind_kmh": 20.2,
+          "gust_kmh": 38.9,
           "rain_mm": 0.0,
-          "low_cloud_pct": 17,
-          "solar_wm2": 156,
-          "cape_jkg": 10,
+          "low_cloud_pct": 5,
+          "solar_wm2": 181,
+          "cape_jkg": 20,
           "boundary_layer": {
             "agl_m": 1560,
             "agl_ft": 5118,
@@ -907,10 +905,10 @@
             "asl_ft": 6053
           },
           "cloud_base": {
-            "agl_m": 1787,
-            "agl_ft": 5863,
-            "asl_m": 2072,
-            "asl_ft": 6798
+            "agl_m": 1800,
+            "agl_ft": 5906,
+            "asl_m": 2085,
+            "asl_ft": 6841
           },
           "usable_thermal_depth": {
             "m": 1560,
@@ -919,8 +917,8 @@
           "thermal_strength": "weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 98\u00b0 outside the configured site sector",
-            "Forecast gusts reach 37 km/h"
+            "Wind is 88\u00b0 outside the configured site sector",
+            "Forecast gusts reach 39 km/h"
           ]
         }
       },
@@ -945,6 +943,140 @@
       }
     },
     {
+      "id": "golden-ball",
+      "name": "Golden Ball",
+      "verdict": "NO GO",
+      "score": 58.0,
+      "best_period": "14:00",
+      "verified_for_automatic_go": true,
+      "outlooks": {
+        "11:00": {
+          "hour_local": 11,
+          "verdict": "NO GO",
+          "score": 57.1,
+          "wind_direction_deg": 90,
+          "wind_direction": "east",
+          "wind_kmh": 20.2,
+          "gust_kmh": 40.7,
+          "rain_mm": 0.0,
+          "low_cloud_pct": 0,
+          "solar_wm2": 596,
+          "cape_jkg": 60,
+          "boundary_layer": {
+            "agl_m": 965,
+            "agl_ft": 3166,
+            "asl_m": 1225,
+            "asl_ft": 4019
+          },
+          "cloud_base": {
+            "agl_m": 1325,
+            "agl_ft": 4347,
+            "asl_m": 1585,
+            "asl_ft": 5200
+          },
+          "usable_thermal_depth": {
+            "m": 965,
+            "ft": 3166
+          },
+          "thermal_strength": "moderate",
+          "thermals_reach_launch": true,
+          "reasons": [
+            "Wind is 45\u00b0 outside the configured site sector",
+            "Forecast gusts reach 41 km/h"
+          ]
+        },
+        "14:00": {
+          "hour_local": 14,
+          "verdict": "NO GO",
+          "score": 58.0,
+          "wind_direction_deg": 92,
+          "wind_direction": "east",
+          "wind_kmh": 17.3,
+          "gust_kmh": 36.7,
+          "rain_mm": 0.0,
+          "low_cloud_pct": 34,
+          "solar_wm2": 554,
+          "cape_jkg": 100,
+          "boundary_layer": {
+            "agl_m": 1890,
+            "agl_ft": 6201,
+            "asl_m": 2150,
+            "asl_ft": 7054
+          },
+          "cloud_base": {
+            "agl_m": 1775,
+            "agl_ft": 5823,
+            "asl_m": 2035,
+            "asl_ft": 6677
+          },
+          "usable_thermal_depth": {
+            "m": 1775,
+            "ft": 5823
+          },
+          "thermal_strength": "moderate",
+          "thermals_reach_launch": true,
+          "reasons": [
+            "Wind is 43\u00b0 outside the configured site sector",
+            "Forecast gusts reach 37 km/h"
+          ]
+        },
+        "18:00": {
+          "hour_local": 18,
+          "verdict": "NO GO",
+          "score": 49.7,
+          "wind_direction_deg": 90,
+          "wind_direction": "east",
+          "wind_kmh": 19.1,
+          "gust_kmh": 37.8,
+          "rain_mm": 0.0,
+          "low_cloud_pct": 0,
+          "solar_wm2": 133,
+          "cape_jkg": 10,
+          "boundary_layer": {
+            "agl_m": 1560,
+            "agl_ft": 5118,
+            "asl_m": 1820,
+            "asl_ft": 5971
+          },
+          "cloud_base": {
+            "agl_m": 1800,
+            "agl_ft": 5906,
+            "asl_m": 2060,
+            "asl_ft": 6759
+          },
+          "usable_thermal_depth": {
+            "m": 1560,
+            "ft": 5118
+          },
+          "thermal_strength": "weak",
+          "thermals_reach_launch": true,
+          "reasons": [
+            "Wind is 45\u00b0 outside the configured site sector",
+            "Forecast gusts reach 38 km/h"
+          ]
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 260,
+          "ft": 853
+        },
+        "wind_sectors": [
+          [
+            135,
+            210
+          ]
+        ],
+        "club": "Thames Valley HGC",
+        "access": "Sensitive XC-only site with strict launch and landing rules. Check current club status.",
+        "pilot_level": "Pilot plus 100 hours",
+        "guide_url": "https://www.tvhgc.co.uk/sites/"
+      },
+      "distance_from_portchester": {
+        "km_straight_line": 72.6
+      }
+    },
+    {
       "id": "uffington-white-horse",
       "name": "Uffington White Horse",
       "verdict": "NO GO",
@@ -955,14 +1087,14 @@
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 56.8,
-          "wind_direction_deg": 80,
+          "score": 57.1,
+          "wind_direction_deg": 82,
           "wind_direction": "east",
           "wind_kmh": 21.2,
-          "gust_kmh": 41.4,
+          "gust_kmh": 41.8,
           "rain_mm": 0.0,
-          "low_cloud_pct": 8,
-          "solar_wm2": 566,
+          "low_cloud_pct": 5,
+          "solar_wm2": 579,
           "cape_jkg": 60,
           "boundary_layer": {
             "agl_m": 1035,
@@ -971,10 +1103,10 @@
             "asl_ft": 4216
           },
           "cloud_base": {
-            "agl_m": 1275,
-            "agl_ft": 4183,
-            "asl_m": 1525,
-            "asl_ft": 5003
+            "agl_m": 1312,
+            "agl_ft": 4304,
+            "asl_m": 1562,
+            "asl_ft": 5125
           },
           "usable_thermal_depth": {
             "m": 1035,
@@ -983,21 +1115,21 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 55\u00b0 outside the configured site sector",
-            "Forecast gusts reach 41 km/h"
+            "Wind is 57\u00b0 outside the configured site sector",
+            "Forecast gusts reach 42 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "NO GO",
           "score": 58.0,
-          "wind_direction_deg": 88,
+          "wind_direction_deg": 94,
           "wind_direction": "east",
-          "wind_kmh": 19.4,
-          "gust_kmh": 39.6,
+          "wind_kmh": 18.0,
+          "gust_kmh": 37.4,
           "rain_mm": 0.0,
-          "low_cloud_pct": 34,
-          "solar_wm2": 633,
+          "low_cloud_pct": 12,
+          "solar_wm2": 576,
           "cape_jkg": 100,
           "boundary_layer": {
             "agl_m": 1655,
@@ -1018,22 +1150,22 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 63\u00b0 outside the configured site sector",
-            "Forecast gusts reach 40 km/h"
+            "Wind is 69\u00b0 outside the configured site sector",
+            "Forecast gusts reach 37 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 49.8,
-          "wind_direction_deg": 92,
+          "score": 52.7,
+          "wind_direction_deg": 94,
           "wind_direction": "east",
-          "wind_kmh": 19.1,
-          "gust_kmh": 37.1,
+          "wind_kmh": 18.7,
+          "gust_kmh": 36.0,
           "rain_mm": 0.0,
-          "low_cloud_pct": 2,
-          "solar_wm2": 195,
-          "cape_jkg": 20,
+          "low_cloud_pct": 6,
+          "solar_wm2": 319,
+          "cape_jkg": 30,
           "boundary_layer": {
             "agl_m": 1320,
             "agl_ft": 4331,
@@ -1041,20 +1173,20 @@
             "asl_ft": 5151
           },
           "cloud_base": {
-            "agl_m": 2038,
-            "agl_ft": 6686,
-            "asl_m": 2288,
-            "asl_ft": 7507
+            "agl_m": 2050,
+            "agl_ft": 6726,
+            "asl_m": 2300,
+            "asl_ft": 7546
           },
           "usable_thermal_depth": {
             "m": 1320,
             "ft": 4331
           },
-          "thermal_strength": "weak",
+          "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 67\u00b0 outside the configured site sector",
-            "Forecast gusts reach 37 km/h"
+            "Wind is 69\u00b0 outside the configured site sector",
+            "Forecast gusts reach 36 km/h"
           ]
         }
       },
@@ -1093,14 +1225,14 @@
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 53.3,
-          "wind_direction_deg": 96,
-          "wind_direction": "east",
-          "wind_kmh": 20.2,
-          "gust_kmh": 42.5,
+          "score": 55.1,
+          "wind_direction_deg": 102,
+          "wind_direction": "east-south-east",
+          "wind_kmh": 20.5,
+          "gust_kmh": 43.2,
           "rain_mm": 0.0,
-          "low_cloud_pct": 0,
-          "solar_wm2": 429,
+          "low_cloud_pct": 1,
+          "solar_wm2": 510,
           "cape_jkg": 40,
           "boundary_layer": {
             "agl_m": 985,
@@ -1109,33 +1241,33 @@
             "asl_ft": 3921
           },
           "cloud_base": {
-            "agl_m": 1238,
-            "agl_ft": 4062,
-            "asl_m": 1448,
-            "asl_ft": 4751
+            "agl_m": 1275,
+            "agl_ft": 4183,
+            "asl_m": 1485,
+            "asl_ft": 4872
           },
           "usable_thermal_depth": {
             "m": 985,
             "ft": 3232
           },
-          "thermal_strength": "weak",
+          "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 116\u00b0 outside the configured site sector",
-            "Forecast gusts reach 42 km/h"
+            "Wind is 122\u00b0 outside the configured site sector",
+            "Forecast gusts reach 43 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "NO GO",
           "score": 58.0,
-          "wind_direction_deg": 98,
+          "wind_direction_deg": 100,
           "wind_direction": "east",
           "wind_kmh": 17.6,
           "gust_kmh": 39.2,
           "rain_mm": 0.0,
-          "low_cloud_pct": 13,
-          "solar_wm2": 697,
+          "low_cloud_pct": 20,
+          "solar_wm2": 672,
           "cape_jkg": 130,
           "boundary_layer": {
             "agl_m": 1990,
@@ -1156,22 +1288,22 @@
           "thermal_strength": "strong",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 118\u00b0 outside the configured site sector",
+            "Wind is 120\u00b0 outside the configured site sector",
             "Forecast gusts reach 39 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 52.3,
-          "wind_direction_deg": 96,
-          "wind_direction": "east",
-          "wind_kmh": 15.8,
-          "gust_kmh": 34.2,
+          "score": 49.7,
+          "wind_direction_deg": 106,
+          "wind_direction": "east-south-east",
+          "wind_kmh": 16.2,
+          "gust_kmh": 34.6,
           "rain_mm": 0.0,
-          "low_cloud_pct": 5,
-          "solar_wm2": 198,
-          "cape_jkg": 40,
+          "low_cloud_pct": 1,
+          "solar_wm2": 87,
+          "cape_jkg": 20,
           "boundary_layer": {
             "agl_m": 1730,
             "agl_ft": 5676,
@@ -1179,10 +1311,10 @@
             "asl_ft": 6365
           },
           "cloud_base": {
-            "agl_m": 2125,
-            "agl_ft": 6972,
-            "asl_m": 2335,
-            "asl_ft": 7661
+            "agl_m": 2050,
+            "agl_ft": 6726,
+            "asl_m": 2260,
+            "asl_ft": 7415
           },
           "usable_thermal_depth": {
             "m": 1730,
@@ -1191,7 +1323,7 @@
           "thermal_strength": "weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 116\u00b0 outside the configured site sector"
+            "Wind is 126\u00b0 outside the configured site sector"
           ]
         }
       },
@@ -1226,15 +1358,15 @@
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 53.6,
-          "wind_direction_deg": 86,
+          "score": 51.5,
+          "wind_direction_deg": 90,
           "wind_direction": "east",
-          "wind_kmh": 18.7,
-          "gust_kmh": 40.0,
+          "wind_kmh": 19.4,
+          "gust_kmh": 41.4,
           "rain_mm": 0.0,
           "low_cloud_pct": 2,
-          "solar_wm2": 408,
-          "cape_jkg": 40,
+          "solar_wm2": 315,
+          "cape_jkg": 30,
           "boundary_layer": {
             "agl_m": 1125,
             "agl_ft": 3691,
@@ -1242,10 +1374,10 @@
             "asl_ft": 4511
           },
           "cloud_base": {
-            "agl_m": 1238,
-            "agl_ft": 4062,
-            "asl_m": 1488,
-            "asl_ft": 4882
+            "agl_m": 1275,
+            "agl_ft": 4183,
+            "asl_m": 1525,
+            "asl_ft": 5003
           },
           "usable_thermal_depth": {
             "m": 1125,
@@ -1254,21 +1386,21 @@
           "thermal_strength": "weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 41\u00b0 outside the configured site sector",
-            "Forecast gusts reach 40 km/h"
+            "Wind is 45\u00b0 outside the configured site sector",
+            "Forecast gusts reach 41 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "NO GO",
           "score": 58.0,
-          "wind_direction_deg": 94,
+          "wind_direction_deg": 98,
           "wind_direction": "east",
-          "wind_kmh": 16.6,
-          "gust_kmh": 37.4,
+          "wind_kmh": 15.8,
+          "gust_kmh": 36.0,
           "rain_mm": 0.0,
-          "low_cloud_pct": 10,
-          "solar_wm2": 702,
+          "low_cloud_pct": 15,
+          "solar_wm2": 689,
           "cape_jkg": 120,
           "boundary_layer": {
             "agl_m": 1795,
@@ -1289,21 +1421,21 @@
           "thermal_strength": "strong",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 49\u00b0 outside the configured site sector",
-            "Forecast gusts reach 37 km/h"
+            "Wind is 53\u00b0 outside the configured site sector",
+            "Forecast gusts reach 36 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 54.2,
-          "wind_direction_deg": 104,
-          "wind_direction": "east-south-east",
-          "wind_kmh": 14.8,
-          "gust_kmh": 31.3,
+          "score": 54.8,
+          "wind_direction_deg": 100,
+          "wind_direction": "east",
+          "wind_kmh": 15.8,
+          "gust_kmh": 33.8,
           "rain_mm": 0.0,
-          "low_cloud_pct": 15,
-          "solar_wm2": 221,
+          "low_cloud_pct": 12,
+          "solar_wm2": 248,
           "cape_jkg": 40,
           "boundary_layer": {
             "agl_m": 1965,
@@ -1312,10 +1444,10 @@
             "asl_ft": 7267
           },
           "cloud_base": {
-            "agl_m": 2175,
-            "agl_ft": 7136,
-            "asl_m": 2425,
-            "asl_ft": 7956
+            "agl_m": 2188,
+            "agl_ft": 7178,
+            "asl_m": 2438,
+            "asl_ft": 7999
           },
           "usable_thermal_depth": {
             "m": 1965,
@@ -1324,7 +1456,7 @@
           "thermal_strength": "weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 59\u00b0 outside the configured site sector"
+            "Wind is 55\u00b0 outside the configured site sector"
           ]
         }
       },
@@ -1364,14 +1496,14 @@
           "hour_local": 11,
           "verdict": "NO GO",
           "score": 57.4,
-          "wind_direction_deg": 74,
+          "wind_direction_deg": 76,
           "wind_direction": "east-north-east",
-          "wind_kmh": 19.8,
-          "gust_kmh": 39.6,
+          "wind_kmh": 19.4,
+          "gust_kmh": 39.2,
           "rain_mm": 0.0,
-          "low_cloud_pct": 2,
-          "solar_wm2": 582,
-          "cape_jkg": 60,
+          "low_cloud_pct": 0,
+          "solar_wm2": 585,
+          "cape_jkg": 50,
           "boundary_layer": {
             "agl_m": 1080,
             "agl_ft": 3543,
@@ -1391,22 +1523,22 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 62\u00b0 outside the configured site sector",
-            "Forecast gusts reach 40 km/h"
+            "Wind is 64\u00b0 outside the configured site sector",
+            "Forecast gusts reach 39 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "NO GO",
           "score": 58.0,
-          "wind_direction_deg": 88,
+          "wind_direction_deg": 92,
           "wind_direction": "east",
-          "wind_kmh": 17.3,
-          "gust_kmh": 36.0,
+          "wind_kmh": 18.4,
+          "gust_kmh": 38.2,
           "rain_mm": 0.0,
-          "low_cloud_pct": 10,
-          "solar_wm2": 701,
-          "cape_jkg": 100,
+          "low_cloud_pct": 0,
+          "solar_wm2": 716,
+          "cape_jkg": 80,
           "boundary_layer": {
             "agl_m": 1160,
             "agl_ft": 3806,
@@ -1414,10 +1546,10 @@
             "asl_ft": 4518
           },
           "cloud_base": {
-            "agl_m": 2062,
-            "agl_ft": 6765,
-            "asl_m": 2279,
-            "asl_ft": 7477
+            "agl_m": 1962,
+            "agl_ft": 6437,
+            "asl_m": 2179,
+            "asl_ft": 7149
           },
           "usable_thermal_depth": {
             "m": 1160,
@@ -1426,22 +1558,22 @@
           "thermal_strength": "moderate",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 76\u00b0 outside the configured site sector",
-            "Forecast gusts reach 36 km/h"
+            "Wind is 80\u00b0 outside the configured site sector",
+            "Forecast gusts reach 38 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 50.1,
-          "wind_direction_deg": 104,
+          "score": 48.9,
+          "wind_direction_deg": 112,
           "wind_direction": "east-south-east",
-          "wind_kmh": 16.6,
-          "gust_kmh": 32.0,
+          "wind_kmh": 16.9,
+          "gust_kmh": 32.8,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 285,
-          "cape_jkg": 20,
+          "solar_wm2": 234,
+          "cape_jkg": 10,
           "boundary_layer": {
             "agl_m": 1015,
             "agl_ft": 3330,
@@ -1449,10 +1581,10 @@
             "asl_ft": 4042
           },
           "cloud_base": {
-            "agl_m": 1750,
-            "agl_ft": 5741,
-            "asl_m": 1967,
-            "asl_ft": 6453
+            "agl_m": 1700,
+            "agl_ft": 5577,
+            "asl_m": 1917,
+            "asl_ft": 6289
           },
           "usable_thermal_depth": {
             "m": 1015,
@@ -1461,7 +1593,7 @@
           "thermal_strength": "weak",
           "thermals_reach_launch": true,
           "reasons": [
-            "Wind is 92\u00b0 outside the configured site sector"
+            "Wind is 100\u00b0 outside the configured site sector"
           ]
         }
       },
@@ -1490,140 +1622,6 @@
       }
     },
     {
-      "id": "golden-ball",
-      "name": "Golden Ball",
-      "verdict": "NO GO",
-      "score": 57.6,
-      "best_period": "14:00",
-      "verified_for_automatic_go": true,
-      "outlooks": {
-        "11:00": {
-          "hour_local": 11,
-          "verdict": "NO GO",
-          "score": 57.1,
-          "wind_direction_deg": 86,
-          "wind_direction": "east",
-          "wind_kmh": 20.2,
-          "gust_kmh": 41.0,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 0,
-          "solar_wm2": 597,
-          "cape_jkg": 60,
-          "boundary_layer": {
-            "agl_m": 965,
-            "agl_ft": 3166,
-            "asl_m": 1225,
-            "asl_ft": 4019
-          },
-          "cloud_base": {
-            "agl_m": 1312,
-            "agl_ft": 4304,
-            "asl_m": 1572,
-            "asl_ft": 5157
-          },
-          "usable_thermal_depth": {
-            "m": 965,
-            "ft": 3166
-          },
-          "thermal_strength": "moderate",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Wind is 49\u00b0 outside the configured site sector",
-            "Forecast gusts reach 41 km/h"
-          ]
-        },
-        "14:00": {
-          "hour_local": 14,
-          "verdict": "NO GO",
-          "score": 57.6,
-          "wind_direction_deg": 92,
-          "wind_direction": "east",
-          "wind_kmh": 17.3,
-          "gust_kmh": 36.0,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 54,
-          "solar_wm2": 455,
-          "cape_jkg": 90,
-          "boundary_layer": {
-            "agl_m": 1890,
-            "agl_ft": 6201,
-            "asl_m": 2150,
-            "asl_ft": 7054
-          },
-          "cloud_base": {
-            "agl_m": 1662,
-            "agl_ft": 5453,
-            "asl_m": 1922,
-            "asl_ft": 6306
-          },
-          "usable_thermal_depth": {
-            "m": 1662,
-            "ft": 5453
-          },
-          "thermal_strength": "moderate",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Wind is 43\u00b0 outside the configured site sector",
-            "Forecast gusts reach 36 km/h"
-          ]
-        },
-        "18:00": {
-          "hour_local": 18,
-          "verdict": "NO GO",
-          "score": 50.3,
-          "wind_direction_deg": 84,
-          "wind_direction": "east",
-          "wind_kmh": 18.4,
-          "gust_kmh": 36.4,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 8,
-          "solar_wm2": 158,
-          "cape_jkg": 20,
-          "boundary_layer": {
-            "agl_m": 1560,
-            "agl_ft": 5118,
-            "asl_m": 1820,
-            "asl_ft": 5971
-          },
-          "cloud_base": {
-            "agl_m": 1812,
-            "agl_ft": 5945,
-            "asl_m": 2072,
-            "asl_ft": 6798
-          },
-          "usable_thermal_depth": {
-            "m": 1560,
-            "ft": 5118
-          },
-          "thermal_strength": "weak",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Wind is 51\u00b0 outside the configured site sector",
-            "Forecast gusts reach 36 km/h"
-          ]
-        }
-      },
-      "site": {
-        "elevation": {
-          "m": 260,
-          "ft": 853
-        },
-        "wind_sectors": [
-          [
-            135,
-            210
-          ]
-        ],
-        "club": "Thames Valley HGC",
-        "access": "Sensitive XC-only site with strict launch and landing rules. Check current club status.",
-        "pilot_level": "Pilot plus 100 hours",
-        "guide_url": "https://www.tvhgc.co.uk/sites/"
-      },
-      "distance_from_portchester": {
-        "km_straight_line": 72.6
-      }
-    },
-    {
       "id": "butser-west",
       "name": "Butser West",
       "verdict": "NO GO",
@@ -1634,14 +1632,14 @@
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 50.4,
+          "score": 50.8,
           "wind_direction_deg": 82,
           "wind_direction": "east",
-          "wind_kmh": 20.2,
-          "gust_kmh": 41.4,
+          "wind_kmh": 20.5,
+          "gust_kmh": 42.5,
           "rain_mm": 0.0,
-          "low_cloud_pct": 17,
-          "solar_wm2": 557,
+          "low_cloud_pct": 8,
+          "solar_wm2": 576,
           "cape_jkg": 40,
           "boundary_layer": {
             "agl_m": 1025,
@@ -1663,21 +1661,21 @@
           "thermals_reach_launch": true,
           "reasons": [
             "Wind sector is not verified",
-            "Forecast gusts reach 41 km/h"
+            "Forecast gusts reach 42 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "NO GO",
           "score": 52.0,
-          "wind_direction_deg": 98,
+          "wind_direction_deg": 96,
           "wind_direction": "east",
           "wind_kmh": 15.8,
-          "gust_kmh": 33.8,
+          "gust_kmh": 33.5,
           "rain_mm": 0.0,
-          "low_cloud_pct": 14,
-          "solar_wm2": 583,
-          "cape_jkg": 70,
+          "low_cloud_pct": 15,
+          "solar_wm2": 595,
+          "cape_jkg": 60,
           "boundary_layer": {
             "agl_m": 1635,
             "agl_ft": 5364,
@@ -1685,10 +1683,10 @@
             "asl_ft": 6253
           },
           "cloud_base": {
-            "agl_m": 1712,
-            "agl_ft": 5617,
-            "asl_m": 1983,
-            "asl_ft": 6506
+            "agl_m": 1750,
+            "agl_ft": 5741,
+            "asl_m": 2021,
+            "asl_ft": 6631
           },
           "usable_thermal_depth": {
             "m": 1635,
@@ -1703,14 +1701,14 @@
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 42.8,
-          "wind_direction_deg": 136,
+          "score": 39.9,
+          "wind_direction_deg": 146,
           "wind_direction": "south-east",
-          "wind_kmh": 16.2,
-          "gust_kmh": 31.7,
+          "wind_kmh": 16.6,
+          "gust_kmh": 32.0,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 324,
+          "solar_wm2": 190,
           "cape_jkg": 0,
           "boundary_layer": {
             "agl_m": 655,
@@ -1719,16 +1717,16 @@
             "asl_ft": 3038
           },
           "cloud_base": {
-            "agl_m": 1563,
-            "agl_ft": 5128,
-            "asl_m": 1834,
-            "asl_ft": 6017
+            "agl_m": 1350,
+            "agl_ft": 4429,
+            "asl_m": 1621,
+            "asl_ft": 5318
           },
           "usable_thermal_depth": {
             "m": 655,
             "ft": 2149
           },
-          "thermal_strength": "weak",
+          "thermal_strength": "very weak",
           "thermals_reach_launch": true,
           "reasons": [
             "Wind sector is not verified"
@@ -1767,13 +1765,13 @@
           "hour_local": 11,
           "verdict": "NO GO",
           "score": 50.9,
-          "wind_direction_deg": 86,
+          "wind_direction_deg": 84,
           "wind_direction": "east",
-          "wind_kmh": 20.9,
-          "gust_kmh": 41.8,
+          "wind_kmh": 22.0,
+          "gust_kmh": 43.9,
           "rain_mm": 0.0,
-          "low_cloud_pct": 6,
-          "solar_wm2": 575,
+          "low_cloud_pct": 3,
+          "solar_wm2": 577,
           "cape_jkg": 50,
           "boundary_layer": {
             "agl_m": 1025,
@@ -1782,10 +1780,10 @@
             "asl_ft": 4085
           },
           "cloud_base": {
-            "agl_m": 1362,
-            "agl_ft": 4469,
-            "asl_m": 1582,
-            "asl_ft": 5190
+            "agl_m": 1325,
+            "agl_ft": 4347,
+            "asl_m": 1545,
+            "asl_ft": 5069
           },
           "usable_thermal_depth": {
             "m": 1025,
@@ -1795,21 +1793,21 @@
           "thermals_reach_launch": true,
           "reasons": [
             "The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.",
-            "Forecast gusts reach 42 km/h"
+            "Forecast gusts reach 44 km/h"
           ]
         },
         "14:00": {
           "hour_local": 14,
           "verdict": "NO GO",
           "score": 52.0,
-          "wind_direction_deg": 98,
+          "wind_direction_deg": 100,
           "wind_direction": "east",
-          "wind_kmh": 16.9,
-          "gust_kmh": 35.3,
+          "wind_kmh": 17.3,
+          "gust_kmh": 35.6,
           "rain_mm": 0.0,
-          "low_cloud_pct": 14,
-          "solar_wm2": 635,
-          "cape_jkg": 100,
+          "low_cloud_pct": 9,
+          "solar_wm2": 611,
+          "cape_jkg": 80,
           "boundary_layer": {
             "agl_m": 1635,
             "agl_ft": 5364,
@@ -1817,10 +1815,10 @@
             "asl_ft": 6086
           },
           "cloud_base": {
-            "agl_m": 1812,
-            "agl_ft": 5945,
-            "asl_m": 2032,
-            "asl_ft": 6667
+            "agl_m": 1862,
+            "agl_ft": 6109,
+            "asl_m": 2082,
+            "asl_ft": 6831
           },
           "usable_thermal_depth": {
             "m": 1635,
@@ -1830,21 +1828,21 @@
           "thermals_reach_launch": true,
           "reasons": [
             "The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.",
-            "Forecast gusts reach 35 km/h"
+            "Forecast gusts reach 36 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 42.0,
-          "wind_direction_deg": 136,
+          "score": 39.8,
+          "wind_direction_deg": 144,
           "wind_direction": "south-east",
-          "wind_kmh": 16.6,
-          "gust_kmh": 32.0,
+          "wind_kmh": 17.6,
+          "gust_kmh": 33.5,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 284,
-          "cape_jkg": 10,
+          "solar_wm2": 186,
+          "cape_jkg": 0,
           "boundary_layer": {
             "agl_m": 655,
             "agl_ft": 2149,
@@ -1852,16 +1850,16 @@
             "asl_ft": 2871
           },
           "cloud_base": {
-            "agl_m": 1612,
-            "agl_ft": 5289,
-            "asl_m": 1832,
-            "asl_ft": 6010
+            "agl_m": 1450,
+            "agl_ft": 4757,
+            "asl_m": 1670,
+            "asl_ft": 5479
           },
           "usable_thermal_depth": {
             "m": 655,
             "ft": 2149
           },
-          "thermal_strength": "weak",
+          "thermal_strength": "very weak",
           "thermals_reach_launch": true,
           "reasons": [
             "The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered."
@@ -1884,135 +1882,6 @@
       }
     },
     {
-      "id": "bell-hill",
-      "name": "Bell Hill",
-      "verdict": "NO GO",
-      "score": 52.0,
-      "best_period": "14:00",
-      "verified_for_automatic_go": false,
-      "outlooks": {
-        "11:00": {
-          "hour_local": 11,
-          "verdict": "NO GO",
-          "score": 46.4,
-          "wind_direction_deg": 94,
-          "wind_direction": "east",
-          "wind_kmh": 18.7,
-          "gust_kmh": 38.9,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 2,
-          "solar_wm2": 396,
-          "cape_jkg": 50,
-          "boundary_layer": {
-            "agl_m": 925,
-            "agl_ft": 3035,
-            "asl_m": 1175,
-            "asl_ft": 3855
-          },
-          "cloud_base": {
-            "agl_m": 1400,
-            "agl_ft": 4593,
-            "asl_m": 1650,
-            "asl_ft": 5413
-          },
-          "usable_thermal_depth": {
-            "m": 925,
-            "ft": 3035
-          },
-          "thermal_strength": "weak",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.",
-            "Forecast gusts reach 39 km/h"
-          ]
-        },
-        "14:00": {
-          "hour_local": 14,
-          "verdict": "NO GO",
-          "score": 52.0,
-          "wind_direction_deg": 118,
-          "wind_direction": "east-south-east",
-          "wind_kmh": 18.0,
-          "gust_kmh": 38.2,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 41,
-          "solar_wm2": 596,
-          "cape_jkg": 100,
-          "boundary_layer": {
-            "agl_m": 1255,
-            "agl_ft": 4117,
-            "asl_m": 1505,
-            "asl_ft": 4938
-          },
-          "cloud_base": {
-            "agl_m": 1812,
-            "agl_ft": 5945,
-            "asl_m": 2062,
-            "asl_ft": 6765
-          },
-          "usable_thermal_depth": {
-            "m": 1255,
-            "ft": 4117
-          },
-          "thermal_strength": "moderate",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.",
-            "Forecast gusts reach 38 km/h"
-          ]
-        },
-        "18:00": {
-          "hour_local": 18,
-          "verdict": "NO GO",
-          "score": 43.2,
-          "wind_direction_deg": 144,
-          "wind_direction": "south-east",
-          "wind_kmh": 18.4,
-          "gust_kmh": 35.3,
-          "rain_mm": 0.0,
-          "low_cloud_pct": 0,
-          "solar_wm2": 279,
-          "cape_jkg": 40,
-          "boundary_layer": {
-            "agl_m": 845,
-            "agl_ft": 2772,
-            "asl_m": 1095,
-            "asl_ft": 3593
-          },
-          "cloud_base": {
-            "agl_m": 1287,
-            "agl_ft": 4222,
-            "asl_m": 1537,
-            "asl_ft": 5043
-          },
-          "usable_thermal_depth": {
-            "m": 845,
-            "ft": 2772
-          },
-          "thermal_strength": "weak",
-          "thermals_reach_launch": true,
-          "reasons": [
-            "Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.",
-            "Forecast gusts reach 35 km/h"
-          ]
-        }
-      },
-      "site": {
-        "elevation": {
-          "m": 250,
-          "ft": 820
-        },
-        "wind_sectors": [],
-        "club": "Wessex HGPG Club",
-        "access": "Wessex-managed site. Check the current Wessex site-status page, full PDF site guide, membership or visitor arrangements and all site-specific restrictions before travel.",
-        "pilot_level": "Follow current Wessex site guide",
-        "guide_url": "https://www.wessexhgpg.org.uk/Sites/Siteguide/BellHill.pdf"
-      },
-      "distance_from_portchester": {
-        "km_straight_line": 82.0
-      }
-    },
-    {
       "id": "hambledon-hill",
       "name": "Hambledon Hill",
       "verdict": "NO GO",
@@ -2023,14 +1892,14 @@
         "11:00": {
           "hour_local": 11,
           "verdict": "NO GO",
-          "score": 50.1,
+          "score": 50.2,
           "wind_direction_deg": 100,
           "wind_direction": "east",
           "wind_kmh": 18.4,
           "gust_kmh": 38.5,
           "rain_mm": 0.0,
-          "low_cloud_pct": 3,
-          "solar_wm2": 559,
+          "low_cloud_pct": 12,
+          "solar_wm2": 564,
           "cape_jkg": 60,
           "boundary_layer": {
             "agl_m": 930,
@@ -2039,10 +1908,10 @@
             "asl_ft": 3675
           },
           "cloud_base": {
-            "agl_m": 1513,
-            "agl_ft": 4964,
-            "asl_m": 1703,
-            "asl_ft": 5587
+            "agl_m": 1525,
+            "agl_ft": 5003,
+            "asl_m": 1715,
+            "asl_ft": 5627
           },
           "usable_thermal_depth": {
             "m": 930,
@@ -2059,14 +1928,14 @@
           "hour_local": 14,
           "verdict": "NO GO",
           "score": 52.0,
-          "wind_direction_deg": 116,
+          "wind_direction_deg": 118,
           "wind_direction": "east-south-east",
-          "wind_kmh": 17.6,
-          "gust_kmh": 37.4,
+          "wind_kmh": 18.4,
+          "gust_kmh": 39.2,
           "rain_mm": 0.0,
-          "low_cloud_pct": 41,
-          "solar_wm2": 564,
-          "cape_jkg": 100,
+          "low_cloud_pct": 33,
+          "solar_wm2": 619,
+          "cape_jkg": 110,
           "boundary_layer": {
             "agl_m": 1415,
             "agl_ft": 4642,
@@ -2074,10 +1943,10 @@
             "asl_ft": 5266
           },
           "cloud_base": {
-            "agl_m": 1812,
-            "agl_ft": 5945,
-            "asl_m": 2002,
-            "asl_ft": 6568
+            "agl_m": 1912,
+            "agl_ft": 6273,
+            "asl_m": 2102,
+            "asl_ft": 6896
           },
           "usable_thermal_depth": {
             "m": 1415,
@@ -2087,21 +1956,21 @@
           "thermals_reach_launch": true,
           "reasons": [
             "Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.",
-            "Forecast gusts reach 37 km/h"
+            "Forecast gusts reach 39 km/h"
           ]
         },
         "18:00": {
           "hour_local": 18,
           "verdict": "NO GO",
-          "score": 45.2,
-          "wind_direction_deg": 146,
+          "score": 41.8,
+          "wind_direction_deg": 144,
           "wind_direction": "south-east",
-          "wind_kmh": 17.6,
-          "gust_kmh": 35.6,
+          "wind_kmh": 18.4,
+          "gust_kmh": 36.4,
           "rain_mm": 0.0,
           "low_cloud_pct": 0,
-          "solar_wm2": 331,
-          "cape_jkg": 40,
+          "solar_wm2": 189,
+          "cape_jkg": 10,
           "boundary_layer": {
             "agl_m": 990,
             "agl_ft": 3248,
@@ -2109,10 +1978,10 @@
             "asl_ft": 3871
           },
           "cloud_base": {
-            "agl_m": 1500,
-            "agl_ft": 4921,
-            "asl_m": 1690,
-            "asl_ft": 5545
+            "agl_m": 1475,
+            "agl_ft": 4839,
+            "asl_m": 1665,
+            "asl_ft": 5463
           },
           "usable_thermal_depth": {
             "m": 990,
@@ -2139,6 +2008,135 @@
       },
       "distance_from_portchester": {
         "km_straight_line": 77.4
+      }
+    },
+    {
+      "id": "bell-hill",
+      "name": "Bell Hill",
+      "verdict": "NO GO",
+      "score": 51.6,
+      "best_period": "14:00",
+      "verified_for_automatic_go": false,
+      "outlooks": {
+        "11:00": {
+          "hour_local": 11,
+          "verdict": "NO GO",
+          "score": 50.4,
+          "wind_direction_deg": 98,
+          "wind_direction": "east",
+          "wind_kmh": 18.4,
+          "gust_kmh": 38.9,
+          "rain_mm": 0.0,
+          "low_cloud_pct": 2,
+          "solar_wm2": 574,
+          "cape_jkg": 60,
+          "boundary_layer": {
+            "agl_m": 925,
+            "agl_ft": 3035,
+            "asl_m": 1175,
+            "asl_ft": 3855
+          },
+          "cloud_base": {
+            "agl_m": 1450,
+            "agl_ft": 4757,
+            "asl_m": 1700,
+            "asl_ft": 5577
+          },
+          "usable_thermal_depth": {
+            "m": 925,
+            "ft": 3035
+          },
+          "thermal_strength": "moderate",
+          "thermals_reach_launch": true,
+          "reasons": [
+            "Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.",
+            "Forecast gusts reach 39 km/h"
+          ]
+        },
+        "14:00": {
+          "hour_local": 14,
+          "verdict": "NO GO",
+          "score": 51.6,
+          "wind_direction_deg": 124,
+          "wind_direction": "south-east",
+          "wind_kmh": 19.1,
+          "gust_kmh": 39.6,
+          "rain_mm": 0.0,
+          "low_cloud_pct": 18,
+          "solar_wm2": 532,
+          "cape_jkg": 100,
+          "boundary_layer": {
+            "agl_m": 1255,
+            "agl_ft": 4117,
+            "asl_m": 1505,
+            "asl_ft": 4938
+          },
+          "cloud_base": {
+            "agl_m": 1812,
+            "agl_ft": 5945,
+            "asl_m": 2062,
+            "asl_ft": 6765
+          },
+          "usable_thermal_depth": {
+            "m": 1255,
+            "ft": 4117
+          },
+          "thermal_strength": "moderate",
+          "thermals_reach_launch": true,
+          "reasons": [
+            "Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.",
+            "Forecast gusts reach 40 km/h"
+          ]
+        },
+        "18:00": {
+          "hour_local": 18,
+          "verdict": "NO GO",
+          "score": 41.1,
+          "wind_direction_deg": 142,
+          "wind_direction": "south-east",
+          "wind_kmh": 19.4,
+          "gust_kmh": 37.4,
+          "rain_mm": 0.0,
+          "low_cloud_pct": 0,
+          "solar_wm2": 195,
+          "cape_jkg": 10,
+          "boundary_layer": {
+            "agl_m": 845,
+            "agl_ft": 2772,
+            "asl_m": 1095,
+            "asl_ft": 3593
+          },
+          "cloud_base": {
+            "agl_m": 1350,
+            "agl_ft": 4429,
+            "asl_m": 1600,
+            "asl_ft": 5249
+          },
+          "usable_thermal_depth": {
+            "m": 845,
+            "ft": 2772
+          },
+          "thermal_strength": "weak",
+          "thermals_reach_launch": true,
+          "reasons": [
+            "Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.",
+            "Forecast gusts reach 37 km/h"
+          ]
+        }
+      },
+      "site": {
+        "elevation": {
+          "m": 250,
+          "ft": 820
+        },
+        "wind_sectors": [],
+        "club": "Wessex HGPG Club",
+        "access": "Wessex-managed site. Check the current Wessex site-status page, full PDF site guide, membership or visitor arrangements and all site-specific restrictions before travel.",
+        "pilot_level": "Follow current Wessex site guide",
+        "guide_url": "https://www.wessexhgpg.org.uk/Sites/Siteguide/BellHill.pdf"
+      },
+      "distance_from_portchester": {
+        "km_straight_line": 82.0
       }
     }
   ],
