@@ -1,490 +1,460 @@
-# South of England flying-site recommendation — 2026-10-02T13:00:02.113259+01:00
+# South of England flying-site recommendation — 2026-10-02T14:47:16.677060+01:00
 
 > Planning aid only. Cloud base and thermal strength are estimates, not measured values. Check current club status, official site guide, NOTAMs, local observations and your own limits before travelling or launching.
 
-## Best automatic choice: **Golden Ball — GO at 18:00**
-Score: **71.1/100**
+## Best automatic choice: **Milk Hill — GO at 18:00**
+Score: **74.1/100**
 
 ## Whole-day outlook
 
 | Rank | Site | 11:00 | 14:00 | 18:00 | Best |
 |---:|---|---|---|---|---|
-| 1 | Golden Ball | **MARGINAL**; very weak; CB 563 m/1847 ft AGL; south-south-west 198° 18.0 km/h G33.5 | **NO GO**; very weak; CB 638 m/2093 ft AGL; south-south-west 192° 24.1 km/h G44.6 | **GO**; weak; CB 712 m/2336 ft AGL; south-south-west 212° 16.6 km/h G31.0 | 18:00 — **GO** (71.1) |
-| 2 | Liddington | **NO GO**; weak; CB 862 m/2828 ft AGL; south-south-west 208° 23.4 km/h G42.8 | **NO GO**; weak; CB 950 m/3117 ft AGL; south-south-west 202° 25.2 km/h G46.1 | **MARGINAL**; weak; CB 738 m/2421 ft AGL; south-south-west 204° 17.6 km/h G32.0 | 18:00 — **MARGINAL** (65.6) |
-| 3 | Tan Hill | **MARGINAL**; very weak; CB 688 m/2257 ft AGL; south-south-west 196° 17.3 km/h G31.7 | **NO GO**; very weak; CB 688 m/2257 ft AGL; south 182° 23.0 km/h G41.4 | **NO GO**; weak; CB 737 m/2418 ft AGL; south-south-west 210° 15.1 km/h G27.7 | 11:00 — **MARGINAL** (62.6) |
-| 4 | Milk Hill | **NO GO**; weak; CB 650 m/2133 ft AGL; south-south-west 198° 22.0 km/h G40.3 | **NO GO**; weak; CB 775 m/2543 ft AGL; south-south-west 196° 24.5 km/h G44.6 | **GO**; very weak; CB 688 m/2257 ft AGL; south-south-west 210° 17.6 km/h G32.0 | 11:00 — **NO GO** (78.1) |
-| 5 | Devil's Dyke | **NO GO**; weak; CB 825 m/2707 ft AGL; south-south-west 206° 16.6 km/h G31.0 | **NO GO**; weak; CB 887 m/2910 ft AGL; south-south-west 200° 19.4 km/h G37.1 | **NO GO**; very weak; CB 600 m/1969 ft AGL; south-west 224° 10.8 km/h G20.2 | 14:00 — **NO GO** (51.8) |
-| 6 | Harting Down | **NO GO**; very weak; CB 687 m/2254 ft AGL; south-south-west 204° 15.8 km/h G31.0 | **NO GO**; weak; CB 850 m/2789 ft AGL; south-south-west 200° 17.3 km/h G33.5 | **NO GO**; very weak; CB 600 m/1969 ft AGL; south-west 228° 7.6 km/h G15.8 | 14:00 — **NO GO** (51.6) |
-| 7 | Whitewool | **NO GO**; weak; CB 575 m/1886 ft AGL; south-south-west 198° 18.0 km/h G33.8 | **NO GO**; weak; CB 925 m/3035 ft AGL; south 190° 17.3 km/h G33.5 | **NO GO**; very weak; CB 525 m/1722 ft AGL; south-west 214° 10.4 km/h G20.2 | 14:00 — **NO GO** (50.8) |
-| 8 | Bo Peep | **NO GO**; very weak; CB 662 m/2172 ft AGL; south-south-west 212° 14.0 km/h G25.6 | **NO GO**; weak; CB 638 m/2093 ft AGL; south-south-west 202° 18.4 km/h G33.5 | **NO GO**; very weak; CB 562 m/1844 ft AGL; south-south-west 212° 9.4 km/h G16.6 | 14:00 — **NO GO** (50.5) |
-| 9 | Selsley Common | **NO GO**; weak; CB 838 m/2749 ft AGL; south-south-west 204° 21.2 km/h G41.0 | **NO GO**; very weak; CB 337 m/1106 ft AGL; south-south-west 198° 18.7 km/h G36.4 | **NO GO**; weak; CB 775 m/2543 ft AGL; south-south-west 192° 14.0 km/h G27.4 | 11:00 — **NO GO** (46.0) |
-| 10 | Butser West | **NO GO**; weak; CB 550 m/1804 ft AGL; south-south-west 200° 16.2 km/h G30.6 | **NO GO**; moderate; CB 762 m/2500 ft AGL; south 190° 19.1 km/h G36.4 | **NO GO**; very weak; CB 475 m/1558 ft AGL; south-west 228° 11.2 km/h G22.0 | 14:00 — **NO GO** (45.4) |
-| 11 | Leckhampton | **NO GO**; weak; CB 900 m/2953 ft AGL; south-south-west 204° 20.9 km/h G41.0 | **NO GO**; very weak; CB 500 m/1640 ft AGL; south-south-west 204° 15.5 km/h G30.2 | **NO GO**; weak; CB 838 m/2749 ft AGL; south-south-west 198° 17.3 km/h G33.8 | 11:00 — **NO GO** (45.1) |
-| 12 | Park Hill, East Meon | **NO GO**; weak; CB 550 m/1804 ft AGL; south-south-west 200° 17.3 km/h G32.8 | **NO GO**; weak; CB 825 m/2707 ft AGL; south 188° 18.0 km/h G34.6 | **NO GO**; very weak; CB 500 m/1640 ft AGL; south-west 218° 10.4 km/h G20.2 | 14:00 — **NO GO** (44.6) |
-| 13 | Uffington White Horse | **NO GO**; weak; CB 1000 m/3281 ft AGL; south-south-west 210° 23.4 km/h G43.2 | **NO GO**; weak; CB 1038 m/3406 ft AGL; south-south-west 210° 24.5 km/h G45.0 | **NO GO**; weak; CB 825 m/2707 ft AGL; south-south-west 210° 17.3 km/h G31.7 | 18:00 — **NO GO** (44.2) |
-| 14 | Frocester | **NO GO**; weak; CB 738 m/2421 ft AGL; south-south-west 202° 23.0 km/h G45.0 | **NO GO**; very weak; CB 225 m/738 ft AGL; south 186° 14.0 km/h G27.0 | **NO GO**; weak; CB 738 m/2421 ft AGL; south-south-west 200° 19.1 km/h G36.7 | 18:00 — **NO GO** (44.0) |
-| 15 | Bell Hill | **NO GO**; weak; CB 575 m/1886 ft AGL; south-south-west 198° 16.6 km/h G31.0 | **NO GO**; weak; CB 688 m/2257 ft AGL; south-south-west 212° 19.1 km/h G36.0 | **NO GO**; very weak; CB 488 m/1601 ft AGL; south-west 216° 14.0 km/h G26.6 | 11:00 — **NO GO** (40.6) |
-| 16 | Hambledon Hill | **NO GO**; very weak; CB 562 m/1844 ft AGL; south-south-west 196° 12.2 km/h G23.8 | **NO GO**; very weak; CB 688 m/2257 ft AGL; south-south-west 210° 16.6 km/h G31.7 | **NO GO**; very weak; CB 500 m/1640 ft AGL; south-south-west 210° 10.1 km/h G19.8 | 14:00 — **NO GO** (37.2) |
+| 1 | Milk Hill | **NO GO**; very weak; CB 688 m/2257 ft AGL; south-south-west 196° 22.7 km/h G40.7 | **NO GO**; weak; CB 950 m/3117 ft AGL; south-south-west 206° 23.0 km/h G42.1 | **GO**; weak; CB 738 m/2421 ft AGL; south-south-west 206° 16.6 km/h G29.9 | 18:00 — **GO** (74.1) |
+| 2 | Liddington | **NO GO**; weak; CB 863 m/2831 ft AGL; south-south-west 202° 23.8 km/h G42.8 | **NO GO**; moderate; CB 1225 m/4019 ft AGL; south-west 214° 23.8 km/h G42.8 | **MARGINAL**; weak; CB 825 m/2707 ft AGL; south-south-west 204° 17.6 km/h G31.3 | 18:00 — **MARGINAL** (66.1) |
+| 3 | Golden Ball | **NO GO**; weak; CB 750 m/2461 ft AGL; south-south-west 198° 20.2 km/h G37.1 | **NO GO**; weak; CB 963 m/3159 ft AGL; south-south-west 208° 20.2 km/h G37.4 | **GO**; very weak; CB 688 m/2257 ft AGL; south-south-west 200° 14.0 km/h G27.0 | 14:00 — **NO GO** (74.5) |
+| 4 | Tan Hill | **NO GO**; weak; CB 775 m/2543 ft AGL; south-south-west 194° 19.8 km/h G35.6 | **NO GO**; weak; CB 950 m/3117 ft AGL; south-south-west 202° 19.8 km/h G37.1 | **NO GO**; weak; CB 800 m/2625 ft AGL; south-south-west 206° 14.0 km/h G25.6 | 11:00 — **NO GO** (66.1) |
+| 5 | Uffington White Horse | **NO GO**; weak; CB 1012 m/3320 ft AGL; south-south-west 204° 23.0 km/h G42.8 | **NO GO**; moderate; CB 1325 m/4347 ft AGL; south-west 216° 21.2 km/h G39.6 | **NO GO**; weak; CB 888 m/2913 ft AGL; south-south-west 210° 16.2 km/h G29.9 | 14:00 — **NO GO** (54.0) |
+| 6 | Bo Peep | **NO GO**; weak; CB 750 m/2461 ft AGL; south-south-west 210° 16.2 km/h G28.4 | **NO GO**; weak; CB 675 m/2215 ft AGL; south-south-west 194° 17.6 km/h G32.8 | **NO GO**; very weak; CB 550 m/1804 ft AGL; south-south-west 196° 9.4 km/h G17.3 | 14:00 — **NO GO** (51.9) |
+| 7 | Harting Down | **NO GO**; weak; CB 800 m/2625 ft AGL; south-south-west 196° 17.6 km/h G34.6 | **NO GO**; weak; CB 950 m/3117 ft AGL; south-south-west 196° 16.6 km/h G32.0 | **NO GO**; very weak; CB 425 m/1394 ft AGL; south 188° 7.6 km/h G15.8 | 14:00 — **NO GO** (51.1) |
+| 8 | Devil's Dyke | **NO GO**; weak; CB 850 m/2789 ft AGL; south-south-west 202° 16.6 km/h G31.0 | **NO GO**; weak; CB 950 m/3117 ft AGL; south-south-west 196° 19.1 km/h G35.6 | **NO GO**; very weak; CB 688 m/2257 ft AGL; south-south-west 200° 10.4 km/h G19.4 | 14:00 — **NO GO** (50.3) |
+| 9 | Whitewool | **NO GO**; very weak; CB 538 m/1765 ft AGL; south-south-west 194° 16.2 km/h G31.0 | **NO GO**; weak; CB 913 m/2995 ft AGL; south-south-west 194° 17.3 km/h G32.4 | **NO GO**; very weak; CB 550 m/1804 ft AGL; south-west 218° 9.7 km/h G19.1 | 14:00 — **NO GO** (46.9) |
+| 10 | Leckhampton | **NO GO**; weak; CB 900 m/2953 ft AGL; south-south-west 198° 19.8 km/h G38.9 | **NO GO**; very weak; CB 463 m/1519 ft AGL; west-south-west 248° 13.0 km/h G24.5 | **NO GO**; weak; CB 838 m/2749 ft AGL; south-south-west 200° 15.8 km/h G32.0 | 11:00 — **NO GO** (46.0) |
+| 11 | Frocester | **NO GO**; weak; CB 800 m/2625 ft AGL; south-south-west 204° 20.9 km/h G39.6 | **NO GO**; very weak; CB 200 m/656 ft AGL; south 184° 19.1 km/h G35.6 | **NO GO**; weak; CB 738 m/2421 ft AGL; south-south-west 198° 15.8 km/h G31.0 | 11:00 — **NO GO** (44.6) |
+| 12 | Selsley Common | **NO GO**; weak; CB 862 m/2828 ft AGL; south-south-west 206° 20.2 km/h G38.9 | **NO GO**; very weak; CB 188 m/617 ft AGL; south-south-west 198° 12.2 km/h G23.8 | **NO GO**; weak; CB 775 m/2543 ft AGL; south-south-west 198° 14.0 km/h G28.1 | 18:00 — **NO GO** (44.4) |
+| 13 | Park Hill, East Meon | **NO GO**; weak; CB 612 m/2008 ft AGL; south-south-west 192° 17.3 km/h G32.0 | **NO GO**; weak; CB 900 m/2953 ft AGL; south-south-west 196° 18.0 km/h G33.8 | **NO GO**; very weak; CB 525 m/1722 ft AGL; south-west 222° 10.1 km/h G19.1 | 14:00 — **NO GO** (42.8) |
+| 14 | Butser West | **NO GO**; very weak; CB 650 m/2133 ft AGL; south-south-west 192° 17.3 km/h G32.0 | **NO GO**; weak; CB 850 m/2789 ft AGL; south-south-west 196° 17.6 km/h G33.5 | **NO GO**; very weak; CB 475 m/1558 ft AGL; south-west 222° 7.9 km/h G15.5 | 14:00 — **NO GO** (42.4) |
+| 15 | Hambledon Hill | **NO GO**; weak; CB 750 m/2461 ft AGL; south-south-west 192° 14.8 km/h G29.2 | **NO GO**; weak; CB 775 m/2543 ft AGL; south-south-west 208° 15.1 km/h G29.5 | **NO GO**; very weak; CB 550 m/1804 ft AGL; south-south-west 200° 7.6 km/h G15.5 | 11:00 — **NO GO** (42.0) |
 
-## Golden Ball — best period 18:00 (GO)
+## Milk Hill — best period 18:00 (GO)
 
-### 11:00 — MARGINAL — very weak thermals
-- Wind: **south-south-west (198°)** at **18.0 km/h**, gusting **33.5 km/h**
-- Estimated cloud base: **563 m / 1847 ft AGL**; **823 m / 2700 ft ASL**
-- Boundary-layer top: **995 m / 3264 ft AGL**; **1255 m / 4117 ft ASL**
-- Usable thermal depth above launch: **563 m / 1847 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **84 W/m²**; CAPE: **30 J/kg**; low cloud: **84%**; rain: **0.0 mm**
-- Reason: Low cloud is 84%
+### 11:00 — NO GO — very weak thermals
+- Wind: **south-south-west (196°)** at **22.7 km/h**, gusting **40.7 km/h**
+- Estimated cloud base: **688 m / 2257 ft AGL**; **973 m / 3192 ft ASL**
+- Boundary-layer top: **1010 m / 3314 ft AGL**; **1295 m / 4249 ft ASL**
+- Usable thermal depth above launch: **688 m / 2257 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **246 W/m²**; CAPE: **60 J/kg**; low cloud: **58%**; rain: **0.0 mm**
+- Reason: Forecast gusts reach 41 km/h
 
-### 14:00 — NO GO — very weak thermals
-- Wind: **south-south-west (192°)** at **24.1 km/h**, gusting **44.6 km/h**
-- Estimated cloud base: **638 m / 2093 ft AGL**; **898 m / 2946 ft ASL**
-- Boundary-layer top: **1265 m / 4150 ft AGL**; **1525 m / 5003 ft ASL**
-- Usable thermal depth above launch: **638 m / 2093 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **218 W/m²**; CAPE: **60 J/kg**; low cloud: **91%**; rain: **0.0 mm**
-- Reason: Forecast gusts reach 45 km/h; Low cloud is 91%
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (206°)** at **23.0 km/h**, gusting **42.1 km/h**
+- Estimated cloud base: **950 m / 3117 ft AGL**; **1235 m / 4052 ft ASL**
+- Boundary-layer top: **1315 m / 4314 ft AGL**; **1600 m / 5249 ft ASL**
+- Usable thermal depth above launch: **950 m / 3117 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **281 W/m²**; CAPE: **60 J/kg**; low cloud: **88%**; rain: **0.0 mm**
+- Reason: Forecast gusts reach 42 km/h; Low cloud is 88%
 
 ### 18:00 — GO — weak thermals
-- Wind: **south-south-west (212°)** at **16.6 km/h**, gusting **31.0 km/h**
-- Estimated cloud base: **712 m / 2336 ft AGL**; **972 m / 3189 ft ASL**
-- Boundary-layer top: **865 m / 2838 ft AGL**; **1125 m / 3691 ft ASL**
-- Usable thermal depth above launch: **712 m / 2336 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **72 W/m²**; CAPE: **10 J/kg**; low cloud: **60%**; rain: **0.0 mm**
-- Reason: Direction, wind and dry-weather checks are favourable
-
-- Site elevation: **260 m / 853 ft**
-- Access: Sensitive XC-only site with strict launch and landing rules. Check current club status.
-
-## Liddington — best period 18:00 (MARGINAL)
-
-### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (208°)** at **23.4 km/h**, gusting **42.8 km/h**
-- Estimated cloud base: **862 m / 2828 ft AGL**; **1112 m / 3648 ft ASL**
-- Boundary-layer top: **900 m / 2953 ft AGL**; **1150 m / 3773 ft ASL**
-- Usable thermal depth above launch: **862 m / 2828 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **290 W/m²**; CAPE: **30 J/kg**; low cloud: **50%**; rain: **0.0 mm**
-- Reason: Forecast gusts reach 43 km/h
-
-### 14:00 — NO GO — weak thermals
-- Wind: **south-south-west (202°)** at **25.2 km/h**, gusting **46.1 km/h**
-- Estimated cloud base: **950 m / 3117 ft AGL**; **1200 m / 3937 ft ASL**
-- Boundary-layer top: **1225 m / 4019 ft AGL**; **1475 m / 4839 ft ASL**
-- Usable thermal depth above launch: **950 m / 3117 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **358 W/m²**; CAPE: **50 J/kg**; low cloud: **52%**; rain: **0.0 mm**
-- Reason: Forecast gusts reach 46 km/h
-
-### 18:00 — MARGINAL — weak thermals
-- Wind: **south-south-west (204°)** at **17.6 km/h**, gusting **32.0 km/h**
-- Estimated cloud base: **738 m / 2421 ft AGL**; **988 m / 3241 ft ASL**
-- Boundary-layer top: **880 m / 2887 ft AGL**; **1130 m / 3707 ft ASL**
+- Wind: **south-south-west (206°)** at **16.6 km/h**, gusting **29.9 km/h**
+- Estimated cloud base: **738 m / 2421 ft AGL**; **1023 m / 3356 ft ASL**
+- Boundary-layer top: **845 m / 2772 ft AGL**; **1130 m / 3707 ft ASL**
 - Usable thermal depth above launch: **738 m / 2421 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **80 W/m²**; CAPE: **0 J/kg**; low cloud: **43%**; rain: **0.0 mm**
-- Reason: Direction, wind and dry-weather checks are favourable
-
-- Site elevation: **250 m / 820 ft**
-- Access: TVHGC membership, suitable rating and insurance required. Check livestock and current site status.
-
-## Tan Hill — best period 11:00 (MARGINAL)
-
-### 11:00 — MARGINAL — very weak thermals
-- Wind: **south-south-west (196°)** at **17.3 km/h**, gusting **31.7 km/h**
-- Estimated cloud base: **688 m / 2257 ft AGL**; **980 m / 3215 ft ASL**
-- Boundary-layer top: **1035 m / 3396 ft AGL**; **1327 m / 4354 ft ASL**
-- Usable thermal depth above launch: **688 m / 2257 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **219 W/m²**; CAPE: **60 J/kg**; low cloud: **76%**; rain: **0.0 mm**
-- Reason: Direction, wind and dry-weather checks are favourable
-
-### 14:00 — NO GO — very weak thermals
-- Wind: **south (182°)** at **23.0 km/h**, gusting **41.4 km/h**
-- Estimated cloud base: **688 m / 2257 ft AGL**; **980 m / 3215 ft ASL**
-- Boundary-layer top: **1275 m / 4183 ft AGL**; **1567 m / 5141 ft ASL**
-- Usable thermal depth above launch: **688 m / 2257 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **239 W/m²**; CAPE: **80 J/kg**; low cloud: **87%**; rain: **0.0 mm**
-- Reason: Forecast gusts reach 41 km/h; Low cloud is 87%
-
-### 18:00 — NO GO — weak thermals
-- Wind: **south-south-west (210°)** at **15.1 km/h**, gusting **27.7 km/h**
-- Estimated cloud base: **737 m / 2418 ft AGL**; **1029 m / 3376 ft ASL**
-- Boundary-layer top: **880 m / 2887 ft AGL**; **1172 m / 3845 ft ASL**
-- Usable thermal depth above launch: **737 m / 2418 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **94 W/m²**; CAPE: **10 J/kg**; low cloud: **47%**; rain: **0.0 mm**
-- Reason: Wind is 30° outside the configured site sector
-
-- Site elevation: **292 m / 958 ft**
-- Access: No unaccompanied flying; SSSI and current club rules apply.
-
-## Milk Hill — best period 11:00 (NO GO)
-
-### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (198°)** at **22.0 km/h**, gusting **40.3 km/h**
-- Estimated cloud base: **650 m / 2133 ft AGL**; **935 m / 3068 ft ASL**
-- Boundary-layer top: **995 m / 3264 ft AGL**; **1280 m / 4199 ft ASL**
-- Usable thermal depth above launch: **650 m / 2133 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **359 W/m²**; CAPE: **60 J/kg**; low cloud: **70%**; rain: **0.0 mm**
-- Reason: Forecast gusts reach 40 km/h
-
-### 14:00 — NO GO — weak thermals
-- Wind: **south-south-west (196°)** at **24.5 km/h**, gusting **44.6 km/h**
-- Estimated cloud base: **775 m / 2543 ft AGL**; **1060 m / 3478 ft ASL**
-- Boundary-layer top: **1265 m / 4150 ft AGL**; **1550 m / 5085 ft ASL**
-- Usable thermal depth above launch: **775 m / 2543 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **289 W/m²**; CAPE: **70 J/kg**; low cloud: **85%**; rain: **0.0 mm**
-- Reason: Forecast gusts reach 45 km/h; Low cloud is 85%
-
-### 18:00 — GO — very weak thermals
-- Wind: **south-south-west (210°)** at **17.6 km/h**, gusting **32.0 km/h**
-- Estimated cloud base: **688 m / 2257 ft AGL**; **973 m / 3192 ft ASL**
-- Boundary-layer top: **865 m / 2838 ft AGL**; **1150 m / 3773 ft ASL**
-- Usable thermal depth above launch: **688 m / 2257 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **81 W/m²**; CAPE: **10 J/kg**; low cloud: **51%**; rain: **0.0 mm**
+- Solar heating: **89 W/m²**; CAPE: **0 J/kg**; low cloud: **45%**; rain: **0.0 mm**
 - Reason: Direction, wind and dry-weather checks are favourable
 
 - Site elevation: **285 m / 935 ft**
 - Access: TVHGC membership and current site rules apply; check seasonal restrictions.
 
-## Devil's Dyke — best period 14:00 (NO GO)
+## Liddington — best period 18:00 (MARGINAL)
 
 ### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (206°)** at **16.6 km/h**, gusting **31.0 km/h**
-- Estimated cloud base: **825 m / 2707 ft AGL**; **1042 m / 3419 ft ASL**
-- Boundary-layer top: **1145 m / 3757 ft AGL**; **1362 m / 4469 ft ASL**
-- Usable thermal depth above launch: **825 m / 2707 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **283 W/m²**; CAPE: **60 J/kg**; low cloud: **35%**; rain: **0.0 mm**
-- Reason: Wind is 86° outside the configured site sector
-
-### 14:00 — NO GO — weak thermals
-- Wind: **south-south-west (200°)** at **19.4 km/h**, gusting **37.1 km/h**
-- Estimated cloud base: **887 m / 2910 ft AGL**; **1104 m / 3622 ft ASL**
-- Boundary-layer top: **1075 m / 3527 ft AGL**; **1292 m / 4239 ft ASL**
-- Usable thermal depth above launch: **887 m / 2910 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **385 W/m²**; CAPE: **40 J/kg**; low cloud: **48%**; rain: **0.0 mm**
-- Reason: Wind is 92° outside the configured site sector; Forecast gusts reach 37 km/h
-
-### 18:00 — NO GO — very weak thermals
-- Wind: **south-west (224°)** at **10.8 km/h**, gusting **20.2 km/h**
-- Estimated cloud base: **600 m / 1969 ft AGL**; **817 m / 2680 ft ASL**
-- Boundary-layer top: **595 m / 1952 ft AGL**; **812 m / 2664 ft ASL**
-- Usable thermal depth above launch: **595 m / 1952 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **83 W/m²**; CAPE: **0 J/kg**; low cloud: **20%**; rain: **0.0 mm**
-- Reason: Wind is 68° outside the configured site sector
-
-- Site elevation: **217 m / 712 ft**
-- Access: SHGC membership or valid visitor pass, BHPA requirements and site briefing rules apply.
-
-## Harting Down — best period 14:00 (NO GO)
-
-### 11:00 — NO GO — very weak thermals
-- Wind: **south-south-west (204°)** at **15.8 km/h**, gusting **31.0 km/h**
-- Estimated cloud base: **687 m / 2254 ft AGL**; **912 m / 2992 ft ASL**
-- Boundary-layer top: **1235 m / 4052 ft AGL**; **1460 m / 4790 ft ASL**
-- Usable thermal depth above launch: **687 m / 2254 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **200 W/m²**; CAPE: **30 J/kg**; low cloud: **72%**; rain: **0.0 mm**
-- Reason: Wind is 111° outside the configured site sector
-
-### 14:00 — NO GO — weak thermals
-- Wind: **south-south-west (200°)** at **17.3 km/h**, gusting **33.5 km/h**
-- Estimated cloud base: **850 m / 2789 ft AGL**; **1075 m / 3527 ft ASL**
-- Boundary-layer top: **1180 m / 3871 ft AGL**; **1405 m / 4610 ft ASL**
-- Usable thermal depth above launch: **850 m / 2789 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **390 W/m²**; CAPE: **30 J/kg**; low cloud: **48%**; rain: **0.0 mm**
-- Reason: Wind is 115° outside the configured site sector
-
-### 18:00 — NO GO — very weak thermals
-- Wind: **south-west (228°)** at **7.6 km/h**, gusting **15.8 km/h**
-- Estimated cloud base: **600 m / 1969 ft AGL**; **825 m / 2707 ft ASL**
-- Boundary-layer top: **625 m / 2051 ft AGL**; **850 m / 2789 ft ASL**
-- Usable thermal depth above launch: **600 m / 1969 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **73 W/m²**; CAPE: **10 J/kg**; low cloud: **59%**; rain: **0.0 mm**
-- Reason: Wind is 87° outside the configured site sector
-
-- Site elevation: **225 m / 738 ft**
-- Access: Strictly Sky Surfing Club members only; no reciprocal-club access. Check current site status and obtain a local briefing.
-
-## Whitewool — best period 14:00 (NO GO)
-
-### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (198°)** at **18.0 km/h**, gusting **33.8 km/h**
-- Estimated cloud base: **575 m / 1886 ft AGL**; **765 m / 2510 ft ASL**
-- Boundary-layer top: **1225 m / 4019 ft AGL**; **1415 m / 4642 ft ASL**
-- Usable thermal depth above launch: **575 m / 1886 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **284 W/m²**; CAPE: **60 J/kg**; low cloud: **78%**; rain: **0.0 mm**
-- Reason: Wind is 98° outside the configured site sector
-
-### 14:00 — NO GO — weak thermals
-- Wind: **south (190°)** at **17.3 km/h**, gusting **33.5 km/h**
-- Estimated cloud base: **925 m / 3035 ft AGL**; **1115 m / 3658 ft ASL**
-- Boundary-layer top: **1205 m / 3953 ft AGL**; **1395 m / 4577 ft ASL**
-- Usable thermal depth above launch: **925 m / 3035 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **448 W/m²**; CAPE: **40 J/kg**; low cloud: **76%**; rain: **0.0 mm**
-- Reason: Wind is 90° outside the configured site sector
-
-### 18:00 — NO GO — very weak thermals
-- Wind: **south-west (214°)** at **10.4 km/h**, gusting **20.2 km/h**
-- Estimated cloud base: **525 m / 1722 ft AGL**; **715 m / 2346 ft ASL**
-- Boundary-layer top: **700 m / 2297 ft AGL**; **890 m / 2920 ft ASL**
-- Usable thermal depth above launch: **525 m / 1722 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **98 W/m²**; CAPE: **10 J/kg**; low cloud: **13%**; rain: **0.0 mm**
-- Reason: Wind is 114° outside the configured site sector
-
-- Site elevation: **190 m / 623 ft**
-- Access: Paragliders only. SSC members and permitted reciprocal-club members only; maximum 20 pilots. Check livestock, parking rules and current status.
-
-## Bo Peep — best period 14:00 (NO GO)
-
-### 11:00 — NO GO — very weak thermals
-- Wind: **south-south-west (212°)** at **14.0 km/h**, gusting **25.6 km/h**
-- Estimated cloud base: **662 m / 2172 ft AGL**; **852 m / 2795 ft ASL**
-- Boundary-layer top: **1075 m / 3527 ft AGL**; **1265 m / 4150 ft ASL**
-- Usable thermal depth above launch: **662 m / 2172 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **171 W/m²**; CAPE: **60 J/kg**; low cloud: **52%**; rain: **0.0 mm**
-- Reason: Wind is 142° outside the configured site sector
-
-### 14:00 — NO GO — weak thermals
-- Wind: **south-south-west (202°)** at **18.4 km/h**, gusting **33.5 km/h**
-- Estimated cloud base: **638 m / 2093 ft AGL**; **828 m / 2717 ft ASL**
-- Boundary-layer top: **995 m / 3264 ft AGL**; **1185 m / 3888 ft ASL**
-- Usable thermal depth above launch: **638 m / 2093 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **450 W/m²**; CAPE: **80 J/kg**; low cloud: **67%**; rain: **0.0 mm**
-- Reason: Wind is 132° outside the configured site sector
-
-### 18:00 — NO GO — very weak thermals
-- Wind: **south-south-west (212°)** at **9.4 km/h**, gusting **16.6 km/h**
-- Estimated cloud base: **562 m / 1844 ft AGL**; **752 m / 2467 ft ASL**
-- Boundary-layer top: **570 m / 1870 ft AGL**; **760 m / 2493 ft ASL**
-- Usable thermal depth above launch: **562 m / 1844 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **85 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
-- Reason: Wind is 142° outside the configured site sector
-
-- Site elevation: **190 m / 623 ft**
-- Access: SHGC membership or valid visitor pass and current site rules apply.
-
-## Selsley Common — best period 11:00 (NO GO)
-
-### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (204°)** at **21.2 km/h**, gusting **41.0 km/h**
-- Estimated cloud base: **838 m / 2749 ft AGL**; **1048 m / 3438 ft ASL**
-- Boundary-layer top: **1065 m / 3494 ft AGL**; **1275 m / 4183 ft ASL**
-- Usable thermal depth above launch: **838 m / 2749 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **242 W/m²**; CAPE: **20 J/kg**; low cloud: **72%**; rain: **0.0 mm**
-- Reason: Wind is 88° outside the configured site sector; Forecast gusts reach 41 km/h
-
-### 14:00 — NO GO — very weak thermals
-- Wind: **south-south-west (198°)** at **18.7 km/h**, gusting **36.4 km/h**
-- Estimated cloud base: **337 m / 1106 ft AGL**; **547 m / 1795 ft ASL**
-- Boundary-layer top: **1275 m / 4183 ft AGL**; **1485 m / 4872 ft ASL**
-- Usable thermal depth above launch: **337 m / 1106 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **67 W/m²**; CAPE: **30 J/kg**; low cloud: **100%**; rain: **0.2 mm**
-- Reason: Wind is 94° outside the configured site sector; Forecast gusts reach 36 km/h; Low cloud is 100%
-
-### 18:00 — NO GO — weak thermals
-- Wind: **south-south-west (192°)** at **14.0 km/h**, gusting **27.4 km/h**
-- Estimated cloud base: **775 m / 2543 ft AGL**; **985 m / 3232 ft ASL**
-- Boundary-layer top: **925 m / 3035 ft AGL**; **1135 m / 3724 ft ASL**
-- Usable thermal depth above launch: **775 m / 2543 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **87 W/m²**; CAPE: **10 J/kg**; low cloud: **67%**; rain: **0.0 mm**
-- Reason: Wind is 100° outside the configured site sector
-
-- Site elevation: **210 m / 689 ft**
-- Access: Open site subject to Avon site rules. Obtain a local briefing, respect modeller separation and check the nominated landing field and livestock status.
-
-## Butser West — best period 14:00 (NO GO)
-
-### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (200°)** at **16.2 km/h**, gusting **30.6 km/h**
-- Estimated cloud base: **550 m / 1804 ft AGL**; **821 m / 2694 ft ASL**
-- Boundary-layer top: **1180 m / 3871 ft AGL**; **1451 m / 4760 ft ASL**
-- Usable thermal depth above launch: **550 m / 1804 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **269 W/m²**; CAPE: **50 J/kg**; low cloud: **82%**; rain: **0.0 mm**
-- Reason: Wind sector is not verified; Low cloud is 82%
+- Wind: **south-south-west (202°)** at **23.8 km/h**, gusting **42.8 km/h**
+- Estimated cloud base: **863 m / 2831 ft AGL**; **1113 m / 3652 ft ASL**
+- Boundary-layer top: **915 m / 3002 ft AGL**; **1165 m / 3822 ft ASL**
+- Usable thermal depth above launch: **863 m / 2831 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **266 W/m²**; CAPE: **30 J/kg**; low cloud: **55%**; rain: **0.0 mm**
+- Reason: Forecast gusts reach 43 km/h
 
 ### 14:00 — NO GO — moderate thermals
-- Wind: **south (190°)** at **19.1 km/h**, gusting **36.4 km/h**
-- Estimated cloud base: **762 m / 2500 ft AGL**; **1033 m / 3389 ft ASL**
-- Boundary-layer top: **1145 m / 3757 ft AGL**; **1416 m / 4646 ft ASL**
-- Usable thermal depth above launch: **762 m / 2500 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **482 W/m²**; CAPE: **40 J/kg**; low cloud: **69%**; rain: **0.0 mm**
-- Reason: Wind sector is not verified; Forecast gusts reach 36 km/h
+- Wind: **south-west (214°)** at **23.8 km/h**, gusting **42.8 km/h**
+- Estimated cloud base: **1225 m / 4019 ft AGL**; **1475 m / 4839 ft ASL**
+- Boundary-layer top: **1350 m / 4429 ft AGL**; **1600 m / 5249 ft ASL**
+- Usable thermal depth above launch: **1225 m / 4019 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **330 W/m²**; CAPE: **60 J/kg**; low cloud: **48%**; rain: **0.0 mm**
+- Reason: Forecast gusts reach 43 km/h
 
-### 18:00 — NO GO — very weak thermals
-- Wind: **south-west (228°)** at **11.2 km/h**, gusting **22.0 km/h**
-- Estimated cloud base: **475 m / 1558 ft AGL**; **746 m / 2448 ft ASL**
-- Boundary-layer top: **690 m / 2264 ft AGL**; **961 m / 3153 ft ASL**
-- Usable thermal depth above launch: **475 m / 1558 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **106 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
-- Reason: Wind sector is not verified
-
-- Site elevation: **271 m / 889 ft**
-- Access: Check the current club site guide and status before travel.
-
-## Leckhampton — best period 11:00 (NO GO)
-
-### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (204°)** at **20.9 km/h**, gusting **41.0 km/h**
-- Estimated cloud base: **900 m / 2953 ft AGL**; **1150 m / 3773 ft ASL**
-- Boundary-layer top: **1105 m / 3625 ft AGL**; **1355 m / 4446 ft ASL**
-- Usable thermal depth above launch: **900 m / 2953 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **268 W/m²**; CAPE: **20 J/kg**; low cloud: **90%**; rain: **0.0 mm**
-- Reason: Wind is 111° outside the configured site sector; Forecast gusts reach 41 km/h; Low cloud is 90%
-
-### 14:00 — NO GO — very weak thermals
-- Wind: **south-south-west (204°)** at **15.5 km/h**, gusting **30.2 km/h**
-- Estimated cloud base: **500 m / 1640 ft AGL**; **750 m / 2461 ft ASL**
-- Boundary-layer top: **1335 m / 4380 ft AGL**; **1585 m / 5200 ft ASL**
-- Usable thermal depth above launch: **500 m / 1640 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **111 W/m²**; CAPE: **20 J/kg**; low cloud: **96%**; rain: **0.1 mm**
-- Reason: Wind is 111° outside the configured site sector; Low cloud is 96%
-
-### 18:00 — NO GO — weak thermals
-- Wind: **south-south-west (198°)** at **17.3 km/h**, gusting **33.8 km/h**
-- Estimated cloud base: **838 m / 2749 ft AGL**; **1088 m / 3570 ft ASL**
-- Boundary-layer top: **920 m / 3018 ft AGL**; **1170 m / 3839 ft ASL**
-- Usable thermal depth above launch: **838 m / 2749 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **94 W/m²**; CAPE: **0 J/kg**; low cloud: **13%**; rain: **0.0 mm**
-- Reason: Wind is 117° outside the configured site sector
+### 18:00 — MARGINAL — weak thermals
+- Wind: **south-south-west (204°)** at **17.6 km/h**, gusting **31.3 km/h**
+- Estimated cloud base: **825 m / 2707 ft AGL**; **1075 m / 3527 ft ASL**
+- Boundary-layer top: **880 m / 2887 ft AGL**; **1130 m / 3707 ft ASL**
+- Usable thermal depth above launch: **825 m / 2707 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **81 W/m²**; CAPE: **0 J/kg**; low cloud: **45%**; rain: **0.0 mm**
+- Reason: Direction, wind and dry-weather checks are favourable
 
 - Site elevation: **250 m / 820 ft**
-- Access: Pilot rated only. There is no authorised bottom landing field; use requires careful assessment of the restricted launch, slope-landing and top-landing options.
+- Access: TVHGC membership, suitable rating and insurance required. Check livestock and current site status.
 
-## Park Hill, East Meon — best period 14:00 (NO GO)
-
-### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (200°)** at **17.3 km/h**, gusting **32.8 km/h**
-- Estimated cloud base: **550 m / 1804 ft AGL**; **770 m / 2526 ft ASL**
-- Boundary-layer top: **1180 m / 3871 ft AGL**; **1400 m / 4593 ft ASL**
-- Usable thermal depth above launch: **550 m / 1804 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **319 W/m²**; CAPE: **80 J/kg**; low cloud: **68%**; rain: **0.0 mm**
-- Reason: The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.
-
-### 14:00 — NO GO — weak thermals
-- Wind: **south (188°)** at **18.0 km/h**, gusting **34.6 km/h**
-- Estimated cloud base: **825 m / 2707 ft AGL**; **1045 m / 3428 ft ASL**
-- Boundary-layer top: **1145 m / 3757 ft AGL**; **1365 m / 4478 ft ASL**
-- Usable thermal depth above launch: **825 m / 2707 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **385 W/m²**; CAPE: **40 J/kg**; low cloud: **59%**; rain: **0.0 mm**
-- Reason: The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.
-
-### 18:00 — NO GO — very weak thermals
-- Wind: **south-west (218°)** at **10.4 km/h**, gusting **20.2 km/h**
-- Estimated cloud base: **500 m / 1640 ft AGL**; **720 m / 2362 ft ASL**
-- Boundary-layer top: **690 m / 2264 ft AGL**; **910 m / 2986 ft ASL**
-- Usable thermal depth above launch: **500 m / 1640 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **91 W/m²**; CAPE: **10 J/kg**; low cloud: **52%**; rain: **0.0 mm**
-- Reason: The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.
-
-- Site elevation: **220 m / 722 ft**
-- Access: Members only; Pilot rated; compulsory hill briefing and Park Hill Telegram booking. Maximum six pilots. Normally closed for shooting from about 1 September to 31 January.
-
-## Uffington White Horse — best period 18:00 (NO GO)
+## Golden Ball — best period 14:00 (NO GO)
 
 ### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (210°)** at **23.4 km/h**, gusting **43.2 km/h**
-- Estimated cloud base: **1000 m / 3281 ft AGL**; **1250 m / 4101 ft ASL**
-- Boundary-layer top: **905 m / 2969 ft AGL**; **1155 m / 3789 ft ASL**
-- Usable thermal depth above launch: **905 m / 2969 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **354 W/m²**; CAPE: **40 J/kg**; low cloud: **41%**; rain: **0.0 mm**
-- Reason: Wind is 105° outside the configured site sector; Forecast gusts reach 43 km/h
+- Wind: **south-south-west (198°)** at **20.2 km/h**, gusting **37.1 km/h**
+- Estimated cloud base: **750 m / 2461 ft AGL**; **1010 m / 3314 ft ASL**
+- Boundary-layer top: **1010 m / 3314 ft AGL**; **1270 m / 4167 ft ASL**
+- Usable thermal depth above launch: **750 m / 2461 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **172 W/m²**; CAPE: **40 J/kg**; low cloud: **79%**; rain: **0.0 mm**
+- Reason: Forecast gusts reach 37 km/h
 
 ### 14:00 — NO GO — weak thermals
-- Wind: **south-south-west (210°)** at **24.5 km/h**, gusting **45.0 km/h**
-- Estimated cloud base: **1038 m / 3406 ft AGL**; **1288 m / 4226 ft ASL**
-- Boundary-layer top: **1225 m / 4019 ft AGL**; **1475 m / 4839 ft ASL**
-- Usable thermal depth above launch: **1038 m / 3406 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **323 W/m²**; CAPE: **50 J/kg**; low cloud: **49%**; rain: **0.0 mm**
-- Reason: Wind is 105° outside the configured site sector; Forecast gusts reach 45 km/h
+- Wind: **south-south-west (208°)** at **20.2 km/h**, gusting **37.4 km/h**
+- Estimated cloud base: **963 m / 3159 ft AGL**; **1223 m / 4012 ft ASL**
+- Boundary-layer top: **1315 m / 4314 ft AGL**; **1575 m / 5167 ft ASL**
+- Usable thermal depth above launch: **963 m / 3159 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **201 W/m²**; CAPE: **60 J/kg**; low cloud: **88%**; rain: **0.0 mm**
+- Reason: Forecast gusts reach 37 km/h; Low cloud is 88%
+
+### 18:00 — GO — very weak thermals
+- Wind: **south-south-west (200°)** at **14.0 km/h**, gusting **27.0 km/h**
+- Estimated cloud base: **688 m / 2257 ft AGL**; **948 m / 3110 ft ASL**
+- Boundary-layer top: **845 m / 2772 ft AGL**; **1105 m / 3625 ft ASL**
+- Usable thermal depth above launch: **688 m / 2257 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **91 W/m²**; CAPE: **20 J/kg**; low cloud: **63%**; rain: **0.0 mm**
+- Reason: Direction, wind and dry-weather checks are favourable
+
+- Site elevation: **260 m / 853 ft**
+- Access: Sensitive XC-only site with strict launch and landing rules. Check current club status.
+
+## Tan Hill — best period 11:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **south-south-west (194°)** at **19.8 km/h**, gusting **35.6 km/h**
+- Estimated cloud base: **775 m / 2543 ft AGL**; **1067 m / 3501 ft ASL**
+- Boundary-layer top: **1025 m / 3363 ft AGL**; **1317 m / 4321 ft ASL**
+- Usable thermal depth above launch: **775 m / 2543 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **247 W/m²**; CAPE: **60 J/kg**; low cloud: **67%**; rain: **0.0 mm**
+- Reason: Forecast gusts reach 36 km/h
+
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (202°)** at **19.8 km/h**, gusting **37.1 km/h**
+- Estimated cloud base: **950 m / 3117 ft AGL**; **1242 m / 4075 ft ASL**
+- Boundary-layer top: **1355 m / 4446 ft AGL**; **1647 m / 5404 ft ASL**
+- Usable thermal depth above launch: **950 m / 3117 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **292 W/m²**; CAPE: **70 J/kg**; low cloud: **80%**; rain: **0.0 mm**
+- Reason: Wind is 22° outside the configured site sector; Forecast gusts reach 37 km/h
 
 ### 18:00 — NO GO — weak thermals
-- Wind: **south-south-west (210°)** at **17.3 km/h**, gusting **31.7 km/h**
-- Estimated cloud base: **825 m / 2707 ft AGL**; **1075 m / 3527 ft ASL**
+- Wind: **south-south-west (206°)** at **14.0 km/h**, gusting **25.6 km/h**
+- Estimated cloud base: **800 m / 2625 ft AGL**; **1092 m / 3583 ft ASL**
+- Boundary-layer top: **840 m / 2756 ft AGL**; **1132 m / 3714 ft ASL**
+- Usable thermal depth above launch: **800 m / 2625 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **95 W/m²**; CAPE: **0 J/kg**; low cloud: **58%**; rain: **0.0 mm**
+- Reason: Wind is 26° outside the configured site sector
+
+- Site elevation: **292 m / 958 ft**
+- Access: No unaccompanied flying; SSSI and current club rules apply.
+
+## Uffington White Horse — best period 14:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **south-south-west (204°)** at **23.0 km/h**, gusting **42.8 km/h**
+- Estimated cloud base: **1012 m / 3320 ft AGL**; **1262 m / 4140 ft ASL**
 - Boundary-layer top: **910 m / 2986 ft AGL**; **1160 m / 3806 ft ASL**
-- Usable thermal depth above launch: **825 m / 2707 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **75 W/m²**; CAPE: **0 J/kg**; low cloud: **28%**; rain: **0.0 mm**
+- Usable thermal depth above launch: **910 m / 2986 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **378 W/m²**; CAPE: **30 J/kg**; low cloud: **27%**; rain: **0.0 mm**
+- Reason: Wind is 111° outside the configured site sector; Forecast gusts reach 43 km/h
+
+### 14:00 — NO GO — moderate thermals
+- Wind: **south-west (216°)** at **21.2 km/h**, gusting **39.6 km/h**
+- Estimated cloud base: **1325 m / 4347 ft AGL**; **1575 m / 5167 ft ASL**
+- Boundary-layer top: **1365 m / 4478 ft AGL**; **1615 m / 5299 ft ASL**
+- Usable thermal depth above launch: **1325 m / 4347 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **381 W/m²**; CAPE: **60 J/kg**; low cloud: **53%**; rain: **0.0 mm**
+- Reason: Wind is 99° outside the configured site sector; Forecast gusts reach 40 km/h
+
+### 18:00 — NO GO — weak thermals
+- Wind: **south-south-west (210°)** at **16.2 km/h**, gusting **29.9 km/h**
+- Estimated cloud base: **888 m / 2913 ft AGL**; **1138 m / 3734 ft ASL**
+- Boundary-layer top: **910 m / 2986 ft AGL**; **1160 m / 3806 ft ASL**
+- Usable thermal depth above launch: **888 m / 2913 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **84 W/m²**; CAPE: **0 J/kg**; low cloud: **26%**; rain: **0.0 mm**
 - Reason: Wind is 105° outside the configured site sector
 
 - Site elevation: **250 m / 820 ft**
 - Access: Experienced-pilot National Trust site; membership and current rules apply.
 
-## Frocester — best period 18:00 (NO GO)
+## Bo Peep — best period 14:00 (NO GO)
 
 ### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (202°)** at **23.0 km/h**, gusting **45.0 km/h**
-- Estimated cloud base: **738 m / 2421 ft AGL**; **957 m / 3140 ft ASL**
-- Boundary-layer top: **1065 m / 3494 ft AGL**; **1284 m / 4213 ft ASL**
-- Usable thermal depth above launch: **738 m / 2421 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **236 W/m²**; CAPE: **30 J/kg**; low cloud: **72%**; rain: **0.0 mm**
-- Reason: Wind is 58° outside the configured site sector; Forecast gusts reach 45 km/h
+- Wind: **south-south-west (210°)** at **16.2 km/h**, gusting **28.4 km/h**
+- Estimated cloud base: **750 m / 2461 ft AGL**; **940 m / 3084 ft ASL**
+- Boundary-layer top: **1110 m / 3642 ft AGL**; **1300 m / 4265 ft ASL**
+- Usable thermal depth above launch: **750 m / 2461 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **140 W/m²**; CAPE: **80 J/kg**; low cloud: **35%**; rain: **0.0 mm**
+- Reason: Wind is 140° outside the configured site sector
+
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (194°)** at **17.6 km/h**, gusting **32.8 km/h**
+- Estimated cloud base: **675 m / 2215 ft AGL**; **865 m / 2838 ft ASL**
+- Boundary-layer top: **935 m / 3068 ft AGL**; **1125 m / 3691 ft ASL**
+- Usable thermal depth above launch: **675 m / 2215 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **421 W/m²**; CAPE: **100 J/kg**; low cloud: **37%**; rain: **0.0 mm**
+- Reason: Wind is 124° outside the configured site sector
+
+### 18:00 — NO GO — very weak thermals
+- Wind: **south-south-west (196°)** at **9.4 km/h**, gusting **17.3 km/h**
+- Estimated cloud base: **550 m / 1804 ft AGL**; **740 m / 2428 ft ASL**
+- Boundary-layer top: **540 m / 1772 ft AGL**; **730 m / 2395 ft ASL**
+- Usable thermal depth above launch: **540 m / 1772 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **86 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
+- Reason: Wind is 126° outside the configured site sector
+
+- Site elevation: **190 m / 623 ft**
+- Access: SHGC membership or valid visitor pass and current site rules apply.
+
+## Harting Down — best period 14:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **south-south-west (196°)** at **17.6 km/h**, gusting **34.6 km/h**
+- Estimated cloud base: **800 m / 2625 ft AGL**; **1025 m / 3363 ft ASL**
+- Boundary-layer top: **1275 m / 4183 ft AGL**; **1500 m / 4921 ft ASL**
+- Usable thermal depth above launch: **800 m / 2625 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **324 W/m²**; CAPE: **60 J/kg**; low cloud: **38%**; rain: **0.0 mm**
+- Reason: Wind is 119° outside the configured site sector
+
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (196°)** at **16.6 km/h**, gusting **32.0 km/h**
+- Estimated cloud base: **950 m / 3117 ft AGL**; **1175 m / 3855 ft ASL**
+- Boundary-layer top: **1265 m / 4150 ft AGL**; **1490 m / 4888 ft ASL**
+- Usable thermal depth above launch: **950 m / 3117 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **380 W/m²**; CAPE: **30 J/kg**; low cloud: **59%**; rain: **0.0 mm**
+- Reason: Wind is 119° outside the configured site sector
+
+### 18:00 — NO GO — very weak thermals
+- Wind: **south (188°)** at **7.6 km/h**, gusting **15.8 km/h**
+- Estimated cloud base: **425 m / 1394 ft AGL**; **650 m / 2133 ft ASL**
+- Boundary-layer top: **485 m / 1591 ft AGL**; **710 m / 2329 ft ASL**
+- Usable thermal depth above launch: **425 m / 1394 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **96 W/m²**; CAPE: **20 J/kg**; low cloud: **0%**; rain: **0.0 mm**
+- Reason: Wind is 118° outside the configured site sector
+
+- Site elevation: **225 m / 738 ft**
+- Access: Strictly Sky Surfing Club members only; no reciprocal-club access. Check current site status and obtain a local briefing.
+
+## Devil's Dyke — best period 14:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **south-south-west (202°)** at **16.6 km/h**, gusting **31.0 km/h**
+- Estimated cloud base: **850 m / 2789 ft AGL**; **1067 m / 3501 ft ASL**
+- Boundary-layer top: **1165 m / 3822 ft AGL**; **1382 m / 4534 ft ASL**
+- Usable thermal depth above launch: **850 m / 2789 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **230 W/m²**; CAPE: **60 J/kg**; low cloud: **70%**; rain: **0.0 mm**
+- Reason: Wind is 90° outside the configured site sector
+
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (196°)** at **19.1 km/h**, gusting **35.6 km/h**
+- Estimated cloud base: **950 m / 3117 ft AGL**; **1167 m / 3829 ft ASL**
+- Boundary-layer top: **970 m / 3182 ft AGL**; **1187 m / 3894 ft ASL**
+- Usable thermal depth above launch: **950 m / 3117 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **350 W/m²**; CAPE: **60 J/kg**; low cloud: **63%**; rain: **0.0 mm**
+- Reason: Wind is 96° outside the configured site sector; Forecast gusts reach 36 km/h
+
+### 18:00 — NO GO — very weak thermals
+- Wind: **south-south-west (200°)** at **10.4 km/h**, gusting **19.4 km/h**
+- Estimated cloud base: **688 m / 2257 ft AGL**; **905 m / 2969 ft ASL**
+- Boundary-layer top: **595 m / 1952 ft AGL**; **812 m / 2664 ft ASL**
+- Usable thermal depth above launch: **595 m / 1952 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **89 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
+- Reason: Wind is 92° outside the configured site sector
+
+- Site elevation: **217 m / 712 ft**
+- Access: SHGC membership or valid visitor pass, BHPA requirements and site briefing rules apply.
+
+## Whitewool — best period 14:00 (NO GO)
+
+### 11:00 — NO GO — very weak thermals
+- Wind: **south-south-west (194°)** at **16.2 km/h**, gusting **31.0 km/h**
+- Estimated cloud base: **538 m / 1765 ft AGL**; **728 m / 2388 ft ASL**
+- Boundary-layer top: **1255 m / 4117 ft AGL**; **1445 m / 4741 ft ASL**
+- Usable thermal depth above launch: **538 m / 1765 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **74 W/m²**; CAPE: **50 J/kg**; low cloud: **100%**; rain: **0.2 mm**
+- Reason: Wind is 94° outside the configured site sector; Low cloud is 100%
+
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (194°)** at **17.3 km/h**, gusting **32.4 km/h**
+- Estimated cloud base: **913 m / 2995 ft AGL**; **1103 m / 3619 ft ASL**
+- Boundary-layer top: **1220 m / 4003 ft AGL**; **1410 m / 4626 ft ASL**
+- Usable thermal depth above launch: **913 m / 2995 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **289 W/m²**; CAPE: **30 J/kg**; low cloud: **78%**; rain: **0.0 mm**
+- Reason: Wind is 94° outside the configured site sector
+
+### 18:00 — NO GO — very weak thermals
+- Wind: **south-west (218°)** at **9.7 km/h**, gusting **19.1 km/h**
+- Estimated cloud base: **550 m / 1804 ft AGL**; **740 m / 2428 ft ASL**
+- Boundary-layer top: **645 m / 2116 ft AGL**; **835 m / 2740 ft ASL**
+- Usable thermal depth above launch: **550 m / 1804 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **100 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
+- Reason: Wind is 118° outside the configured site sector
+
+- Site elevation: **190 m / 623 ft**
+- Access: Paragliders only. SSC members and permitted reciprocal-club members only; maximum 20 pilots. Check livestock, parking rules and current status.
+
+## Leckhampton — best period 11:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **south-south-west (198°)** at **19.8 km/h**, gusting **38.9 km/h**
+- Estimated cloud base: **900 m / 2953 ft AGL**; **1150 m / 3773 ft ASL**
+- Boundary-layer top: **1060 m / 3478 ft AGL**; **1310 m / 4298 ft ASL**
+- Usable thermal depth above launch: **900 m / 2953 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **216 W/m²**; CAPE: **30 J/kg**; low cloud: **70%**; rain: **0.0 mm**
+- Reason: Wind is 117° outside the configured site sector; Forecast gusts reach 39 km/h
 
 ### 14:00 — NO GO — very weak thermals
-- Wind: **south (186°)** at **14.0 km/h**, gusting **27.0 km/h**
-- Estimated cloud base: **225 m / 738 ft AGL**; **444 m / 1457 ft ASL**
-- Boundary-layer top: **1275 m / 4183 ft AGL**; **1494 m / 4902 ft ASL**
-- Usable thermal depth above launch: **225 m / 738 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **174 W/m²**; CAPE: **60 J/kg**; low cloud: **7%**; rain: **0.5 mm**
-- Reason: Wind is 74° outside the configured site sector
+- Wind: **west-south-west (248°)** at **13.0 km/h**, gusting **24.5 km/h**
+- Estimated cloud base: **463 m / 1519 ft AGL**; **713 m / 2339 ft ASL**
+- Boundary-layer top: **1370 m / 4495 ft AGL**; **1620 m / 5315 ft ASL**
+- Usable thermal depth above launch: **463 m / 1519 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **128 W/m²**; CAPE: **60 J/kg**; low cloud: **99%**; rain: **0.0 mm**
+- Reason: Wind is 67° outside the configured site sector; Low cloud is 99%
 
 ### 18:00 — NO GO — weak thermals
-- Wind: **south-south-west (200°)** at **19.1 km/h**, gusting **36.7 km/h**
+- Wind: **south-south-west (200°)** at **15.8 km/h**, gusting **32.0 km/h**
+- Estimated cloud base: **838 m / 2749 ft AGL**; **1088 m / 3570 ft ASL**
+- Boundary-layer top: **895 m / 2936 ft AGL**; **1145 m / 3757 ft ASL**
+- Usable thermal depth above launch: **838 m / 2749 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **101 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
+- Reason: Wind is 115° outside the configured site sector
+
+- Site elevation: **250 m / 820 ft**
+- Access: Pilot rated only. There is no authorised bottom landing field; use requires careful assessment of the restricted launch, slope-landing and top-landing options.
+
+## Frocester — best period 11:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **south-south-west (204°)** at **20.9 km/h**, gusting **39.6 km/h**
+- Estimated cloud base: **800 m / 2625 ft AGL**; **1019 m / 3343 ft ASL**
+- Boundary-layer top: **1000 m / 3281 ft AGL**; **1219 m / 3999 ft ASL**
+- Usable thermal depth above launch: **800 m / 2625 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **175 W/m²**; CAPE: **30 J/kg**; low cloud: **70%**; rain: **0.0 mm**
+- Reason: Wind is 56° outside the configured site sector; Forecast gusts reach 40 km/h
+
+### 14:00 — NO GO — very weak thermals
+- Wind: **south (184°)** at **19.1 km/h**, gusting **35.6 km/h**
+- Estimated cloud base: **200 m / 656 ft AGL**; **419 m / 1375 ft ASL**
+- Boundary-layer top: **1290 m / 4232 ft AGL**; **1509 m / 4951 ft ASL**
+- Usable thermal depth above launch: **200 m / 656 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **328 W/m²**; CAPE: **90 J/kg**; low cloud: **83%**; rain: **0.9 mm**
+- Reason: Wind is 76° outside the configured site sector; Forecast gusts reach 36 km/h; Low cloud is 83%
+
+### 18:00 — NO GO — weak thermals
+- Wind: **south-south-west (198°)** at **15.8 km/h**, gusting **31.0 km/h**
 - Estimated cloud base: **738 m / 2421 ft AGL**; **957 m / 3140 ft ASL**
-- Boundary-layer top: **925 m / 3035 ft AGL**; **1144 m / 3753 ft ASL**
+- Boundary-layer top: **855 m / 2805 ft AGL**; **1074 m / 3524 ft ASL**
 - Usable thermal depth above launch: **738 m / 2421 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **87 W/m²**; CAPE: **0 J/kg**; low cloud: **46%**; rain: **0.0 mm**
-- Reason: Wind is 60° outside the configured site sector; Forecast gusts reach 37 km/h
+- Solar heating: **105 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
+- Reason: Wind is 62° outside the configured site sector
 
 - Site elevation: **219 m / 719 ft**
 - Access: Open site subject to Avon rules. Pilot rated; 100 hours is recommended. Local briefing strongly advised. No take-off or landing in the picnic area and no official top landing.
 
-## Bell Hill — best period 11:00 (NO GO)
+## Selsley Common — best period 18:00 (NO GO)
 
 ### 11:00 — NO GO — weak thermals
-- Wind: **south-south-west (198°)** at **16.6 km/h**, gusting **31.0 km/h**
-- Estimated cloud base: **575 m / 1886 ft AGL**; **825 m / 2707 ft ASL**
-- Boundary-layer top: **1095 m / 3593 ft AGL**; **1345 m / 4413 ft ASL**
-- Usable thermal depth above launch: **575 m / 1886 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **322 W/m²**; CAPE: **70 J/kg**; low cloud: **73%**; rain: **0.0 mm**
-- Reason: Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.
-
-### 14:00 — NO GO — weak thermals
-- Wind: **south-south-west (212°)** at **19.1 km/h**, gusting **36.0 km/h**
-- Estimated cloud base: **688 m / 2257 ft AGL**; **938 m / 3077 ft ASL**
-- Boundary-layer top: **1230 m / 4035 ft AGL**; **1480 m / 4856 ft ASL**
-- Usable thermal depth above launch: **688 m / 2257 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **260 W/m²**; CAPE: **40 J/kg**; low cloud: **86%**; rain: **0.0 mm**
-- Reason: Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.; Forecast gusts reach 36 km/h; Low cloud is 86%
-
-### 18:00 — NO GO — very weak thermals
-- Wind: **south-west (216°)** at **14.0 km/h**, gusting **26.6 km/h**
-- Estimated cloud base: **488 m / 1601 ft AGL**; **738 m / 2421 ft ASL**
-- Boundary-layer top: **780 m / 2559 ft AGL**; **1030 m / 3379 ft ASL**
-- Usable thermal depth above launch: **488 m / 1601 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **85 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
-- Reason: Bell Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.
-
-- Site elevation: **250 m / 820 ft**
-- Access: Wessex-managed site. Check the current Wessex site-status page, full PDF site guide, membership or visitor arrangements and all site-specific restrictions before travel.
-
-## Hambledon Hill — best period 14:00 (NO GO)
-
-### 11:00 — NO GO — very weak thermals
-- Wind: **south-south-west (196°)** at **12.2 km/h**, gusting **23.8 km/h**
-- Estimated cloud base: **562 m / 1844 ft AGL**; **752 m / 2467 ft ASL**
-- Boundary-layer top: **1070 m / 3510 ft AGL**; **1260 m / 4134 ft ASL**
-- Usable thermal depth above launch: **562 m / 1844 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **91 W/m²**; CAPE: **60 J/kg**; low cloud: **95%**; rain: **0.0 mm**
-- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.; Low cloud is 95%
+- Wind: **south-south-west (206°)** at **20.2 km/h**, gusting **38.9 km/h**
+- Estimated cloud base: **862 m / 2828 ft AGL**; **1072 m / 3517 ft ASL**
+- Boundary-layer top: **1000 m / 3281 ft AGL**; **1210 m / 3970 ft ASL**
+- Usable thermal depth above launch: **862 m / 2828 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **187 W/m²**; CAPE: **30 J/kg**; low cloud: **81%**; rain: **0.0 mm**
+- Reason: Wind is 86° outside the configured site sector; Forecast gusts reach 39 km/h; Low cloud is 81%
 
 ### 14:00 — NO GO — very weak thermals
-- Wind: **south-south-west (210°)** at **16.6 km/h**, gusting **31.7 km/h**
-- Estimated cloud base: **688 m / 2257 ft AGL**; **878 m / 2881 ft ASL**
-- Boundary-layer top: **1215 m / 3986 ft AGL**; **1405 m / 4610 ft ASL**
-- Usable thermal depth above launch: **688 m / 2257 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **212 W/m²**; CAPE: **60 J/kg**; low cloud: **88%**; rain: **0.0 mm**
-- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.; Low cloud is 88%
+- Wind: **south-south-west (198°)** at **12.2 km/h**, gusting **23.8 km/h**
+- Estimated cloud base: **188 m / 617 ft AGL**; **398 m / 1306 ft ASL**
+- Boundary-layer top: **1290 m / 4232 ft AGL**; **1500 m / 4921 ft ASL**
+- Usable thermal depth above launch: **188 m / 617 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **66 W/m²**; CAPE: **80 J/kg**; low cloud: **100%**; rain: **0.4 mm**
+- Reason: Wind is 94° outside the configured site sector; Low cloud is 100%
+
+### 18:00 — NO GO — weak thermals
+- Wind: **south-south-west (198°)** at **14.0 km/h**, gusting **28.1 km/h**
+- Estimated cloud base: **775 m / 2543 ft AGL**; **985 m / 3232 ft ASL**
+- Boundary-layer top: **855 m / 2805 ft AGL**; **1065 m / 3494 ft ASL**
+- Usable thermal depth above launch: **775 m / 2543 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **92 W/m²**; CAPE: **10 J/kg**; low cloud: **40%**; rain: **0.0 mm**
+- Reason: Wind is 94° outside the configured site sector
+
+- Site elevation: **210 m / 689 ft**
+- Access: Open site subject to Avon site rules. Obtain a local briefing, respect modeller separation and check the nominated landing field and livestock status.
+
+## Park Hill, East Meon — best period 14:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **south-south-west (192°)** at **17.3 km/h**, gusting **32.0 km/h**
+- Estimated cloud base: **612 m / 2008 ft AGL**; **832 m / 2730 ft ASL**
+- Boundary-layer top: **1245 m / 4085 ft AGL**; **1465 m / 4806 ft ASL**
+- Usable thermal depth above launch: **612 m / 2008 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **308 W/m²**; CAPE: **70 J/kg**; low cloud: **93%**; rain: **0.2 mm**
+- Reason: The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.; Low cloud is 93%
+
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (196°)** at **18.0 km/h**, gusting **33.8 km/h**
+- Estimated cloud base: **900 m / 2953 ft AGL**; **1120 m / 3675 ft ASL**
+- Boundary-layer top: **1185 m / 3888 ft AGL**; **1405 m / 4610 ft ASL**
+- Usable thermal depth above launch: **900 m / 2953 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **352 W/m²**; CAPE: **40 J/kg**; low cloud: **74%**; rain: **0.0 mm**
+- Reason: The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.
 
 ### 18:00 — NO GO — very weak thermals
-- Wind: **south-south-west (210°)** at **10.1 km/h**, gusting **19.8 km/h**
-- Estimated cloud base: **500 m / 1640 ft AGL**; **690 m / 2264 ft ASL**
-- Boundary-layer top: **820 m / 2690 ft AGL**; **1010 m / 3314 ft ASL**
-- Usable thermal depth above launch: **500 m / 1640 ft**; thermals likely to reach launch: **yes**
-- Solar heating: **105 W/m²**; CAPE: **10 J/kg**; low cloud: **2%**; rain: **0.0 mm**
+- Wind: **south-west (222°)** at **10.1 km/h**, gusting **19.1 km/h**
+- Estimated cloud base: **525 m / 1722 ft AGL**; **745 m / 2444 ft ASL**
+- Boundary-layer top: **585 m / 1919 ft AGL**; **805 m / 2641 ft ASL**
+- Usable thermal depth above launch: **525 m / 1722 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **100 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
+- Reason: The public site summary does not state a dependable wind sector, so Park Hill is forecast but cannot receive an automatic GO until the club sector is entered.
+
+- Site elevation: **220 m / 722 ft**
+- Access: Members only; Pilot rated; compulsory hill briefing and Park Hill Telegram booking. Maximum six pilots. Normally closed for shooting from about 1 September to 31 January.
+
+## Butser West — best period 14:00 (NO GO)
+
+### 11:00 — NO GO — very weak thermals
+- Wind: **south-south-west (192°)** at **17.3 km/h**, gusting **32.0 km/h**
+- Estimated cloud base: **650 m / 2133 ft AGL**; **921 m / 3022 ft ASL**
+- Boundary-layer top: **1245 m / 4085 ft AGL**; **1516 m / 4974 ft ASL**
+- Usable thermal depth above launch: **650 m / 2133 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **176 W/m²**; CAPE: **50 J/kg**; low cloud: **96%**; rain: **0.0 mm**
+- Reason: Wind sector is not verified; Low cloud is 96%
+
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (196°)** at **17.6 km/h**, gusting **33.5 km/h**
+- Estimated cloud base: **850 m / 2789 ft AGL**; **1121 m / 3678 ft ASL**
+- Boundary-layer top: **1185 m / 3888 ft AGL**; **1456 m / 4777 ft ASL**
+- Usable thermal depth above launch: **850 m / 2789 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **349 W/m²**; CAPE: **30 J/kg**; low cloud: **73%**; rain: **0.0 mm**
+- Reason: Wind sector is not verified
+
+### 18:00 — NO GO — very weak thermals
+- Wind: **south-west (222°)** at **7.9 km/h**, gusting **15.5 km/h**
+- Estimated cloud base: **475 m / 1558 ft AGL**; **746 m / 2448 ft ASL**
+- Boundary-layer top: **585 m / 1919 ft AGL**; **856 m / 2808 ft ASL**
+- Usable thermal depth above launch: **475 m / 1558 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **96 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
+- Reason: Wind sector is not verified
+
+- Site elevation: **271 m / 889 ft**
+- Access: Check the current club site guide and status before travel.
+
+## Hambledon Hill — best period 11:00 (NO GO)
+
+### 11:00 — NO GO — weak thermals
+- Wind: **south-south-west (192°)** at **14.8 km/h**, gusting **29.2 km/h**
+- Estimated cloud base: **750 m / 2461 ft AGL**; **940 m / 3084 ft ASL**
+- Boundary-layer top: **1070 m / 3510 ft AGL**; **1260 m / 4134 ft ASL**
+- Usable thermal depth above launch: **750 m / 2461 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **380 W/m²**; CAPE: **90 J/kg**; low cloud: **84%**; rain: **0.0 mm**
+- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.; Low cloud is 84%
+
+### 14:00 — NO GO — weak thermals
+- Wind: **south-south-west (208°)** at **15.1 km/h**, gusting **29.5 km/h**
+- Estimated cloud base: **775 m / 2543 ft AGL**; **965 m / 3166 ft ASL**
+- Boundary-layer top: **1250 m / 4101 ft AGL**; **1440 m / 4724 ft ASL**
+- Usable thermal depth above launch: **775 m / 2543 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **308 W/m²**; CAPE: **90 J/kg**; low cloud: **76%**; rain: **0.0 mm**
+- Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.
+
+### 18:00 — NO GO — very weak thermals
+- Wind: **south-south-west (200°)** at **7.6 km/h**, gusting **15.5 km/h**
+- Estimated cloud base: **550 m / 1804 ft AGL**; **740 m / 2428 ft ASL**
+- Boundary-layer top: **760 m / 2493 ft AGL**; **950 m / 3117 ft ASL**
+- Usable thermal depth above launch: **550 m / 1804 ft**; thermals likely to reach launch: **yes**
+- Solar heating: **108 W/m²**; CAPE: **0 J/kg**; low cloud: **0%**; rain: **0.0 mm**
 - Reason: Hambledon Hill is included in forecasts, but the current PDF wind sector could not be reliably parsed automatically. It cannot receive an automatic GO until the official sector is entered.
 
 - Site elevation: **190 m / 623 ft**
